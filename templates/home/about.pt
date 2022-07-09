@@ -1,0 +1,11 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+
+        <div class="content">
+            <div class="box">
+              About Nansens - new HiP Hop artist!
+            </div>
+        </div>
+    </div>
+</div>

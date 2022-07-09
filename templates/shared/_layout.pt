@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FootyTracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  </head>
+
+<body>
+
+<nav class="navbar is-white has-shadow" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="/static/img/footy.png" width="34" height="34">FootyTracker
+        </a>
+
+        <a class="navbar-burger" data-target="navbar" id="burger" >
+            <span ></span>
+            <span ></span>
+            <span ></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navbar-links">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/">
+                Home
+            </a>
+
+            <a class="navbar-item" href="/about">
+                About
+            </a>
+
+            <a class="navbar-item" href="/get_started">
+                Get started
+            </a>
+
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <a class="button is-primary">
+                        <strong>Sign up</strong>
+                    </a>
+                    <a class="button is-light">
+                        Log in
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="main_content">
+    <div metal:define-slot="content" tal:omit-tag="True">No content</div>
+</div>
+
+<script>
+    // mobile menu
+    const burgerIcon = document.querySelector('#burger')
+    const navbarMenu = document.querySelector('#navbar-links')
+
+    burgerIcon.addEventListener('click', () => {
+        navbarMenu.classList.toggle('is-active')
+    });
+</script>
+</body>
+</html>

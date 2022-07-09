@@ -1,0 +1,28 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+
+        <div class="content">
+
+            <section class="section">
+                <div class="container">
+                    <h1 class="title">
+                        Gangsta Nansen🚀
+                    </h1>
+                    <p class="subtitle">
+                        Coneeeect!
+                    </p>
+                    <figure class="image">
+                        <img src="/static/img/nansen.png" width="34" height="34">
+                    </figure>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <div metal:fill-slot="additional-css" tal:omit-tag="True">
+        <!-- additional css from the page -->
+    </div>
+</div>
