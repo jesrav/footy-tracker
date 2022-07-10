@@ -4,7 +4,6 @@ import uvicorn
 from starlette.staticfiles import StaticFiles
 
 from views import home
-from api import ping
 
 app = fastapi.FastAPI()
 
@@ -27,7 +26,6 @@ def configure_templates(dev_mode: bool):
 def configure_routes():
     app.mount('/static', StaticFiles(directory='static'), name='static')
     app.include_router(home.router)
-    app.include_router(ping.router)
 
 
 if __name__ == '__main__':

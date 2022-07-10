@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="Playing around">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/img/nansen.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/home/index.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home/index.pt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +67,7 @@
       <option name="presentableId" value="Default" />
       <updated>1657373007629</updated>
       <workItem from="1657373008805" duration="12440000" />
-      <workItem from="1657400889395" duration="388000" />
+      <workItem from="1657400889395" duration="750000" />
     </task>
     <task id="LOCAL-00001" summary="Playing around">
       <created>1657400976590</created>
@@ -77,7 +76,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657400976591</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Playing around">
+      <created>1657432864092</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1657432864093</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
