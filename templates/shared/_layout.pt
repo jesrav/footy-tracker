@@ -36,6 +36,10 @@
                 Get started
             </a>
 
+            <a class="navbar-item" href="/submit_result">
+                Submit a result
+            </a>
+
         </div>
 
         <div class="navbar-end">

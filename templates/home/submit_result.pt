@@ -1,0 +1,27 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+
+        <div class="content">
+        <div class="section">
+
+        <span class="title">
+         Register a match
+         </span><br><br>
+            <div class="field">
+                <label class="label">Your team</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="enter name of your team">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Your opponent</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="enter name of your opponent">
+                </div>
+            </div>
+
+        </div>
+        </div>
+    </div>
+</div>
