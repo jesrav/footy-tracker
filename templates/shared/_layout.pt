@@ -9,6 +9,7 @@
 
 <body>
 
+<section class="hero is-primary">
 <nav class="navbar is-white has-shadow" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
@@ -56,7 +57,7 @@
         </div>
     </div>
 </nav>
-
+</section>
 <div class="main_content">
     <div metal:define-slot="content" tal:omit-tag="True">No content</div>
 </div>
