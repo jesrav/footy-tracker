@@ -46,12 +46,21 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons">
-                    <a class="button is-primary">
-                        <strong>Sign up</strong>
+
+                    <a tal:condition="not is_logged_in" href="/account/register" class="button is-primary" >
+                        <strong>Register</strong>
                     </a>
-                    <a class="button is-light">
+                    <a tal:condition="not is_logged_in" href="/account/login" class="button is-light">
                         Log in
                     </a>
+
+                    <a tal:condition="is_logged_in"  href="/account" class="button is-primary">
+                        <strong>Account</strong>
+                    </a>
+                    <a tal:condition="is_logged_in"  href="/account/logout" class="button is-light">
+                        Log out
+                    </a>
+
                 </div>
             </div>
         </div>

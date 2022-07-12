@@ -1,29 +1,35 @@
 import fastapi
 from fastapi_chameleon import template
+from starlette.requests import Request
+
+from viewmodels.shared.viewmodel import ViewModelBase
 
 router = fastapi.APIRouter()
 
 
 @router.get('/')
 @template()
-def index():
-    return {}
+def index(request: Request):
+    vm = ViewModelBase(request)
+    return vm.to_dict()
 
 
 @router.get('/about')
 @template()
-def about():
-    return {}
+def about(request: Request):
+    vm = ViewModelBase(request)
+    return vm.to_dict()
 
 
 @router.get('/get_started')
 @template()
-def get_started():
-    return {}
+def get_started(request: Request):
+    vm = ViewModelBase(request)
+    return vm.to_dict()
 
 
 @router.get('/submit_result')
 @template()
-def submit_result():
-    return {}
-
+def submit_result(request: Request):
+    vm = ViewModelBase(request)
+    return vm.to_dict()
