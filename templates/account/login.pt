@@ -1,0 +1,20 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+    <div class="content">
+        <div class="section">
+            <form action="" method="POST" class="form">
+                <h1>Login to your FootyTracker account</h1>
+
+                <input class="input" type="text" name="email" type="text" placeholder=" Your email address"
+                       value="${ email }" required>
+                <input class="input" type="text" name="password" type="text" placeholder=" Password"
+                       value="${ password }" required>
+                <button type="submit" class="button">Log in</button>
+                <div class="error-msg" tal:condition="error">${ error }</div>
+            </form>
+        </div>
+    </div>
+
+</div>
+</div>
