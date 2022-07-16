@@ -16,10 +16,10 @@
                             <span class="icon is-small is-left">
                               <ion-icon name="football"></ion-icon>
                             </span>
-                            <span class="icon is-small is-right">
-                              <ion-icon name="checkmark"></ion-icon>
+                            <span class="icon is-small is-right is-hidden">
+                              <ion-icon name="checkmark" id="goals-team1-status-icon"></ion-icon>
                             </span>
-                            <p class="help is-danger is-hidden" id="goals-team1-warning">Number of goals must be a positive integer</p>
+                            <p class="help is-danger is-hidden" id="goals-team1-warning-text">Number of goals must be a positive integer</p>
                         </div>
                     </div>
 
@@ -56,7 +56,6 @@
                 </div>
 
                 <div class="column">
-
                     <h1 class="title">Team 2</h1>
                     <div class="field">
                         <label class="label">Goals</label>
@@ -65,10 +64,10 @@
                             <span class="icon is-small is-left">
                               <ion-icon name="football"></ion-icon>
                             </span>
-                            <span class="icon is-small is-right">
-                              <ion-icon name="checkmark"></ion-icon>
+                            <span class="icon is-small is-right is-hidden">
+                              <ion-icon name="checkmark" id="goals-team2-status-icon"></ion-icon>
                             </span>
-                            <p class="help is-danger is-hidden" id="goals-team2-warning">Number of goals must be a positive integer</p>
+                            <p class="help is-danger is-hidden" id="goals-team2-warning-text">Number of goals must be a positive integer</p>
                         </div>
                     </div>
                     <div class="field">
@@ -112,47 +111,63 @@
 <script>
     const goalsTeam1 = document.querySelector('#goals-team1')
     const goalsTeam2 = document.querySelector('#goals-team2')
-    const goalsWarningTeam1 = document.querySelector('#goals-team1-warning')
-    const goalsWarningTeam2 = document.querySelector('#goals-team2-warning')
+    const goalsWarningTextTeam1 = document.querySelector('#goals-team1-warning-text')
+    const goalsWarningTextTeam2 = document.querySelector('#goals-team2-warning-text')
+    const goalStatusIconTeam1 = document.querySelector('#goals-team1-status-icon')
+    const goalStatusIconTeam2 = document.querySelector('#goals-team2-status-icon')
 
     // Partial functions for updating the status of the elements containing goals for team 1 and team 2
-    const updateTeam1GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam1),
-            updateTeam2GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam2);
+    const updateTeam1GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam1, goalsWarningTextTeam1, goalStatusIconTeam1),
+            updateTeam2GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam2, goalsWarningTextTeam2, goalStatusIconTeam2);
 
     // Partial functions for updating the helper text about inputed goals for team 1 and team 2
-    const updateGoalTeam1Warning = x => updateGoalWarning(x, goalsWarningTeam1),
-            updateGoalTeam2Warning = x => updateGoalWarning(x, goalsWarningTeam2);
+  //  const updateGoalTeam1Warning = x => updateGoalWarning(x, goalsWarningTeam1),
+  //          updateGoalTeam2Warning = x => updateGoalWarning(x, goalsWarningTeam2);
 
     // Event listeners to update the status and warning text of the elements containing goals for team 1 and team 2
     goalsTeam1.addEventListener('input', updateTeam1GoalInputStatus);
-    goalsTeam1.addEventListener('input', updateGoalTeam1Warning);
+   // goalsTeam1.addEventListener('input', updateGoalTeam1Warning);
     goalsTeam2.addEventListener('input', updateTeam2GoalInputStatus);
-    goalsTeam2.addEventListener('input', updateGoalTeam2Warning);
+   // goalsTeam2.addEventListener('input', updateGoalTeam2Warning);
 
 
-    function updateGoalInputStatus(e, inputElement) {
+    function updateGoalInputStatus(e, goalInputElement, goalWarningTextElement, goalInputStatusIconElement) {
         if (isPositiveInteger(e.target.value)) {
-            inputElement.classList.remove('is-danger')
-            inputElement.classList.add('is-success')
+            goalInputElement.classList.remove('is-danger')
+            goalInputElement.classList.add('is-success')
+
+            goalWarningTextElement.classList.add('is-hidden')
+
+            goalInputStatusIconElement.parentElement.classList.remove('is-hidden')
+            goalInputStatusIconElement.name = "checkmark"
 
         } else if (e.target.value === "") {
-            inputElement.classList.remove('is-success')
-            inputElement.classList.remove('is-danger')
+            goalInputElement.classList.remove('is-success')
+            goalInputElement.classList.remove('is-danger')
+
+            goalWarningTextElement.classList.add('is-hidden')
+
+            goalInputStatusIconElement.parentElement.classList.add('is-hidden')
+
         } else {
-          inputElement.classList.remove('is-success')
-          inputElement.classList.add('is-danger')
+          goalInputElement.classList.remove('is-success')
+          goalInputElement.classList.add('is-danger')
+
+          goalWarningTextElement.classList.remove('is-hidden')
+          goalInputStatusIconElement.parentElement.classList.remove('is-hidden')
+          goalInputStatusIconElement.name = "warning"
         }
     }
 
-    function updateGoalWarning(e, textElement) {
-        if (isPositiveInteger(e.target.value)) {
-            textElement.classList.add('is-hidden')
-        } else if (e.target.value === "") {
-            textElement.classList.add('is-hidden')
-        } else {
-            textElement.classList.remove('is-hidden')
-        }
-    }
+    // function updateGoalWarning(e, warningTextElement) {
+    //     if (isPositiveInteger(e.target.value)) {
+    //         warningTextElement.classList.add('is-hidden')
+    //     } else if (e.target.value === "") {
+    //         warningTextElement.classList.add('is-hidden')
+    //     } else {
+    //         warningTextElement.classList.remove('is-hidden')
+    //     }
+    // }
 
     function isPositiveInteger(str) {
       if (typeof str !== 'string') {

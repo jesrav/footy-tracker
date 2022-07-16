@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/user_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/shared/_layout.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/shared/_layout.pt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/tracking/submit_result.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/tracking/submit_result.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/tracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/tracking.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +80,7 @@
       <workItem from="1657373008805" duration="12440000" />
       <workItem from="1657400889395" duration="750000" />
       <workItem from="1657563613024" duration="11058000" />
-      <workItem from="1657884171357" duration="23888000" />
+      <workItem from="1657884171357" duration="26588000" />
     </task>
     <task id="LOCAL-00001" summary="Playing around">
       <created>1657400976590</created>
@@ -155,7 +152,14 @@
       <option name="project" value="LOCAL" />
       <updated>1657992470837</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="WIP">
+      <created>1658009182043</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1658009182043</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
