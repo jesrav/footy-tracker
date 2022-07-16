@@ -72,7 +72,7 @@
 </div>
 
 <script>
-    // mobile burger menu
+    // Mobile burger menu
     const burgerIcon = document.querySelector('#burger')
     const navbarMenu = document.querySelector('#navbar-links')
 
@@ -80,5 +80,10 @@
         navbarMenu.classList.toggle('is-active')
     });
 </script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<div metal:define-slot="additional-js" tal:omit-tag="True"></div>
+
 </body>
 </html>

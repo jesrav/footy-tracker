@@ -1,59 +1,168 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
 
-
-        <div class="content">
+    <div class="content">
 
         <div class="section">
-        <h1 class="title">Register a match result</h1>
-        <br><br>
-        <div class="columns">
-            <div class="column">
-            <h1 class="title">Team 1</h1>
-            <div class="field">
-                <label class="label">Goals</label>
-                <div class="control">
-                    <input class="input" type="text" placeholder="Goals for team 1">
-                </div>
-            </div>
-            <div class="field">
-                <label class="label">Defender</label>
-                <div class="control">
-                    <input class="input" type="text" placeholder="Select team 1 defender">
-                </div>
-            </div>
-            <div class="field">
-                <label class="label">Attacker</label>
-                <div class="control">
-                    <input class="input" type="text" placeholder="Select team 1 attacker">
-                </div>
-            </div>
-            </div>
+            <h1 class="title">Register a match result</h1>
+            <br><br>
+            <div class="columns">
+                <div class="column">
+                    <h1 class="title">Team 1</h1>
+                    <div class="field">
+                        <label class="label">Goals</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input" type="text" placeholder="Goals for team 1" id="goals-team1">
+                            <span class="icon is-small is-left">
+                              <ion-icon name="football"></ion-icon>
+                            </span>
+                            <span class="icon is-small is-right">
+                              <ion-icon name="checkmark"></ion-icon>
+                            </span>
+                            <p class="help is-danger is-hidden" id="goals-team1-warning">Number of goals must be a positive integer</p>
+                        </div>
+                    </div>
 
-            <div class="column">
-            <h1 class="title">Team 2</h1>
-            <div class="field">
-            <label class="label">Goals</label>
-            <div class="control">
-                <input class="input" type="text" placeholder="Goals for team 2">
-            </div>
-            </div>
+                    <div class="field">
+                        <label class="label">Defender</label>
+                        <div class="control">
+                            <div class="select">
+                                <select>
+                                    <option value="">Select team 1 defender</option>
+                                    <option value="Jes">Jes</option>
+                                    <option value="Nanna">Nanna</option>
+                                    <option value="lol">lol</option>
+                                    <option value="lols">lols</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="field">
-                <label class="label">Defender</label>
-                <div class="control">
-                    <input class="input" type="text" placeholder="Select team 2 defender">
+                    <div class="field">
+                        <label class="label">Attacker</label>
+                        <div class="control">
+                            <div class="select">
+                                <select>
+                                    <option value="">Select team 1 attacker</option>
+                                    <option value="Jes">Jes</option>
+                                    <option value="Nanna">Nanna</option>
+                                    <option value="lol">lol</option>
+                                    <option value="lols">lols</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="column">
+
+                    <h1 class="title">Team 2</h1>
+                    <div class="field">
+                        <label class="label">Goals</label>
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input" type="text" placeholder="Goals for team 2" id="goals-team2">
+                            <span class="icon is-small is-left">
+                              <ion-icon name="football"></ion-icon>
+                            </span>
+                            <span class="icon is-small is-right">
+                              <ion-icon name="checkmark"></ion-icon>
+                            </span>
+                            <p class="help is-danger is-hidden" id="goals-team2-warning">Number of goals must be a positive integer</p>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Defender</label>
+                        <div class="control">
+                            <div class="select">
+                                <select>
+                                    <option value="">Select team 2 defender</option>
+                                    <option value="Jes">Jes</option>
+                                    <option value="Nanna">Nanna</option>
+                                    <option value="lol">lol</option>
+                                    <option value="lols">lols</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Attacker</label>
+                        <div class="control">
+                            <div class="select">
+                                <select>
+                                    <option value="">Select team 2 attacker</option>
+                                    <option value="Jes">Jes</option>
+                                    <option value="Nanna">Nanna</option>
+                                    <option value="lol">lol</option>
+                                    <option value="lols">lols</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-            <div class="field">
-                <label class="label">Attacker</label>
-                <div class="control">
-                    <input class="input" type="text" placeholder="Select team 2 attacker">
-                </div>
-            </div>
-            </div>
-        </div>
-        </div>
         </div>
     </div>
 </div>
+
+</div>
+
+<script>
+    const goalsTeam1 = document.querySelector('#goals-team1')
+    const goalsTeam2 = document.querySelector('#goals-team2')
+    const goalsWarningTeam1 = document.querySelector('#goals-team1-warning')
+    const goalsWarningTeam2 = document.querySelector('#goals-team2-warning')
+
+    // Partial functions for updating the status of the elements containing goals for team 1 and team 2
+    const updateTeam1GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam1),
+            updateTeam2GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam2);
+
+    // Partial functions for updating the helper text about inputed goals for team 1 and team 2
+    const updateGoalTeam1Warning = x => updateGoalWarning(x, goalsWarningTeam1),
+            updateGoalTeam2Warning = x => updateGoalWarning(x, goalsWarningTeam2);
+
+    // Event listeners to update the status and warning text of the elements containing goals for team 1 and team 2
+    goalsTeam1.addEventListener('input', updateTeam1GoalInputStatus);
+    goalsTeam1.addEventListener('input', updateGoalTeam1Warning);
+    goalsTeam2.addEventListener('input', updateTeam2GoalInputStatus);
+    goalsTeam2.addEventListener('input', updateGoalTeam2Warning);
+
+
+    function updateGoalInputStatus(e, inputElement) {
+        if (isPositiveInteger(e.target.value)) {
+            inputElement.classList.remove('is-danger')
+            inputElement.classList.add('is-success')
+
+        } else if (e.target.value === "") {
+            inputElement.classList.remove('is-success')
+            inputElement.classList.remove('is-danger')
+        } else {
+          inputElement.classList.remove('is-success')
+          inputElement.classList.add('is-danger')
+        }
+    }
+
+    function updateGoalWarning(e, textElement) {
+        if (isPositiveInteger(e.target.value)) {
+            textElement.classList.add('is-hidden')
+        } else if (e.target.value === "") {
+            textElement.classList.add('is-hidden')
+        } else {
+            textElement.classList.remove('is-hidden')
+        }
+    }
+
+    function isPositiveInteger(str) {
+      if (typeof str !== 'string') {
+        return false;
+      }
+
+      const num = Number(str);
+
+      return Number.isInteger(num) && num > 0;
+
+
+    }
+</script>

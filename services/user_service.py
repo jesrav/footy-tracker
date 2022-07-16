@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 
@@ -53,5 +53,13 @@ def get_user_by_email(email: str) -> Optional[User]:
 
     try:
         return session.query(User).filter(User.email == email).first()
+    finally:
+        session.close()
+
+
+def get_all_users() -> List[User]:
+    session = db_session.create_session()
+    try:
+        return session.query(User).all()
     finally:
         session.close()
