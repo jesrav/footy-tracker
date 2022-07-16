@@ -7,3 +7,6 @@ python-multipart
 fastapi-chameleon==0.1.12
 
 starlette==0.16.0
+
+SQLAlchemy==1.4.39
+passlib

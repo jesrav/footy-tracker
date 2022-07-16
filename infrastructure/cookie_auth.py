@@ -6,7 +6,7 @@ from fastapi import Response
 
 from infrastructure.num_convert import try_int
 
-auth_cookie_name = 'pypi_account'
+auth_cookie_name = 'footy_tracker_account'
 
 
 def set_auth(response: Response, user_id: int):
