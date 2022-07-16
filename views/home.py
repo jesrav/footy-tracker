@@ -21,9 +21,9 @@ def about(request: Request):
     return vm.to_dict()
 
 
-@router.get('/get_started')
+@router.get('/leaderboard')
 @template()
-def get_started(request: Request):
+def leaderboard(request: Request):
     vm = ViewModelBase(request)
     return vm.to_dict()
 
