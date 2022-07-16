@@ -7,15 +7,15 @@ from viewmodels.shared.viewmodel import ViewModelBase
 router = fastapi.APIRouter()
 
 
-@router.get('/')
+@router.get('/leaderboard')
 @template()
-def index(request: Request):
+def leaderboard(request: Request):
     vm = ViewModelBase(request)
     return vm.to_dict()
 
 
-@router.get('/about')
+@router.get('/submit_result')
 @template()
-def about(request: Request):
+def submit_result(request: Request):
     vm = ViewModelBase(request)
     return vm.to_dict()

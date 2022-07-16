@@ -6,7 +6,7 @@ import uvicorn
 from starlette.staticfiles import StaticFiles
 
 from data import db_session
-from views import home, account
+from views import home, account, tracking
 
 app = fastapi.FastAPI()
 
@@ -36,6 +36,7 @@ def configure_routes():
     app.mount('/static', StaticFiles(directory='static'), name='static')
     app.include_router(home.router)
     app.include_router(account.router)
+    app.include_router(tracking.router)
 
 
 if __name__ == '__main__':

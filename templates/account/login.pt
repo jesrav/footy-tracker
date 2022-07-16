@@ -8,7 +8,7 @@
 
                 <input class="input" type="text" name="email" type="text" placeholder=" Your email address"
                        value="${ email }" required>
-                <input class="input" type="text" name="password" type="text" placeholder=" Password"
+                <input class="input" type="password" name="password" type="text" placeholder=" Password"
                        value="${ password }" required>
                 <button type="submit" class="button">Log in</button>
                 <div class="error-msg" tal:condition="error">${ error }</div>
