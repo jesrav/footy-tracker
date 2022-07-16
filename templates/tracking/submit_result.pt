@@ -3,26 +3,57 @@
 
 
         <div class="content">
+
         <div class="section">
-
-        <span class="title">
-         Register a match
-         </span><br><br>
+        <h1 class="title">Register a match result</h1>
+        <br><br>
+        <div class="columns">
+            <div class="column">
+            <h1 class="title">Team 1</h1>
             <div class="field">
-                <label class="label">Your team</label>
+                <label class="label">Goals</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="enter name of your team">
+                    <input class="input" type="text" placeholder="Goals for team 1">
                 </div>
             </div>
             <div class="field">
-                <label class="label">Your opponent</label>
+                <label class="label">Defender</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="enter name of your opponent">
+                    <input class="input" type="text" placeholder="Select team 1 defender">
                 </div>
             </div>
+            <div class="field">
+                <label class="label">Attacker</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="Select team 1 attacker">
+                </div>
+            </div>
+            </div>
 
+            <div class="column">
+            <h1 class="title">Team 2</h1>
+            <div class="field">
+            <label class="label">Goals</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Goals for team 2">
+            </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Defender</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="Select team 2 defender">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Attacker</label>
+                <div class="control">
+                    <input class="input" type="text" placeholder="Select team 2 attacker">
+                </div>
+            </div>
+            </div>
         </div>
         </div>
-
+        </div>
     </div>
 </div>
