@@ -26,13 +26,11 @@
                     </div>
 
 
-
-
                     <div class="field">
                         <label class="label">Defender</label>
                         <div class="control has-icons-left">
                             <div class="select">
-                                <select>
+                                <select id="defender-team1">
                                     <option value="">Select team 1 defender</option>
                                     <option value="Jes">Jes</option>
                                     <option value="Nanna">Nanna</option>
@@ -51,8 +49,8 @@
                         <div class="control">
                             <div class="control has-icons-left">
                                 <div class="select">
-                                    <select>
-                                        <option value="">Select team 1 defender</option>
+                                    <select id="attacker-team1">
+                                        <option value="">Select team 1 attacker</option>
                                         <option value="Jes">Jes</option>
                                         <option value="Nanna">Nanna</option>
                                         <option value="lol">lol</option>
@@ -87,8 +85,8 @@
                         <label class="label">Defender</label>
                         <div class="control has-icons-left">
                             <div class="select">
-                                <select>
-                                    <option value="">Select team 1 defender</option>
+                                <select id="defender-team2">
+                                    <option value="">Select team 2 defender</option>
                                     <option value="Jes">Jes</option>
                                     <option value="Nanna">Nanna</option>
                                     <option value="lol">lol</option>
@@ -105,8 +103,8 @@
                         <label class="label">Attacker</label>
                         <div class="control has-icons-left">
                             <div class="select">
-                                <select>
-                                    <option value="">Select team 1 defender</option>
+                                <select id="attacker-team2">
+                                    <option value="">Select team 2 attacker</option>
                                     <option value="Jes">Jes</option>
                                     <option value="Nanna">Nanna</option>
                                     <option value="lol">lol</option>
@@ -137,6 +135,7 @@
 
 </div>
 
+
 <script>
     const goalsTeam1 = document.querySelector('#goals-team1')
     const goalsTeam2 = document.querySelector('#goals-team2')
@@ -144,20 +143,23 @@
     const goalsWarningTextTeam2 = document.querySelector('#goals-team2-warning-text')
     const goalStatusIconTeam1 = document.querySelector('#goals-team1-status-icon')
     const goalStatusIconTeam2 = document.querySelector('#goals-team2-status-icon')
+    const defenderTeam1Selection = document.querySelector('#defender-team1')
+    const attackerTeam1Selection = document.querySelector('#attacker-team1')
+    const defenderTeam2Selection = document.querySelector('#defender-team2')
+    const attackerTeam2Selection = document.querySelector('#attacker-team2')
 
     // Partial functions for updating the status of the elements containing goals for team 1 and team 2
     const updateTeam1GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam1, goalsWarningTextTeam1, goalStatusIconTeam1),
             updateTeam2GoalInputStatus = x => updateGoalInputStatus(x, goalsTeam2, goalsWarningTextTeam2, goalStatusIconTeam2);
 
-    // Partial functions for updating the helper text about inputed goals for team 1 and team 2
-  //  const updateGoalTeam1Warning = x => updateGoalWarning(x, goalsWarningTeam1),
-  //          updateGoalTeam2Warning = x => updateGoalWarning(x, goalsWarningTeam2);
-
     // Event listeners to update the status and warning text of the elements containing goals for team 1 and team 2
     goalsTeam1.addEventListener('input', updateTeam1GoalInputStatus);
-   // goalsTeam1.addEventListener('input', updateGoalTeam1Warning);
     goalsTeam2.addEventListener('input', updateTeam2GoalInputStatus);
-   // goalsTeam2.addEventListener('input', updateGoalTeam2Warning);
+
+    defenderTeam1Selection.addEventListener('change', updateDropdownMenus);
+    attackerTeam1Selection.addEventListener('change', updateDropdownMenus);
+    defenderTeam2Selection.addEventListener('change', updateDropdownMenus);
+    attackerTeam2Selection.addEventListener('change', updateDropdownMenus);
 
 
     function updateGoalInputStatus(e, goalInputElement, goalWarningTextElement, goalInputStatusIconElement) {
@@ -188,15 +190,74 @@
         }
     }
 
-    // function updateGoalWarning(e, warningTextElement) {
-    //     if (isPositiveInteger(e.target.value)) {
-    //         warningTextElement.classList.add('is-hidden')
-    //     } else if (e.target.value === "") {
-    //         warningTextElement.classList.add('is-hidden')
-    //     } else {
-    //         warningTextElement.classList.remove('is-hidden')
-    //     }
-    // }
+
+    function updateDropdownMenus(event) {
+
+        // var target = event.target
+
+        /*indexEventDropdown = dropdownMenus.findIndex(x => x.id === target.id)
+        dropdownMenus.splice(indexEventDropdown, 1)
+*/
+        var dropdownMenus = [defenderTeam1Selection, attackerTeam1Selection, defenderTeam2Selection, attackerTeam2Selection]
+
+        for (let i = 0; i < dropdownMenus.length; i++) {
+
+            // Remove all previous is-hidden modifiers
+            for (let option of dropdownMenus[i].options) {
+                unhide(option)
+            }
+
+            // Find user selection in all dropdown menus except the one we are modifying
+            var otherDropDownMenus = [...dropdownMenus.slice(0, i), ...dropdownMenus.slice(i + 1, dropdownMenus.length)]
+
+            //console.log(otherDropDownMenus)
+            //console.log(i)
+            for (let otherDropdownMenu of otherDropDownMenus) {
+                // Hide element selected in other dropdown
+                if (otherDropdownMenu.options.selectedIndex !== 0) {
+                   hide(dropdownMenus[i].options[otherDropdownMenu.options.selectedIndex])
+                }
+            }
+            //for (let l = 0; l < otherDropDownMenus.length; l++)
+                //console.log(j)
+                //console.log(otherDropDownMenus)
+                //console.log(otherDropDownMenus[l])
+
+                // // Remove all previous is-hidden modifiers
+                // for (let option of dropdownMenus[i].options) {
+                //    unhide(option)
+                // }
+                // // Hide element selected in other dropdown
+                // if (otherDropDownMenus[l].options.selectedIndex !== 0) {
+                //    hide(dropdownMenus[i].options[otherDropDownMenus[l].options.selectedIndex])
+                // }
+        }
+
+/*
+        const indexOptionToRemove = event.target.selectedIndex
+
+        // Remove all previous is-hidden modifiers
+        for (let option of attackerTeam1Selection.options) {
+            unhide(option)
+        }
+        // Hide element selected in other dropdown
+        if (indexOptionToRemove !== 0) {
+            hide(attackerTeam1Selection.options[indexOptionToRemove])
+        }*/
+
+    }
+
+    function getSelectedIndex(e) {
+        e.options.selectedIndex
+    }
+
+    function hide(e) {
+        e.classList.add('is-hidden')
+    }
+
+    function unhide(e) {
+        e.classList.remove('is-hidden')
+    }
 
     function isPositiveInteger(str) {
       if (typeof str !== 'string') {
@@ -206,7 +267,7 @@
       const num = Number(str);
 
       return Number.isInteger(num) && num > 0;
-
-
     }
+
+
 </script>
