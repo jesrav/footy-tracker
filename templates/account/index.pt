@@ -4,7 +4,7 @@
             <h1>Your FootyTracker Account</h1>
 
             <div>
-                Welcome to your account ${ user.name }!
+                Welcome to your account ${ user.nickname }!
             </div>
         </div>
     </div>

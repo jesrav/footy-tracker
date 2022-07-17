@@ -30,13 +30,14 @@ def register(request: Request):
 @template()
 async def register(request: Request):
     vm = RegisterViewModel(request)
+
     await vm.load()
 
     if vm.error:
         return vm.to_dict()
 
     # Create the account
-    account = user_service.create_account(vm.name, vm.email, vm.password)
+    account = user_service.create_account(vm.nickname, vm.email, vm.password)
 
     # Login user
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)

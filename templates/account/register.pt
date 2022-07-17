@@ -6,14 +6,98 @@
         <form action="" method="POST" class="form">
             <h1>Register at FootyTracker</h1>
 
-            <input class="input" type="text" name="name" type="text" placeholder=" Your name" value="${ name }" required>
-            <input class="input" type="text" name="email" type="text" placeholder=" Your email address" value="${ email }" required>
-            <input class="input" type="password" name="password" type="text" placeholder=" Password" value="${ password }" required>
-            <button type="submit" class="button">Register</button>
-            <div class="error-msg" tal:condition="error">${ error }</div>
+            <div class="field">
+                <label class="label">Nickname</label>
+                <div class="control has-icons-left has-icons-right">
+                    <input class="input" type="text" name="nickname" type="text" placeholder=" Your nickname" value="${ nickname }">
+                    <span class="icon is-small is-left">
+                      <ion-icon name="person"></ion-icon>
+                    </span>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">E-mail</label>
+                <div class="control has-icons-left has-icons-right">
+                    <input class="input" type="text" name="email" placeholder=" Your email address" value="${ email }" id="email-input">
+                    <span class="icon is-small is-left">
+                      <ion-icon name="mail"></ion-icon>
+                    </span>
+                    <span class="icon is-small is-right is-hidden">
+                      <ion-icon name="checkmark" id="email-input-status-icon"></ion-icon>
+                    </span>
+                    <p class="help is-danger is-hidden" id="email-input-status-warning-text">Email must be valid</p>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Password</label>
+                <div class="control has-icons-left has-icons-right">
+                    <input class="input" type="text" name="password" placeholder=" Password" value="${ password }" id="password-input">
+                    <span class="icon is-small is-left">
+                        <ion-icon name="lock-closed"></ion-icon>
+                     </span>
+                    <span class="icon is-small is-right is-hidden">
+                        <ion-icon name="checkmark" id="password-input-status-icon"></ion-icon>
+                    </span>
+                    <p class="help is-danger is-hidden" id="password-input-warning-text">Password must be at least 8 characters</p>
+                </div>
+            </div>
+            <button type="submit" class="button is-primary">Register</button>
+            <h5 class="help is-danger" tal:condition="error">${ error }</h5>
         </form>
     </div>
     </div>
 
 </div>
 </div>
+
+<script>
+    const emailInput = document.querySelector('#email-input')
+    const passwordInput = document.querySelector('#password-input')
+    const emailInputStatusIcon = document.querySelector('#email-input-status-icon')
+    const passwordInputStatusIcon = document.querySelector('#password-input-status-icon')
+    const emailInputWarningText = document.querySelector('#email-input-status-warning-text')
+    const passwordInputWarningText = document.querySelector('#password-input-warning-text')
+
+
+    // Event listeners to update the status and warning text for the email and password input
+    passwordInput.addEventListener('input', updatePaswordInputStatus);
+
+
+    window.onload = function() {
+      yourFunction(param1, param2);
+    };
+
+    function updatePaswordInputStatus(passwordInputEvent) {
+        var password = passwordInputEvent.target.value
+        if (password.length === 0) {
+            passwordInput.classList.remove('is-danger')
+            passwordInput.classList.remove('is-success')
+            passwordInputWarningText.classList.add('is-hidden')
+            passwordInputStatusIcon.parentElement.classList.add('is-hidden')
+        }
+        else if (ValidatePassword(password)) {
+            passwordInput.classList.remove('is-danger')
+            passwordInput.classList.add('is-success')
+            passwordInputWarningText.classList.add('is-hidden')
+            passwordInputStatusIcon.parentElement.classList.remove('is-hidden')
+            passwordInputStatusIcon.name = "checkmark"
+        }
+        else {
+            passwordInput.classList.remove('is-success')
+            passwordInput.classList.add('is-danger')
+            passwordInputWarningText.classList.remove('is-hidden')
+            passwordInputStatusIcon.parentElement.classList.remove('is-hidden')
+            passwordInputStatusIcon.name = "alert"
+        }
+    }
+
+    function ValidatePassword(password) {
+        return password.length >= 8;
+    }
+
+    function validateEmail(email) {
+        var re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
+
+</script>

@@ -6,12 +6,12 @@ from data import db_session
 from data.user import User
 
 
-def create_account(name: str, email: str, password: str) -> User:
+def create_account(nickname: str, email: str, password: str) -> User:
     session = db_session.create_session()
 
     try:
         user = User()
-        user.name = name
+        user.nickname = nickname
         user.email = email
         user.hash_password = crypto.hash(password, rounds=172_434)
 
