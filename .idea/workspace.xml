@@ -8,11 +8,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/user_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/account/index.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/account/index.pt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/account/register.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/account/register.pt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/tracking/submit_result.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/tracking/submit_result.pt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/viewmodels/account/register_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/viewmodels/account/register_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/account.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/account.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,7 +170,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658062871769</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="WIP">
+      <created>1658081693705</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1658081693705</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

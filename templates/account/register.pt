@@ -3,7 +3,7 @@
 
     <div class="content">
     <div class="section">
-        <form action="" method="POST" class="form">
+        <form action="" method="POST" class="form" onsubmit="return validateRegistrationForm()">
             <h1>Register at FootyTracker</h1>
 
             <div class="field">
@@ -60,22 +60,29 @@
 
 
     // Event listeners to update the status and warning text for the email and password input
-    passwordInput.addEventListener('input', updatePaswordInputStatus);
-
-
+    passwordInput.addEventListener('input', (e)=>{
+        updatePaswordInputStatus(e.target.value)
+    });
+    emailInput.addEventListener('input', (e) => {
+        updateEmailInputStatus(e.target.value)
+    });
     window.onload = function() {
-      yourFunction(param1, param2);
+      updatePaswordInputStatus(passwordInput.value)
+      updateEmailInputStatus(emailInput.value)
     };
 
-    function updatePaswordInputStatus(passwordInputEvent) {
-        var password = passwordInputEvent.target.value
+    function validateRegistrationForm() {
+        return (validatePassword(passwordInput.value) && validateEmail(emailInput.value))
+    }
+
+    function updatePaswordInputStatus(password) {
         if (password.length === 0) {
             passwordInput.classList.remove('is-danger')
             passwordInput.classList.remove('is-success')
             passwordInputWarningText.classList.add('is-hidden')
             passwordInputStatusIcon.parentElement.classList.add('is-hidden')
         }
-        else if (ValidatePassword(password)) {
+        else if (validatePassword(password)) {
             passwordInput.classList.remove('is-danger')
             passwordInput.classList.add('is-success')
             passwordInputWarningText.classList.add('is-hidden')
@@ -91,7 +98,30 @@
         }
     }
 
-    function ValidatePassword(password) {
+function updateEmailInputStatus(email) {
+        if (email.length === 0) {
+            emailInput.classList.remove('is-danger')
+            emailInput.classList.remove('is-success')
+            emailInputWarningText.classList.add('is-hidden')
+            emailInputStatusIcon.parentElement.classList.add('is-hidden')
+        }
+        else if (validateEmail(email)) {
+            emailInput.classList.remove('is-danger')
+            emailInput.classList.add('is-success')
+            emailInputWarningText.classList.add('is-hidden')
+            emailInputStatusIcon.parentElement.classList.remove('is-hidden')
+            emailInputStatusIcon.name = "checkmark"
+        }
+        else {
+            emailInput.classList.remove('is-success')
+            emailInput.classList.add('is-danger')
+            emailInputWarningText.classList.remove('is-hidden')
+            emailInputStatusIcon.parentElement.classList.remove('is-hidden')
+            emailInputStatusIcon.name = "alert"
+        }
+    }
+
+    function validatePassword(password) {
         return password.length >= 8;
     }
 

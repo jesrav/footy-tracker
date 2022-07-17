@@ -57,6 +57,15 @@ def get_user_by_email(email: str) -> Optional[User]:
         session.close()
 
 
+def get_user_by_nickname(nickname: str) -> Optional[User]:
+    session = db_session.create_session()
+
+    try:
+        return session.query(User).filter(User.nickname == nickname).first()
+    finally:
+        session.close()
+
+
 def get_all_users() -> List[User]:
     session = db_session.create_session()
     try:

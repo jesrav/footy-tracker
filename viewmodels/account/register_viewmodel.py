@@ -28,5 +28,7 @@ class RegisterViewModel(ViewModelBase):
             self.error = "Your password is required."
         elif len(self.password) < 8:
             self.error = "Your password must be at 8 characters."
+        elif user_service.get_user_by_nickname(self.nickname):
+            self.error = "That nickname is already taken."
         elif user_service.get_user_by_email(self.email):
             self.error = "That email is already taken. Log in instead?"

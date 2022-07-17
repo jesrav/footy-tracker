@@ -153,7 +153,7 @@
         updateGoalInputStatus(e, goalsTeam1, goalsWarningTextTeam1, goalStatusIconTeam1)
     }))
     goalsTeam2.addEventListener('input', ('click', (e) => {
-        updateGoalInputStatus(e, goalsTeam2, goalsWarningTextTeam2, goalStatusIconTeam2)
+        updateGoalInputStatus(e.target.value, goalsTeam2, goalsWarningTextTeam2, goalStatusIconTeam2)
     }))
 
     // Event Listeners to update the possible dropdown user selections
@@ -163,8 +163,8 @@
     attackerTeam2Selection.addEventListener('change', updateDropdownMenus);
 
 
-    function updateGoalInputStatus(goalInputEvent, goalInputElement, goalWarningTextElement, goalInputStatusIconElement) {
-        if (isPositiveInteger(goalInputEvent.target.value)) {
+    function updateGoalInputStatus(goalInput, goalInputElement, goalWarningTextElement, goalInputStatusIconElement) {
+        if (isPositiveInteger(goalInput)) {
             goalInputElement.classList.remove('is-danger')
             goalInputElement.classList.add('is-success')
 
@@ -173,7 +173,7 @@
             goalInputStatusIconElement.parentElement.classList.remove('is-hidden')
             goalInputStatusIconElement.name = "checkmark"
 
-        } else if (goalInputEvent.target.value === "") {
+        } else if (goalInput === "") {
             goalInputElement.classList.remove('is-success')
             goalInputElement.classList.remove('is-danger')
 
