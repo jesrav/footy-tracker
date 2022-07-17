@@ -4,6 +4,8 @@
     <div class="content">
 
         <div class="section">
+        <div class="form-container">
+        <form action="" method="POST" class="account-form">
             <h1 class="title">Register a match result</h1>
             <br><br>
             <div class="columns">
@@ -23,9 +25,12 @@
                         </div>
                     </div>
 
+
+
+
                     <div class="field">
                         <label class="label">Defender</label>
-                        <div class="control">
+                        <div class="control has-icons-left">
                             <div class="select">
                                 <select>
                                     <option value="">Select team 1 defender</option>
@@ -35,20 +40,28 @@
                                     <option value="lols">lols</option>
                                 </select>
                             </div>
+                            <span class="icon is-small is-left">
+                                <ion-icon name="person"></ion-icon>
+                            </span>
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">Attacker</label>
                         <div class="control">
-                            <div class="select">
-                                <select>
-                                    <option value="">Select team 1 attacker</option>
-                                    <option value="Jes">Jes</option>
-                                    <option value="Nanna">Nanna</option>
-                                    <option value="lol">lol</option>
-                                    <option value="lols">lols</option>
-                                </select>
+                            <div class="control has-icons-left">
+                                <div class="select">
+                                    <select>
+                                        <option value="">Select team 1 defender</option>
+                                        <option value="Jes">Jes</option>
+                                        <option value="Nanna">Nanna</option>
+                                        <option value="lol">lol</option>
+                                        <option value="lols">lols</option>
+                                    </select>
+                                </div>
+                                <span class="icon is-small is-left">
+                                    <ion-icon name="person"></ion-icon>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -72,35 +85,51 @@
                     </div>
                     <div class="field">
                         <label class="label">Defender</label>
-                        <div class="control">
+                        <div class="control has-icons-left">
                             <div class="select">
                                 <select>
-                                    <option value="">Select team 2 defender</option>
+                                    <option value="">Select team 1 defender</option>
                                     <option value="Jes">Jes</option>
                                     <option value="Nanna">Nanna</option>
                                     <option value="lol">lol</option>
                                     <option value="lols">lols</option>
                                 </select>
                             </div>
+                            <span class="icon is-small is-left">
+                                <ion-icon name="person"></ion-icon>
+                            </span>
                         </div>
                     </div>
 
                     <div class="field">
                         <label class="label">Attacker</label>
-                        <div class="control">
+                        <div class="control has-icons-left">
                             <div class="select">
                                 <select>
-                                    <option value="">Select team 2 attacker</option>
+                                    <option value="">Select team 1 defender</option>
                                     <option value="Jes">Jes</option>
                                     <option value="Nanna">Nanna</option>
                                     <option value="lol">lol</option>
                                     <option value="lols">lols</option>
                                 </select>
                             </div>
+                            <span class="icon is-small is-left">
+                                <ion-icon name="person"></ion-icon>
+                            </span>
                         </div>
                     </div>
-
                 </div>
+            </div>
+            <div class="columns">
+            <div class="column">
+                <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Submit</button>
+                </div>
+                </div>
+            </div>
+            </div>
+            </form>
             </div>
         </div>
     </div>
