@@ -9,7 +9,7 @@
 
 <body>
 
-<section class="hero is-primary">
+<section class="hero is-light">
 <nav class="navbar is-white has-shadow" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
@@ -47,14 +47,14 @@
             <div class="navbar-item">
                 <div class="buttons">
 
-                    <a tal:condition="not is_logged_in" href="/account/register" class="button is-primary" >
+                    <a tal:condition="not is_logged_in" href="/account/register" class="button is-light" >
                         <strong>Register</strong>
                     </a>
-                    <a tal:condition="not is_logged_in" href="/account/login" class="button is-light">
+                    <a tal:condition="not is_logged_in" href="/account/login" class="button is-primary">
                         Log in
                     </a>
 
-                    <a tal:condition="is_logged_in"  href="/account" class="button is-primary">
+                    <a tal:condition="is_logged_in"  href="/account" class="button is-light">
                         <strong>Account</strong>
                     </a>
                     <a tal:condition="is_logged_in"  href="/account/logout" class="button is-light">

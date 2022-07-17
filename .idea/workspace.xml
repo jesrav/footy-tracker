@@ -6,11 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/user_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/account/register.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/account/register.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/tracking/submit_result.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/tracking/submit_result.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/account/register_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/viewmodels/account/register_viewmodel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/account/login.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/account/login.pt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/shared/_layout.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/shared/_layout.pt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +174,21 @@
       <option name="project" value="LOCAL" />
       <updated>1658081693705</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="WIP">
+      <created>1658084732689</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1658084732689</updated>
+    </task>
+    <task id="LOCAL-00016" summary="WIP">
+      <created>1658086171174</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1658086171174</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

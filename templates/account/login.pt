@@ -1,7 +1,38 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
 
-    <div class="content">
+
+        <div class="content">
+            <div class="section">
+                <form action="" method="POST" class="form" onsubmit="return validateRegistrationForm()">
+                    <h1>Login</h1>
+
+                    <div class="field">
+                        <label class="label">E-mail</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="text" name="email" placeholder=" Your email address" value="${ email }" id="email-input">
+                            <span class="icon is-small is-left">
+                                <ion-icon name="mail"></ion-icon>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Password</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="text" name="password" placeholder=" Password" value="${ password }" id="password-input">
+                            <span class="icon is-small is-left">
+                                <ion-icon name="lock-closed"></ion-icon>
+                            </span>
+                        </div>
+                    </div>
+                    <button type="submit" class="button is-primary">Login</button>
+                    <h5 class="help is-danger" tal:condition="error">${ error }</h5>
+                </form>
+            </div>
+        </div>
+
+
+    <!--?<div class="content">
         <div class="section">
             <form action="" method="POST" class="form">
                 <h1>Login to your FootyTracker account</h1>
@@ -14,7 +45,7 @@
                 <div class="error-msg" tal:condition="error">${ error }</div>
             </form>
         </div>
-    </div>
+    </div>-->
 
 </div>
 </div>
