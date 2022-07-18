@@ -21,25 +21,35 @@ class User(UserBase):
         orm_mode = True
 
 
-class TeamCreate(BaseModel):
+class TeamBase(BaseModel):
     defender_user_id: int
     attacker_user_id: int
 
+    class Config:
+        orm_mode = True
 
-class Team(TeamCreate):
+
+class Team(TeamBase):
     id: int
     created_date: datetime
 
+    class Config:
+        orm_mode = True
 
-class MatchCreate(BaseModel):
-    team1: TeamCreate
-    team2: TeamCreate
+
+class MatchBase(BaseModel):
+    team1: TeamBase
+    team2: TeamBase
     goals_team1: int
     goals_team2: int
 
 
-class Match(MatchCreate):
+class Match(BaseModel):
     id: int
+    team1: TeamBase
+    team2: TeamBase
+    goals_team1: int
+    goals_team2: int
     created_date: datetime
 
     class Config:

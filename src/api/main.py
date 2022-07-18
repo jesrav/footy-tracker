@@ -43,5 +43,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/matches/", response_model=schemas.Match)
-def create_match(match: schemas.MatchCreate, db: Session = Depends(get_db)):
+def create_match(match: schemas.MatchBase, db: Session = Depends(get_db)):
     return crud.create_match(db=db, match=match)
+

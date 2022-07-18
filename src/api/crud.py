@@ -26,7 +26,18 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def create_team(db: Session, team: schemas.TeamCreate):
+def get_team(db: Session, team: schemas.TeamBase):
+    return (
+        db.query(models.Team)
+        .filter(
+            (models.Team.defender_user_id == team.defender_user_id)
+            and (models.Team.attacker_user_id == team.attacker_user_id)
+        )
+        .first()
+    )
+
+
+def create_team(db: Session, team: schemas.TeamBase):
     db_team = models.Team(
         defender_user_id=team.defender_user_id,
         attacker_user_id=team.attacker_user_id,
@@ -37,9 +48,14 @@ def create_team(db: Session, team: schemas.TeamCreate):
     return db_team
 
 
-def create_match(db: Session, match: schemas.MatchCreate):
-    team1_db = create_team(db, team=match.team1)
-    team2_db = create_team(db, team=match.team2)
+def create_match(db: Session, match: schemas.MatchBase):
+    team1_db = get_team(db, team=match.team1)
+    if not team1_db:
+        team1_db = create_team(db, team=match.team1)
+    team2_db = get_team(db, team=match.team2)
+    if not team2_db:
+        team2_db = create_team(db, team=match.team2)
+
     db_match = models.Match(
         team1_id=team1_db.id,
         team2_id=team2_db.id,
@@ -50,15 +66,3 @@ def create_match(db: Session, match: schemas.MatchCreate):
     db.commit()
     db.refresh(db_match)
     return db_match
-
-
-# def get_items(db: Session, skip: int = 0, limit: int = 100):
-#     return db.query(models.Item).offset(skip).limit(limit).all()
-#
-#
-# def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
-#     db_item = models.Item(**item.dict(), owner_id=user_id)
-#     db.add(db_item)
-#     db.commit()
-#     db.refresh(db_item)
-#     return db_item

@@ -16,8 +16,6 @@ class User(SqlAlchemyBase):
     created_date: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
     last_login: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
 
-    #team_members = relationship("TeamMember", back_populates="user")
-
 
 class Team(SqlAlchemyBase):
     __tablename__ = 'teams'
@@ -32,16 +30,6 @@ class Team(SqlAlchemyBase):
     attacker = relationship("User", foreign_keys=[attacker_user_id])
 
 
-# class TeamMember(SqlAlchemyBase):
-#     __tablename__ = 'team_members'
-#     id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-#     user_id: int = sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
-#     team_id: int = sa.Column(sa.Integer, ForeignKey("teams.id"), nullable=False)
-#
-#     user = relationship("User", back_populates="team_members")
-    #team = relationship("Team", back_populates="team_members")
-
-
 class Match(SqlAlchemyBase):
     __tablename__ = 'matches'
 
@@ -52,8 +40,8 @@ class Match(SqlAlchemyBase):
     goals_team2: int = sa.Column(sa.Integer, nullable=False)
     created_date: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
 
-    teams_1 = relationship("Team", foreign_keys=[team1_id])
-    teams_2 = relationship("Team", foreign_keys=[team1_id])
+    team1 = relationship("Team", foreign_keys=[team1_id])
+    team2 = relationship("Team", foreign_keys=[team1_id])
 
 
 # class Rating(SqlAlchemyBase):
