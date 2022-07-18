@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FootyTracker</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  </head>
+
+<body>
+
+<section class="hero is-light">
+<nav class="navbar is-white has-shadow" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="/src/web/static/img/footy.png" width="34" height="34">FootyTracker
+        </a>
+
+        <a class="navbar-burger" data-target="navbar" id="burger" >
+            <span ></span>
+            <span ></span>
+            <span ></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navbar-links">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/">
+                Home
+            </a>
+
+            <a class="navbar-item" href="/about">
+                About
+            </a>
+
+            <a tal:condition="is_logged_in" class="navbar-item" href="/submit_result">
+                Submit a result
+            </a>
+
+            <a tal:condition="is_logged_in" class="navbar-item" href="/leaderboard">
+                Leader board
+            </a>
+
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+
+                    <a tal:condition="not is_logged_in" href="/account/register" class="button is-light" >
+                        <strong>Register</strong>
+                    </a>
+                    <a tal:condition="not is_logged_in" href="/account/login" class="button is-primary">
+                        Log in
+                    </a>
+
+                    <a tal:condition="is_logged_in"  href="/account" class="button is-light">
+                        <strong>Account</strong>
+                    </a>
+                    <a tal:condition="is_logged_in"  href="/account/logout" class="button is-light">
+                        Log out
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</section>
+<div class="main_content">
+    <div metal:define-slot="content" tal:omit-tag="True">No content</div>
+</div>
+
+<script>
+    // Mobile burger menu
+    const burgerIcon = document.querySelector('#burger')
+    const navbarMenu = document.querySelector('#navbar-links')
+
+    burgerIcon.addEventListener('click', () => {
+        navbarMenu.classList.toggle('is-active')
+    });
+</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<div metal:define-slot="additional-js" tal:omit-tag="True"></div>
+
+</body>
+</html>
