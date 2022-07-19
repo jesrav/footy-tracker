@@ -2,7 +2,7 @@ from typing import Optional
 
 from starlette.requests import Request
 
-from src.web.infrastructure import cookie_auth
+from infrastructure import cookie_auth
 
 
 class ViewModelBase:

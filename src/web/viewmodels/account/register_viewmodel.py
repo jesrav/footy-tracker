@@ -2,8 +2,8 @@ from typing import Optional
 
 from starlette.requests import Request
 
-from src.web.services import user_service
-from src.web.viewmodels.shared.viewmodel import ViewModelBase
+from services import user_service
+from viewmodels.shared.viewmodel import ViewModelBase
 
 
 class RegisterViewModel(ViewModelBase):
@@ -28,7 +28,7 @@ class RegisterViewModel(ViewModelBase):
             self.error = "Your password is required."
         elif len(self.password) < 8:
             self.error = "Your password must be at 8 characters."
-        elif user_service.get_user_by_nickname(self.nickname):
-            self.error = "That nickname is already taken."
-        elif user_service.get_user_by_email(self.email):
-            self.error = "That email is already taken. Log in instead?"
+        #elif user_service.get_user_by_nickname(self.nickname):
+        #    self.error = "That nickname is already taken."
+        #elif user_service.get_user_by_email(self.email):
+        #    self.error = "That email is already taken. Log in instead?"

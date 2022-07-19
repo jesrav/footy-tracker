@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import Request
 from fastapi import Response
 
-from src.web.infrastructure.num_convert import try_int
+from infrastructure.num_convert import try_int
 
 auth_cookie_name = 'footy_tracker_account'
 

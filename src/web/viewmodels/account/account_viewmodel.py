@@ -1,7 +1,7 @@
 from starlette.requests import Request
 
-from src.web.services import user_service
-from src.web.viewmodels.shared.viewmodel import ViewModelBase
+from services import user_service
+from viewmodels.shared.viewmodel import ViewModelBase
 
 
 class AccountViewModel(ViewModelBase):

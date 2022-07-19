@@ -1,6 +1,6 @@
 from starlette.requests import Request
 
-from src.web.viewmodels.shared.viewmodel import ViewModelBase
+from viewmodels.shared.viewmodel import ViewModelBase
 
 
 class LoginViewModel(ViewModelBase):
