@@ -4,7 +4,7 @@ from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 import httpx
 from httpx import Response
 
-from schemas.validation_error import ValidationError
+from models.validation_error import ValidationError
 
 BASE_WEB_API_URL = "http://127.0.0.1:8000"
 
@@ -37,12 +37,35 @@ async def create_account(nickname: str, email: str, password: str):
 
 async def get_user_by_id(user_id: int):
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}/")
-        if resp.status_code != 200:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}")
+        if resp.status_code == 404:
+            return None
+        elif resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
+        else:
+            return resp.json()
 
-    return resp.json()
 
+async def get_user_by_email(email: str):
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_email/{email}")
+        if resp.status_code == 404:
+            return None
+        elif resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+        else:
+            return resp.json()
+
+
+async def get_user_by_nickname(nickname: str):
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_nickname/{nickname}")
+        if resp.status_code == 404:
+            return None
+        elif resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+        else:
+            return resp.json()
 
 
 # def get_user_by_email(email: str) -> Optional[User]:

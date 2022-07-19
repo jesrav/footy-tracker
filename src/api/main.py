@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
@@ -30,8 +30,8 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @app.get("/users/", response_model=List[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
-    return users
+    db_users = crud.get_users(db, skip=skip, limit=limit)
+    return db_users
 
 
 @app.get("/users/{user_id}", response_model=schemas.User)
@@ -42,7 +42,22 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
+@app.get("/users/by_email/{email}", response_model=schemas.User)
+def read_users_by_email(email: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=email)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+@app.get("/users/by_nickname/{nickname}", response_model=schemas.User)
+def read_users_by_email(nickname: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_nickname(db, nickname=nickname)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
 @app.post("/matches/", response_model=schemas.Match)
 def create_match(match: schemas.MatchBase, db: Session = Depends(get_db)):
     return crud.create_match(db=db, match=match)
-
