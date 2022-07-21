@@ -30,6 +30,19 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
+def login_user(db: Session, email: str, password: str):
+    try:
+        user = get_user_by_email(db, email)
+        if not user:
+            return None
+        if not crypto.verify(password, user.hash_password):
+            return None
+        else:
+            return user
+    finally:
+        db.close()
+
+
 def get_team(db: Session, team: schemas.TeamBase):
     return (
         db.query(models.Team)

@@ -13,7 +13,7 @@
 <nav class="navbar is-white has-shadow" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="/">
-            <img src="/src/web/static/img/footy.png" width="34" height="34">FootyTracker
+            <img src="/static/img/footy.png" width="34" height="34">FootyTracker
         </a>
 
         <a class="navbar-burger" data-target="navbar" id="burger" >
