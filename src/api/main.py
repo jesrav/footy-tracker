@@ -28,6 +28,14 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
+@app.post("/users/login/", response_model=schemas.User)
+def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
+    db_user = crud.login_user(db, email=user.email, password=user.password)
+    if not db_user:
+        raise HTTPException(status_code=400, detail="Email or password not correct")
+    return db_user
+
+
 @app.get("/users/", response_model=List[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_users = crud.get_users(db, skip=skip, limit=limit)
