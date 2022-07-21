@@ -20,7 +20,12 @@ async def create_account(nickname: str, email: str, password: str) -> Optional[U
 
 
 async def login_user(email: str, password: str) -> Optional[User]:
-
+    json_data = {"password": password, "email": email}
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.post(url=BASE_WEB_API_URL + "/users/login/", json=json_data)
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return User(**resp.json())
 
 async def get_user_by_id(user_id: int) -> User:
     async with httpx.AsyncClient() as client:
