@@ -73,7 +73,7 @@ def create_match(db: Session, match: schemas.MatchBase):
     if not team2_db:
         team2_db = create_team(db, team=match.team2)
 
-    db_match = models.Match(
+    db_match = models.ResultSubmission(
         team1_id=team1_db.id,
         team2_id=team2_db.id,
         goals_team1=match.goals_team1,

@@ -30,10 +30,11 @@ class Team(SqlAlchemyBase):
     attacker = relationship("User", foreign_keys=[attacker_user_id])
 
 
-class Match(SqlAlchemyBase):
-    __tablename__ = 'matches'
+class ResultSubmission(SqlAlchemyBase):
+    __tablename__ = 'result_submissions'
 
     id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    submitter_id: sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
     team1_id: int = sa.Column(sa.Integer, ForeignKey("teams.id"), nullable=False)
     team2_id: int = sa.Column(sa.Integer, ForeignKey("teams.id"), nullable=False)
     goals_team1: int = sa.Column(sa.Integer, nullable=False)
@@ -42,6 +43,16 @@ class Match(SqlAlchemyBase):
 
     team1 = relationship("Team", foreign_keys=[team1_id])
     team2 = relationship("Team", foreign_keys=[team1_id])
+
+
+class ResultApprovals(SqlAlchemyBase):
+    __tablename__ = 'results_approvals'
+
+    id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    result_submission_id: sa.Column(sa.Integer, ForeignKey("result_submissions.id"), nullable=False)
+    reviewer_id: sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
+    approved: bool = sa.Column(sa.Boolean)
+    created_date: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
 
 
 # class Rating(SqlAlchemyBase):
