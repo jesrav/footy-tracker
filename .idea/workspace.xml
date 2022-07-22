@@ -4,43 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/__all_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/data/__all_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/db_session.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/data/db_session.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/match.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/data/match.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/modelbase.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/data/modelbase.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rating.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/data/rating.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/data/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/cookie_auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/infrastructure/cookie_auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infrastructure/num_convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/infrastructure/num_convert.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/tracking_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/services/tracking_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/services/user_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/img/footy.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/static/img/footy.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/account/index.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/account/index.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/account/login.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/account/login.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/account/register.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/account/register.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/home/about.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/home/about.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/home/index.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/home/index.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/shared/_layout.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/shared/_layout.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/tracking/leaderboard.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/tracking/leaderboard.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/tracking/submit_result.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/tracking/submit_result.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/account/account_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/account/account_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/account/login_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/account/login_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/account/register_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/account/register_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/home/about_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/home/about_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/home/index_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/home/index_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/home/submit_result_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/home/submit_result_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/shared/viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/shared/viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/tracking/leaderboard_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/tracking/leaderboard_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/tracking/submit_result_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/tracking/submit_result_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/account.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/views/account.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/home.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/views/home.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/tracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/views/tracking.py" afterDir="false" />
-    </list>
+    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,16 +44,6 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/jesravnbol/code/personal/footy-tracker/src/api",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
-  }
-}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/api" />

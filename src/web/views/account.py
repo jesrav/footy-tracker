@@ -31,7 +31,6 @@ def register(request: Request):
 @template()
 async def register(request: Request):
     vm = RegisterViewModel(request)
-
     await vm.load()
 
     if vm.error:

@@ -32,7 +32,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
     db_user = crud.login_user(db, email=user.email, password=user.password)
     if not db_user:
-        raise HTTPException(status_code=400, detail="Email or password not correct")
+        raise HTTPException(status_code=404, detail="Email or password not correct")
     return db_user
 
 
