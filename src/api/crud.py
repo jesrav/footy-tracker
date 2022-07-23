@@ -1,7 +1,8 @@
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 from sqlalchemy.orm import Session
 
-import models, schemas
+import models
+import schemas
 
 
 def get_user(db: Session, user_id: int):
@@ -65,21 +66,38 @@ def create_team(db: Session, team: schemas.TeamBase):
     return db_team
 
 
-def create_match(db: Session, match: schemas.MatchBase):
-    team1_db = get_team(db, team=match.team1)
+def create_result(db: Session, result: schemas.ResultBase):
+    team1_db = get_team(db, team=result.team1)
     if not team1_db:
-        team1_db = create_team(db, team=match.team1)
-    team2_db = get_team(db, team=match.team2)
+        team1_db = create_team(db, team=result.team1)
+    team2_db = get_team(db, team=result.team2)
     if not team2_db:
-        team2_db = create_team(db, team=match.team2)
+        team2_db = create_team(db, team=result.team2)
 
-    db_match = models.ResultSubmission(
+    db_match = models.Result(
+        submitter_id=result.submitter_id,
         team1_id=team1_db.id,
         team2_id=team2_db.id,
-        goals_team1=match.goals_team1,
-        goals_team2=match.goals_team2,
+        goals_team1=result.goals_team1,
+        goals_team2=result.goals_team2,
     )
     db.add(db_match)
     db.commit()
     db.refresh(db_match)
     return db_match
+
+
+def get_results(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Result).offset(skip).limit(limit).all()
+
+
+def get_results_for_reviev(db: Session, reviever_id):
+    results = db.query(models.Result).filter(models.Result.submitter_id != reviever_id).all()
+    results = [r for r in results if reviever_id in
+       [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
+    ]
+    return results
+
+
+def get_result(db: Session, result_id: int):
+    return db.query(models.Result).filter(models.Result.id == result_id).first()

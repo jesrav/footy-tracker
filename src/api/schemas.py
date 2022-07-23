@@ -42,14 +42,15 @@ class Team(TeamBase):
         orm_mode = True
 
 
-class MatchBase(BaseModel):
+class ResultBase(BaseModel):
+    submitter_id: int
     team1: TeamBase
     team2: TeamBase
     goals_team1: int
     goals_team2: int
 
 
-class Match(BaseModel):
+class Result(BaseModel):
     id: int
     team1: TeamBase
     team2: TeamBase
@@ -60,12 +61,3 @@ class Match(BaseModel):
     class Config:
         orm_mode = True
 
-
-# class MatchBase(BaseModel):
-#     team1_defender_id: int= sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
-#     team1_attacker_id: int
-#     team2_defender_id: int = sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
-#     team2_attacker_id: int = sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
-#     goals_team1: int = sa.Column(sa.Integer, nullable=False)
-#     goals_team2: int = sa.Column(sa.Integer, nullable=False)
-#     created_date: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.now, index=True)

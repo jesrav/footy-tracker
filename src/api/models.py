@@ -30,11 +30,11 @@ class Team(SqlAlchemyBase):
     attacker = relationship("User", foreign_keys=[attacker_user_id])
 
 
-class ResultSubmission(SqlAlchemyBase):
-    __tablename__ = 'result_submissions'
+class Result(SqlAlchemyBase):
+    __tablename__ = 'results'
 
     id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    submitter_id: sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
+    submitter_id: int = sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
     team1_id: int = sa.Column(sa.Integer, ForeignKey("teams.id"), nullable=False)
     team2_id: int = sa.Column(sa.Integer, ForeignKey("teams.id"), nullable=False)
     goals_team1: int = sa.Column(sa.Integer, nullable=False)
@@ -46,7 +46,7 @@ class ResultSubmission(SqlAlchemyBase):
 
 
 class ResultApprovals(SqlAlchemyBase):
-    __tablename__ = 'results_approvals'
+    __tablename__ = 'result_approvals'
 
     id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     result_submission_id: sa.Column(sa.Integer, ForeignKey("result_submissions.id"), nullable=False)

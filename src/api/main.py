@@ -66,6 +66,21 @@ def read_users_by_email(nickname: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.post("/matches/", response_model=schemas.Match)
-def create_match(match: schemas.MatchBase, db: Session = Depends(get_db)):
-    return crud.create_match(db=db, match=match)
+@app.post("/results/", response_model=schemas.Result)
+def create_result(result: schemas.ResultBase, db: Session = Depends(get_db)):
+    return crud.create_result(db=db, result=result)
+
+
+@app.get("/results/", response_model=List[schemas.User])
+def read_users(reviever=None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    if not reviever:
+        db_results = crud.get_results(db, skip=skip, limit=limit)
+    return db_results
+
+
+@app.get("/results/{result_id}", response_model=schemas.User)
+def read_result(result_id: int, db: Session = Depends(get_db)):
+    db_result = crud.get_result(db, result_id=result_id)
+    if db_result is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_result
