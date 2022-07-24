@@ -91,13 +91,21 @@ def get_results(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Result).offset(skip).limit(limit).all()
 
 
-def get_results_for_reviev(db: Session, reviever_id):
-    results = db.query(models.Result).filter(models.Result.submitter_id != reviever_id).all()
-    results = [r for r in results if reviever_id in
-       [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
-    ]
+def get_results_for_review(db: Session, reviewer_id):
+    results = db.query(models.Result).filter(models.Result.submitter_id != reviewer_id).all()
+    results = [r for r in results if reviewer_id in
+               [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
+               ]
     return results
 
 
-def get_result(db: Session, result_id: int):
+def get_result(db: Session, result_id: int) -> models.Result:
     return db.query(models.Result).filter(models.Result.id == result_id).first()
+
+
+def approve_result(db: Session, result_approval: schemas.ResultApprovalBase):
+    db_result_approval = models.ResultApproval(result_submission_id=result_approval.result_submission_id,reviewer_id=result_approval.reviewer_id,approved=result_approval.approved,)
+    db.add(db_result_approval)
+    db.commit()
+    db.refresh(db_result_approval)
+    return db_result_approval

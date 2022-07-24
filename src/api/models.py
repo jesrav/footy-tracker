@@ -45,12 +45,12 @@ class Result(SqlAlchemyBase):
     team2 = relationship("Team", foreign_keys=[team1_id])
 
 
-class ResultApprovals(SqlAlchemyBase):
+class ResultApproval(SqlAlchemyBase):
     __tablename__ = 'result_approvals'
 
     id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    result_submission_id: sa.Column(sa.Integer, ForeignKey("result_submissions.id"), nullable=False)
-    reviewer_id: sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
+    result_submission_id: int = sa.Column(sa.Integer, ForeignKey("results.id"), nullable=False)
+    reviewer_id: int =sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
     approved: bool = sa.Column(sa.Boolean)
     created_date: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
 

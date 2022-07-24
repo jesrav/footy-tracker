@@ -84,3 +84,13 @@ def read_result(result_id: int, db: Session = Depends(get_db)):
     if db_result is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_result
+
+
+@app.post("/result_approvals/", response_model=schemas.ResultApproval)
+def approve_result(result_approval: schemas.ResultApprovalBase, db: Session = Depends(get_db)):
+    result = crud.get_result(db, result_id=result_approval.result_submission_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Result to be validated not found")
+    if result_approval.reviewer_id == result.submitter_id:
+        raise HTTPException(status_code=400, detail="Review user can not be the same as the user that submittet the result")
+    return crud.approve_result(db=db, result_approval=result_approval)

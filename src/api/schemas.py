@@ -50,14 +50,23 @@ class ResultBase(BaseModel):
     goals_team2: int
 
 
-class Result(BaseModel):
+class Result(ResultBase):
     id: int
-    team1: TeamBase
-    team2: TeamBase
-    goals_team1: int
-    goals_team2: int
     created_date: datetime
 
     class Config:
         orm_mode = True
 
+
+class ResultApprovalBase(BaseModel):
+    result_submission_id: int
+    reviewer_id: int
+    approved: bool
+
+
+class ResultApproval(BaseModel):
+    id: int
+    created_date: datetime
+
+    class Config:
+        orm_mode = True
