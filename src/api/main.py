@@ -66,8 +66,16 @@ def read_users_by_email(nickname: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.post("/results/", response_model=schemas.Result)
-def create_result(result: schemas.ResultBase, db: Session = Depends(get_db)):
+@app.get("/users/{user_id}/results_for_approval", response_model=List[schemas.ResultSubmission])
+def read_results_for_approval(user_id: int, db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return crud.get_results_for_review(db, reviewer_id=db_user.id)
+
+
+@app.post("/results/", response_model=schemas.ResultSubmission)
+def create_result(result: schemas.ResultSubmissionBase, db: Session = Depends(get_db)):
     return crud.create_result(db=db, result=result)
 
 
@@ -78,19 +86,22 @@ def read_users(reviever=None, skip: int = 0, limit: int = 100, db: Session = Dep
     return db_results
 
 
-@app.get("/results/{result_id}", response_model=schemas.User)
+@app.get("/results/{result_id}", response_model=schemas.ResultSubmission)
 def read_result(result_id: int, db: Session = Depends(get_db)):
     db_result = crud.get_result(db, result_id=result_id)
     if db_result is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="User result found")
     return db_result
 
 
-@app.post("/result_approvals/", response_model=schemas.ResultApproval)
-def approve_result(result_approval: schemas.ResultApprovalBase, db: Session = Depends(get_db)):
-    result = crud.get_result(db, result_id=result_approval.result_submission_id)
-    if result is None:
-        raise HTTPException(status_code=404, detail="Result to be validated not found")
-    if result_approval.reviewer_id == result.submitter_id:
-        raise HTTPException(status_code=400, detail="Review user can not be the same as the user that submittet the result")
-    return crud.approve_result(db=db, result_approval=result_approval)
+# @app.post("/result_approvals/", response_model=schemas.ResultApproval)
+# def approve_result(result_approval: schemas.ResultApprovalBase, db: Session = Depends(get_db)):
+#     result = crud.get_result(db, result_id=result_approval.result_submission_id)
+#     if result is None:
+#         raise HTTPException(status_code=404, detail="Result to be validated not found")
+#     if result_approval.reviewer_id == result.submitter_id:
+#         raise HTTPException(
+#             status_code=400, detail="Review user can not be the same as the user that submitted the result"
+#         )
+#
+#     return crud.create_result_approval(db=db, result_approval=result_approval)

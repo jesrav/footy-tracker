@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -19,7 +20,7 @@ class UserLogin(BaseModel):
 
 class User(UserBase):
     id: int
-    created_date: datetime
+    created_dt: datetime
     last_login: datetime
 
     class Config:
@@ -36,37 +37,40 @@ class TeamBase(BaseModel):
 
 class Team(TeamBase):
     id: int
-    created_date: datetime
+    created_dt: datetime
 
     class Config:
         orm_mode = True
 
 
-class ResultBase(BaseModel):
+class ResultSubmissionBase(BaseModel):
     submitter_id: int
     team1: TeamBase
     team2: TeamBase
     goals_team1: int
     goals_team2: int
+    approved: Optional[bool]
+    validator_id: Optional[int]
 
 
-class Result(ResultBase):
+class ResultSubmission(ResultSubmissionBase):
     id: int
-    created_date: datetime
+    created_dt: datetime
+    validation_dt: Optional[datetime]
 
     class Config:
         orm_mode = True
 
-
-class ResultApprovalBase(BaseModel):
-    result_submission_id: int
-    reviewer_id: int
-    approved: bool
-
-
-class ResultApproval(BaseModel):
-    id: int
-    created_date: datetime
-
-    class Config:
-        orm_mode = True
+#
+# class ResultApprovalBase(BaseModel):
+#     result_submission_id: int
+#     reviewer_id: int
+#     approved: Optional[bool]
+#
+#
+# class ResultApproval(BaseModel):
+#     id: int
+#     created_dt: datetime
+#
+#     class Config:
+#         orm_mode = True

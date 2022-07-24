@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -11,6 +12,7 @@ class ResultBase(BaseModel):
     team2: TeamBase
     goals_team1: int
     goals_team2: int
+    approved: Optional[bool]
 
 
 class Result(BaseModel):
@@ -19,4 +21,5 @@ class Result(BaseModel):
     team2: TeamBase
     goals_team1: int
     goals_team2: int
-    created_date: datetime
+    created_dt: datetime
+    validation_dt: Optional[datetime]

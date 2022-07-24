@@ -10,4 +10,4 @@ class TeamBase(BaseModel):
 
 class Team(TeamBase):
     id: int
-    created_date: datetime
+    created_dt: datetime

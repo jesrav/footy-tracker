@@ -7,5 +7,5 @@ class User(BaseModel):
     id: int
     nickname: str
     email: str
-    created_date: datetime
+    created_dt: datetime
     last_login: datetime
