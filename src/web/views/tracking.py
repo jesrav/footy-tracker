@@ -3,7 +3,7 @@ from fastapi_chameleon import template
 from starlette import status
 from starlette.requests import Request
 
-from models.result import ResultBase
+from models.result import ResultSubmissionBase
 from models.team import TeamBase
 from services import tracking_service
 from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
@@ -37,7 +37,7 @@ async def submit_result(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    match = ResultBase(
+    match = ResultSubmissionBase(
         submitter_id=vm.user_id,
         team1=TeamBase(
             defender_user_id=vm.team1_defender,

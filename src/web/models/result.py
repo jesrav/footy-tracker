@@ -6,20 +6,18 @@ from pydantic import BaseModel
 from models.team import TeamBase
 
 
-class ResultBase(BaseModel):
+class ResultSubmissionBase(BaseModel):
     submitter_id: int
     team1: TeamBase
     team2: TeamBase
     goals_team1: int
     goals_team2: int
     approved: Optional[bool]
+    validator_id: Optional[int]
 
 
-class Result(BaseModel):
+class ResultSubmission(ResultSubmissionBase):
     id: int
-    team1: TeamBase
-    team2: TeamBase
-    goals_team1: int
-    goals_team2: int
     created_dt: datetime
     validation_dt: Optional[datetime]
+

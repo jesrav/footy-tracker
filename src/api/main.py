@@ -66,7 +66,7 @@ def read_users_by_email(nickname: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.get("/users/{user_id}/results_for_approval", response_model=List[schemas.ResultSubmission])
+@app.get("/users/{user_id}/results_for_approval/", response_model=List[schemas.ResultSubmission])
 def read_results_for_approval(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:

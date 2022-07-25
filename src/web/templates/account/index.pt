@@ -5,7 +5,58 @@
 
             <div>
                 Welcome to your account ${ user.nickname }!
+                <br>
+                <br>
             </div>
+            <div>
+                <h2>Results to validate</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Date and time</th>
+      <th>Result submitter</th>
+      <th>Team 1 defender</th>
+      <th>Team 1 attacker</th>
+      <th>Team 2 defender</th>
+      <th>Team 2 attacker</th>
+      <th>Goals your team</th>
+      <th>Goals opposition</th>
+      <th>Approve result</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2022-08-24</th>
+      <th>Peter</th>
+      <td>Sara</td>
+      <td>Jens</td>
+      <td>Peter</td>
+      <td>Søren</td>
+      <td>12</td>
+      <td>33</td>
+      <td><a href="/home">Approve result</a></td>
+    </tr>
+    <tr tal:repeat="r results_to_approve">
+        <th>${r.created_dt}</th>
+        <td>${r.submitter_id}</td>
+        <td>${r.team1.defender_user_id}</td>
+        <td>${r.team1.attacker_user_id}</td>
+        <td>${r.team2.defender_user_id}</td>
+        <td>${r.team2.attacker_user_id}</td>
+        <td>12</td>
+        <td>33</td>
+        <td><a href="/home">Approve result</a></td>
+    </tr>
+</tbody>
+
+</table>
+
+                <code>
+                    ${ results_to_approve }
+                </code>
+            </div>
+
         </div>
     </div>
 </div>
