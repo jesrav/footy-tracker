@@ -18,7 +18,7 @@ class UserLogin(BaseModel):
     password: str
 
 
-class User(UserBase):
+class UserOut(UserBase):
     id: int
     created_dt: datetime
     last_login: datetime
@@ -27,7 +27,7 @@ class User(UserBase):
         orm_mode = True
 
 
-class TeamBase(BaseModel):
+class TeamCreate(BaseModel):
     defender_user_id: int
     attacker_user_id: int
 
@@ -35,9 +35,9 @@ class TeamBase(BaseModel):
         orm_mode = True
 
 
-class Team(BaseModel):
-    defender: User
-    attacker: User
+class TeamOut(BaseModel):
+    defender: UserOut
+    attacker: UserOut
     id: int
     created_dt: datetime
 
@@ -46,22 +46,25 @@ class Team(BaseModel):
         orm_mode = True
 
 
-class ResultSubmissionBase(BaseModel):
+class ResultSubmissionCreate(BaseModel):
     submitter_id: int
-    team1: TeamBase
-    team2: TeamBase
+    team1: TeamCreate
+    team2: TeamCreate
     goals_team1: int
     goals_team2: int
 
 
-class ResultSubmission(BaseModel):
-    submitter: User
-    team1: Team
-    team2: Team
+class ResultSubmissionOut(BaseModel):
+    id: int
+    submitter: UserOut
+    team1: TeamOut
+    team2: TeamOut
     goals_team1: int
     goals_team2: int
     approved: Optional[bool]
-    validator: Optional[User]
+    validator: Optional[UserOut]
+    validation_dt: Optional[datetime]
+    created_dt: datetime
 
     class Config:
         orm_mode = True

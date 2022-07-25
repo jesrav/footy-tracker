@@ -2,8 +2,8 @@ from typing import Optional, List
 
 from starlette.requests import Request
 
-from models.user import User
-from models.result import ResultSubmission
+from models.user import UserOut
+from models.result import ResultSubmissionOut
 from services import user_service, tracking_service
 from viewmodels.shared.viewmodel import ViewModelBase
 
@@ -11,8 +11,8 @@ from viewmodels.shared.viewmodel import ViewModelBase
 class AccountViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
-        self.user: Optional[User] = None
-        self.results_to_approve: List[ResultSubmission] = []
+        self.user: Optional[UserOut] = None
+        self.results_to_approve: List[ResultSubmissionOut] = []
 
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)

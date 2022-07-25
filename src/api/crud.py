@@ -47,7 +47,7 @@ def login_user(db: Session, email: str, password: str) -> Optional[models.User]:
         db.close()
 
 
-def get_team(db: Session, team: schemas.TeamBase) -> Optional[models.Team]:
+def get_team(db: Session, team: schemas.TeamCreate) -> Optional[models.Team]:
     return (
         db.query(models.Team)
         .filter(
@@ -58,7 +58,7 @@ def get_team(db: Session, team: schemas.TeamBase) -> Optional[models.Team]:
     )
 
 
-def create_team(db: Session, team: schemas.TeamBase) -> models.Team:
+def create_team(db: Session, team: schemas.TeamCreate) -> models.Team:
     db_team = models.Team(
         defender_user_id=team.defender_user_id,
         attacker_user_id=team.attacker_user_id,
@@ -69,7 +69,7 @@ def create_team(db: Session, team: schemas.TeamBase) -> models.Team:
     return db_team
 
 
-def create_result(db: Session, result: schemas.ResultSubmissionBase) -> models.ResultSubmission:
+def create_result(db: Session, result: schemas.ResultSubmissionCreate) -> models.ResultSubmission:
     team1_db = get_team(db, team=result.team1)
     if not team1_db:
         team1_db = create_team(db, team=result.team1)

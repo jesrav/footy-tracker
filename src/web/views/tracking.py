@@ -3,8 +3,8 @@ from fastapi_chameleon import template
 from starlette import status
 from starlette.requests import Request
 
-from models.result import ResultSubmissionBase
-from models.team import TeamBase
+from models.result import ResultSubmissionCreate
+from models.team import TeamCreate
 from services import tracking_service
 from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
 from viewmodels.tracking.leaderboard_viewmodel import LeaderboardViewModel
@@ -37,18 +37,18 @@ async def submit_result(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    match = ResultSubmissionBase(
+    match = ResultSubmissionCreate(
         submitter_id=vm.user_id,
-        team1=TeamBase(
+        team1=TeamCreate(
             defender_user_id=vm.team1_defender,
             attacker_user_id=vm.team1_attacker,
         ),
-        team2=TeamBase(
+        team2=TeamCreate(
             defender_user_id=vm.team2_defender,
             attacker_user_id=vm.team2_attacker,
         ),
-        goals_team1=1,
-        goals_team2=1,
+        goals_team1=vm.goals_team1,
+        goals_team2=vm.goals_team2,
     )
 
     # Create match registration

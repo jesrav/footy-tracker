@@ -1,26 +1,29 @@
-from datetime import datetime
 from typing import Optional
+from datetime import datetime
 
 from pydantic import BaseModel
 
-from models.team import Team, TeamBase
-from models.user import User
+from models.team import TeamOut, TeamCreate
+from models.user import UserOut
 
 
-class ResultSubmissionBase(BaseModel):
+class ResultSubmissionCreate(BaseModel):
     submitter_id: int
-    team1: TeamBase
-    team2: TeamBase
+    team1: TeamCreate
+    team2: TeamCreate
     goals_team1: int
     goals_team2: int
 
 
-class ResultSubmission(BaseModel):
-    submitter: User
-    team1: Team
-    team2: Team
+class ResultSubmissionOut(BaseModel):
+    id: int
+    submitter: UserOut
+    team1: TeamOut
+    team2: TeamOut
     goals_team1: int
     goals_team2: int
     approved: Optional[bool]
-    validator: Optional[User]
+    validator: Optional[UserOut]
+    validation_dt: Optional[datetime]
+    created_dt: datetime
 

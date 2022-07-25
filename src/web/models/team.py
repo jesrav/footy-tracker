@@ -2,16 +2,16 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from models.user import User
+from models.user import UserOut
 
 
-class TeamBase(BaseModel):
+class TeamCreate(BaseModel):
     defender_user_id: int
     attacker_user_id: int
 
 
-class Team(BaseModel):
-    defender: User
-    attacker: User
+class TeamOut(BaseModel):
+    defender: UserOut
+    attacker: UserOut
     id: int
     created_dt: datetime
