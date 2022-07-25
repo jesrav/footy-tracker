@@ -39,11 +39,11 @@
     </tr>
     <tr tal:repeat="r results_to_approve">
         <th>${r.created_dt}</th>
-        <td>${r.submitter_id}</td>
-        <td>${r.team1.defender_user_id}</td>
-        <td>${r.team1.attacker_user_id}</td>
-        <td>${r.team2.defender_user_id}</td>
-        <td>${r.team2.attacker_user_id}</td>
+        <td>${r.submitter.nickname}</td>
+        <td>${r.team1.defender.nickname}</td>
+        <td>${r.team1.attacker.nickname}</td>
+        <td>${r.team2.defender.nickname}</td>
+        <td>${r.team2.attacker.nickname}</td>
         <td>12</td>
         <td>33</td>
         <td><a href="/home">Approve result</a></td>

@@ -3,7 +3,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from models.team import TeamBase
+from models.team import Team, TeamBase
+from models.user import User
 
 
 class ResultSubmissionBase(BaseModel):
@@ -12,12 +13,14 @@ class ResultSubmissionBase(BaseModel):
     team2: TeamBase
     goals_team1: int
     goals_team2: int
+
+
+class ResultSubmission(BaseModel):
+    submitter: User
+    team1: Team
+    team2: Team
+    goals_team1: int
+    goals_team2: int
     approved: Optional[bool]
-    validator_id: Optional[int]
-
-
-class ResultSubmission(ResultSubmissionBase):
-    id: int
-    created_dt: datetime
-    validation_dt: Optional[datetime]
+    validator: Optional[User]
 
