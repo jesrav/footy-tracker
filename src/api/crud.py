@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, List
 
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
@@ -94,15 +95,24 @@ def get_results(db: Session, skip: int = 0, limit: int = 100) -> List[models.Res
     return db.query(models.ResultSubmission).offset(skip).limit(limit).all()
 
 
-def get_results_for_review(db: Session, reviewer_id) -> List[models.ResultSubmission]:
+def get_results_for_review(db: Session, validator_id: int) -> List[models.ResultSubmission]:
     results = db.query(models.ResultSubmission).filter(and_(
         models.ResultSubmission.approved.is_(None),
-        models.ResultSubmission.submitter_id != reviewer_id
+        models.ResultSubmission.submitter_id != validator_id
     )).all()
-    results = [r for r in results if reviewer_id in
-       [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
-   ]
+    results = [r for r in results if validator_id in
+               [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
+               ]
     return results
+
+
+def validate_results(db: Session, validator_id: int, result_id: int, approved: bool) -> models.ResultSubmission:
+    db_result = db.query(models.ResultSubmission).filter(models.ResultSubmission.id == result_id).first()
+    db_result.validator_id = validator_id
+    db_result.approved = approved
+    db_result.validation_dt = datetime.utcnow()
+    db.commit()
+    return db_result
 
 
 def get_result(db: Session, result_id: int) -> Optional[models.ResultSubmission]:

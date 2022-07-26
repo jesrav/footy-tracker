@@ -41,7 +41,7 @@ class ResultSubmission(SqlAlchemyBase):
     goals_team2: int = sa.Column(sa.Integer, nullable=False)
     created_dt: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
     approved: bool = sa.Column(sa.Boolean)
-    validator_id: bool = sa.Column(sa.Boolean, ForeignKey("users.id"), nullable=True)
+    validator_id: int = sa.Column(sa.Integer, ForeignKey("users.id"), nullable=True)
     validation_dt: datetime.datetime = sa.Column(sa.DateTime)
 
     submitter = relationship("User", foreign_keys=[submitter_id])
