@@ -1,15 +1,10 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
-        <div class="page-core">
-            <h1>Your FootyTracker Account</h1>
-
+        <div class="content">
+        <div class="section">
+        <h1 class="title">Welcome to your account ${ user.nickname }!</h1>
             <div>
-                Welcome to your account ${ user.nickname }!
-                <br>
-                <br>
-            </div>
-            <div>
-                <h2>Results to validate</h2>
+                <h2 class="subtitle">Results for you to validate</h2>
 
                 <table class="table">
                   <thead>
@@ -23,6 +18,7 @@
                       <th>Goals your team</th>
                       <th>Goals opposition</th>
                       <th>Approve result</th>
+                      <th>Reject result</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -35,13 +31,89 @@
                         <td>${r.team2.attacker.nickname}</td>
                         <td>12</td>
                         <td>33</td>
-                        <td><a href="/home">Approve result</a></td>
+                        <td>
+                            <button class="button is-primary js-modal-trigger" data-target="modal-js-example">
+                              Approve
+                            </button>
+                        </td>
+                        <td>
+                            <button class="button is-danger js-modal-trigger" data-target="modal-js-example">
+                                Reject
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
 
                 </table>
             </div>
+            </div>
+
+
+    <div class="modal" id="modal-js-example">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Approve of result?</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>date of match:</p>
+                <p>result:</p>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success">Approve</button>
+                <button class="button">Cancel</button>
+            </footer>
+        </div>
+    </div>
 
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Functions to open and close a modal
+  function openModal($el) {
+    $el.classList.add('is-active');
+  }
+
+  function closeModal($el) {
+    $el.classList.remove('is-active');
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  // Add a click event on buttons to open a specific modal
+  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener('click', () => {
+      openModal($target);
+    });
+  });
+
+  // Add a click event on various child elements to close the parent modal
+  (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
+
+    $close.addEventListener('click', () => {
+      closeModal($target);
+    });
+  });
+
+  // Add a keyboard event to close all modals
+  document.addEventListener('keydown', (event) => {
+    const e = event || window.event;
+
+    if (e.keyCode === 27) { // Escape key
+      closeAllModals();
+    }
+  });
+});
+</script>
