@@ -4,7 +4,7 @@ from starlette import status
 from starlette.requests import Request
 
 from infrastructure import cookie_auth
-from services import user_service
+from services import user_service, tracking_service
 from viewmodels.account.account_viewmodel import AccountViewModel
 from viewmodels.account.login_viewmodel import LoginViewModel
 from viewmodels.account.register_viewmodel import RegisterViewModel
@@ -18,6 +18,23 @@ async def index(request: Request):
     vm = AccountViewModel(request)
     await vm.load()
     return vm.to_dict()
+
+
+@router.post('/account')
+@template()
+async def index(request: Request):
+    vm = AccountViewModel(request)
+    await vm.load_form()
+
+    if vm.error:
+        return vm.to_dict()
+
+    _ = await tracking_service.validate_result(
+        validator_id=vm.user_id,
+        result_id=vm.result_id,
+        approved=vm.approved,
+    )
+    return fastapi.responses.RedirectResponse('/account', status_code=status.HTTP_302_FOUND)
 
 
 @router.get('/account/register')

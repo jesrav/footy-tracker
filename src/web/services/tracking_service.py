@@ -23,3 +23,13 @@ async def get_results_for_approval(user_id: int) -> List[ResultSubmissionOut]:
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [ResultSubmissionOut(**r) for r in resp.json()]
+
+
+async def validate_result(validator_id: int, result_id: int, approved: bool) -> ResultSubmissionOut:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.post(
+            url=BASE_WEB_API_URL + f"/users/{validator_id}/validate_result/{result_id}/?approved={approved}"
+        )
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return ResultSubmissionOut(**resp.json())
