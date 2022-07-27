@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator as pydantic_validator
 
 
 class UserBase(BaseModel):
@@ -68,25 +68,3 @@ class ResultSubmissionOut(BaseModel):
 
     class Config:
         orm_mode = True
-
-# class ResultSubmissionInDB(ResultSubmissionBase):
-#     id: int
-#     created_dt: datetime
-#     validation_dt: Optional[datetime]
-#
-#     class Config:
-#         orm_mode = True
-
-#
-# class ResultApprovalBase(BaseModel):
-#     result_submission_id: int
-#     reviewer_id: int
-#     approved: Optional[bool]
-#
-#
-# class ResultApproval(BaseModel):
-#     id: int
-#     created_dt: datetime
-#
-#     class Config:
-#         orm_mode = True

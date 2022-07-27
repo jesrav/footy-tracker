@@ -95,15 +95,34 @@ def get_results(db: Session, skip: int = 0, limit: int = 100) -> List[models.Res
     return db.query(models.ResultSubmission).offset(skip).limit(limit).all()
 
 
-def get_results_for_review(db: Session, validator_id: int) -> List[models.ResultSubmission]:
+def get_results_for_validation(db: Session, validator_id: int) -> List[models.ResultSubmission]:
+    """Get results for validation for user
+
+    A user will only get results where they participated, that were not submitted by a teammate.
+
+    :param db: Database session.
+    :param validator_id: User id of validator (reviewer).
+    :return: A list of result submissions.
+    """
     results = db.query(models.ResultSubmission).filter(and_(
         models.ResultSubmission.approved.is_(None),
         models.ResultSubmission.submitter_id != validator_id
     )).all()
-    results = [r for r in results if validator_id in
-               [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
-               ]
-    return results
+    results_with_validator_participation = [
+        r for r in results if validator_id in
+       [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
+    ]
+    validator_teams = [
+        r.team1
+        if validator_id in [r.team1.defender_user_id, r.team1.attacker_user_id]
+        else r.team2
+        for r in results_with_validator_participation
+    ]
+    results_validator_and_submitter_not_teammates = [
+        r for i, r in enumerate(results_with_validator_participation)
+        if r.submitter_id not in validator_teams[i]
+    ]
+    return results_validator_and_submitter_not_teammates
 
 
 def validate_results(db: Session, validator_id: int, result_id: int, approved: bool) -> models.ResultSubmission:
