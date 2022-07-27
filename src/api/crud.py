@@ -120,7 +120,7 @@ def get_results_for_validation(db: Session, validator_id: int) -> List[models.Re
     ]
     results_validator_and_submitter_not_teammates = [
         r for i, r in enumerate(results_with_validator_participation)
-        if r.submitter_id not in validator_teams[i]
+        if r.submitter_id not in [validator_teams[i].defender_user_id, validator_teams[i].attacker_user_id]
     ]
     return results_validator_and_submitter_not_teammates
 
