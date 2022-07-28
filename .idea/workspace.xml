@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/match.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/match.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/account/login.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/account/login.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/tracking/submit_result.pt" beforeDir="false" afterPath="$PROJECT_DIR$/templates/tracking/submit_result.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/viewmodels/tracking/submit_result_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/viewmodels/tracking/submit_result_viewmodel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/home.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/home.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/tracking.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/tracking.py" afterDir="false" />
-    </list>
+    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,6 +20,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitSEFilterConfiguration">
@@ -48,25 +44,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "last_opened_file_path": "/Users/jesravnbol/code/personal/footy-tracker/services",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
-  }
-}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/api" />
       <recent name="$PROJECT_DIR$/services" />
       <recent name="$PROJECT_DIR$/viewmodels/tracking" />
       <recent name="$PROJECT_DIR$/views" />
       <recent name="$PROJECT_DIR$/data" />
-      <recent name="$PROJECT_DIR$/viewmodels/home" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/templates/tracking" />
+      <recent name="$PROJECT_DIR$/src/web" />
+      <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/static/img" />
+      <recent name="$PROJECT_DIR$/api/src" />
+      <recent name="$PROJECT_DIR$/templates/tracking" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -81,6 +72,7 @@
       <workItem from="1657400889395" duration="750000" />
       <workItem from="1657563613024" duration="11058000" />
       <workItem from="1657884171357" duration="26588000" />
+      <workItem from="1658131124592" duration="323000" />
     </task>
     <task id="LOCAL-00001" summary="Playing around">
       <created>1657400976590</created>
@@ -201,7 +193,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658087827552</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="WIP">
+      <created>1658093343758</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1658093343758</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

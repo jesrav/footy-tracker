@@ -1,0 +1,167 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+        <div class="content">
+        <div class="section">
+
+        <h1 class="title">Welcome to your account ${ user.nickname }!</h1>
+
+            <div class="container">
+                <h2 class="subtitle">Results for you to validate</h2>
+                <div class="b-table">
+                  <div class="table-wrapper has-mobile-cards">
+                    <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                      <thead>
+                      <tr>
+                        <th></th>
+                        <th>Submitter</th>
+                        <th>Team 1 defender</th>
+                        <th>Team 1 attacker</th>
+                        <th>Team 2 defender</th>
+                        <th>Team 2 attacker</th>
+                        <th>Goals your team</th>
+                        <th>Goals opposition</th>
+                        <th>Created</th>
+                        <th></th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr tal:repeat="r results_to_approve">
+                        <td class="is-image-cell">
+                          <div class="image">
+                            <img src="https://avatars.dicebear.com/v2/initials/${r.submitter.nickname}.svg" class="is-rounded">
+                          </div>
+                        </td>
+                        <td data-label="Submitter">${r.submitter.nickname}</td>
+                        <td data-label="Team 1 defender">${r.team1.defender.nickname}</td>
+                        <td data-label="Team 1 attacker">${r.team1.attacker.nickname}</td>
+                        <td data-label="Team 1 defender">${r.team2.defender.nickname}</td>
+                        <td data-label="Team 1 attacker">${r.team2.attacker.nickname}</td>
+                        <td data-label="Goals team 1" class="is-progress-cell">
+                          <progress max="10" class="progress is-small is-primary" value="${r.goals_team1}">${r.goals_team1}</progress>
+                        </td>
+                        <td data-label="Goals team 2" class="is-progress-cell">
+                          <progress max="10" class="progress is-small is-primary" value="${r.goals_team2}">${r.goals_team2}</progress>
+                        </td>
+                        <td data-label="Created">
+                          <small class="has-text-grey is-abbr-like" title="Oct 25, 2020">${r.created_dt}</small>
+                        </td>
+                        <td class="is-actions-cell">
+                          <div class="buttons is-right">
+                            <button class="button is-small is-primary js-modal-trigger" data-target="modal-approve-result-${r.id}" type="button">
+                              <span class="icon"><span class="icon"> <ion-icon name="checkmark"></ion-icon></span></span>
+                            </button>
+                            <button class="button is-small is-danger js-modal-trigger" data-target="modal-reject-result-${r.id}" type="button">
+                              <span class="icon"> <ion-icon name="ban"></ion-icon></span>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
+            <div tal:repeat="r results_to_approve" tal:omit-tag="True">
+
+                <div class="modal" id="modal-approve-result-${r.id}">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Approve result?</p>
+                            <button class="delete" aria-label="close"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <p>Are you sure you want to approve the result?</p>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <form action="" method="POST" class="form">
+                                <input type="hidden" name="approved" value=true>
+                                <input type="hidden" name="user_id" value="${user.id}">
+                                <input type="hidden" name="result_id" value="${r.id}">
+                                <button class="button is-success" type="submit">Approve</button>
+                            </form>
+                            <button class="button">Cancel</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <div class="modal" id="modal-reject-result-${r.id}">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Reject result?</p>
+                            <button class="delete" aria-label="close"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <p>Are you sure you want to reject the result?</p>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <form action="" method="POST" class="form">
+                                <input type="hidden" name="approved" value=false>
+                                <input type="hidden" name="user_id" value="${user.id}">
+                                <input type="hidden" name="result_id" value="${r.id}">
+                                <button class="button is-danger" type="submit">Reject</button>
+                            </form>
+                            <button class="button">Cancel</button>
+                        </footer>
+                    </div>
+                </div>
+
+        </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Functions to open and close a modal
+  function openModal($el) {
+    $el.classList.add('is-active');
+  }
+
+  function closeModal($el) {
+    $el.classList.remove('is-active');
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  // Add a click event on buttons to open a specific modal
+  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener('click', () => {
+      openModal($target);
+    });
+  });
+
+  // Add a click event on various child elements to close the parent modal
+  (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+    const $target = $close.closest('.modal');
+
+    $close.addEventListener('click', () => {
+      closeModal($target);
+    });
+  });
+
+  // Add a keyboard event to close all modals
+  document.addEventListener('keydown', (event) => {
+    const e = event || window.event;
+
+    if (e.keyCode === 27) { // Escape key
+      closeAllModals();
+    }
+  });
+});
+</script>
