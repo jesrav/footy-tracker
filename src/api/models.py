@@ -1,6 +1,7 @@
 import datetime
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey, UniqueConstraint
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from database import SqlAlchemyBase
@@ -14,7 +15,12 @@ class User(SqlAlchemyBase):
     email: str = sa.Column(sa.String, index=True, unique=True, nullable=False)
     hash_password: str = sa.Column(sa.String, nullable=False)
     created_dt: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
-    last_login: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.utcnow, index=True)
+
+    ratings = relationship("UserRating")
+
+    @hybrid_property
+    def latest_rating(self):
+        return sorted(self.ratings, key=lambda x: x.created_dt, reverse=True)[0]
 
 
 class Team(SqlAlchemyBase):
@@ -50,10 +56,13 @@ class ResultSubmission(SqlAlchemyBase):
     team2 = relationship("Team", foreign_keys=[team2_id])
 
 
-# class Rating(SqlAlchemyBase):
-#     __tablename__ = 'ratings'
-#
-#     id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-#     user: int = sa.Column(sa.Integer)
-#     last_match_used_for_calculation: int = sa.Column(sa.Integer)
-#     created_date: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.now, index=True)
+class UserRating(SqlAlchemyBase):
+    __tablename__ = 'user_ratings'
+
+    id: int = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    user_id: int = sa.Column(sa.Integer, ForeignKey("users.id"), nullable=False)
+    rating: float = sa.Column(sa.Float, nullable=False)
+    latest_result_at_update_id: int = sa.Column(sa.Integer, ForeignKey("result_submissions.id"), nullable=True)
+    created_dt: datetime.datetime = sa.Column(sa.DateTime, default=datetime.datetime.now, index=True)
+
+    user = relationship("User", foreign_keys=[user_id], back_populates="ratings")

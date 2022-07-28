@@ -1,7 +1,7 @@
-from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 import crud, models, schemas
@@ -77,14 +77,19 @@ def read_results_for_approval(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/users/{user_id}/validate_result/{result_id}/", response_model=schemas.ResultSubmissionOut)
 def validate_result(user_id: int, result_id: int, approved: bool, db: Session = Depends(get_db)):
+
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+
     db_result = crud.get_result(db, result_id=result_id)
     if db_result is None:
         raise HTTPException(status_code=404, detail="Result submission not found")
+
     if db_result.submitter_id == user_id:
         raise HTTPException(status_code=400, detail="User can not validate result that they submitted themselves")
+
+    # Validator must not be on one of the teams and must not be the same team as the submitter
     if user_id in [db_result.team1.defender_user_id, db_result.team1.attacker_user_id]:
         validator_team = db_result.team1
     elif user_id in [db_result.team2.defender_user_id, db_result.team2.attacker_user_id]:
@@ -97,7 +102,25 @@ def validate_result(user_id: int, result_id: int, approved: bool, db: Session = 
         raise HTTPException(
             status_code=400, detail="Validating user can not be on the same team as the user that submitted the result"
         )
-    return crud.validate_results(db, validator_id=db_user.id, result_id=result_id, approved=approved)
+
+    validated_result = crud.validate_result(db, validator_id=db_user.id, result_id=result_id, approved=approved)
+    updated_user_ratings = crud.update_ratings(
+        db,
+        result=schemas.ResultSubmissionOut(
+            id=validated_result.id,
+            submitter=validated_result.submitter,
+            team1=validated_result.team1,
+            team2=validated_result.team2,
+            goals_team1=validated_result.goals_team1,
+            goals_team2=validated_result.goals_team2,
+            approved=validated_result.approved,
+            validator=validated_result.validator,
+            validation_dt=validated_result.validation_dt,
+            created_dt=validated_result.created_dt,
+        )
+    )
+    db.refresh(validated_result)
+    return validated_result
 
 
 @app.post("/results/", response_model=schemas.ResultSubmissionOut)
@@ -106,9 +129,8 @@ def create_result(result: schemas.ResultSubmissionCreate, db: Session = Depends(
 
 
 @app.get("/results/", response_model=List[schemas.UserOut])
-def read_users(reviever=None, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    if not reviever:
-        db_results = crud.get_results(db, skip=skip, limit=limit)
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_results = crud.get_results(db, skip=skip, limit=limit)
     return db_results
 
 

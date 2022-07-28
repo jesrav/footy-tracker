@@ -1,7 +1,27 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, validator as pydantic_validator
+from pydantic import BaseModel
+
+
+class UserRatingCreate(BaseModel):
+    user_id: int
+    rating: float
+    latest_result_at_update_id: Optional[int]
+
+
+class UserRating(UserRatingCreate):
+    id: int
+    created_dt: datetime
+
+    def get_new_rating(self, rating_delta: float) -> UserRatingCreate:
+        return UserRatingCreate(
+            user_id=self.user_id,
+            rating=self.rating + rating_delta
+        )
+
+    class Config:
+        orm_mode = True
 
 
 class UserBase(BaseModel):
@@ -21,7 +41,7 @@ class UserLogin(BaseModel):
 class UserOut(UserBase):
     id: int
     created_dt: datetime
-    last_login: datetime
+    latest_rating: UserRating
 
     class Config:
         orm_mode = True
@@ -40,7 +60,6 @@ class TeamOut(BaseModel):
     attacker: UserOut
     id: int
     created_dt: datetime
-
 
     class Config:
         orm_mode = True
@@ -68,3 +87,4 @@ class ResultSubmissionOut(BaseModel):
 
     class Config:
         orm_mode = True
+
