@@ -55,5 +55,5 @@ async def submit_result(request: Request):
     _ = await tracking_service.register_result(match)
 
     # redirect (should be to some overview)
-    response = fastapi.responses.RedirectResponse(url='/leaderboard', status_code=status.HTTP_302_FOUND)
+    response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
     return response
