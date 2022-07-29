@@ -55,8 +55,9 @@ class ResultForUserValidation(BaseModel):
             )
         elif result.team2.user_in_team(user_id):
             return ResultForUserValidation(
+                id=result.id,
                 submitter=result.submitter,
-                teamate = result.team2.get_teammate(user_id),
+                teammate = result.team2.get_teammate(user_id),
                 opposing_defender = result.team1.defender,
                 opposing_attacker = result.team1.attacker,
                 goals_user_team = result.goals_team2,

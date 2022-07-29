@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
+import elo
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
@@ -9,7 +10,10 @@ import models
 import schemas
 
 
-INITIAL_USER_RATING = 1500
+INITIAL_USER_RATING = 1200
+
+# User lager K factor than the default
+elo.K_FACTOR = 32
 
 
 def get_user(db: Session, user_id: int) -> Optional[models.User]:
@@ -150,30 +154,28 @@ def get_result(db: Session, result_id: int) -> Optional[models.ResultSubmission]
     return db.query(models.ResultSubmission).filter(models.ResultSubmission.id == result_id).first()
 
 
-def simple_elo(
+def get_updated_elo_player_ratings(
         team1: schemas.TeamRead, team2: schemas.TeamRead, team1_goals: int, team2_goals: int
 ) -> List[schemas.UserRatingCreate]:
+    team1_rating = team1.defender.latest_rating.rating + team1.attacker.latest_rating.rating
+    team2_rating = team2.defender.latest_rating.rating + team2.attacker.latest_rating.rating
+
     if team1_goals > team2_goals:
-        return [
-            team1.defender.latest_rating.get_new_rating(1),
-            team1.attacker.latest_rating.get_new_rating(1),
-            team2.defender.latest_rating.get_new_rating(-1),
-            team2.attacker.latest_rating.get_new_rating(-1),
-        ]
+        new_team1_rating, new_team2_rating = elo.rate_1vs1(team1_rating, team2_rating)
     elif team1_goals < team2_goals:
-        return [
-            team1.defender.latest_rating.get_new_rating(-1),
-            team1.attacker.latest_rating.get_new_rating(-1),
-            team2.defender.latest_rating.get_new_rating(1),
-            team2.attacker.latest_rating.get_new_rating(1),
-        ]
+        new_team2_rating, new_team1_rating = elo.rate_1vs1(team2_rating, team1_rating)
     else:
-        return [
-            team1.defender.latest_rating.get_new_rating(0),
-            team1.attacker.latest_rating.get_new_rating(0),
-            team2.defender.latest_rating.get_new_rating(0),
-            team2.attacker.latest_rating.get_new_rating(0),
-        ]
+        new_team1_rating, new_team2_rating = team1_rating, team2_rating
+
+    team1_rating_delta = new_team1_rating - team1_rating
+    team2_rating_delta = new_team2_rating - team2_rating
+
+    return [
+        team1.defender.latest_rating.get_new_rating(rating_delta=team1_rating_delta),
+        team1.attacker.latest_rating.get_new_rating(rating_delta=team1_rating_delta),
+        team2.defender.latest_rating.get_new_rating(rating_delta=team2_rating_delta),
+        team2.attacker.latest_rating.get_new_rating(rating_delta=team2_rating_delta),
+    ]
 
 
 def _add_rating(db: Session, user_rating: schemas.UserRatingCreate) -> models.UserRating:
@@ -189,7 +191,7 @@ def _add_rating(db: Session, user_rating: schemas.UserRatingCreate) -> models.Us
 
 
 def update_ratings(db: Session, result: schemas.ResultSubmissionRead) -> List[models.UserRating]:
-    new_ratings = simple_elo(
+    new_ratings = get_updated_elo_player_ratings(
         team1_goals=result.goals_team1,
         team2_goals=result.goals_team2,
         team1=result.team1,
