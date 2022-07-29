@@ -10,7 +10,7 @@ class UserRatingCreate(BaseModel):
     latest_result_at_update_id: Optional[int]
 
 
-class UserRating(UserRatingCreate):
+class UserRatingRead(UserRatingCreate):
     id: int
     created_dt: datetime
 
@@ -38,10 +38,10 @@ class UserLogin(BaseModel):
     password: str
 
 
-class UserOut(UserBase):
+class UserRead(UserBase):
     id: int
     created_dt: datetime
-    latest_rating: UserRating
+    latest_rating: UserRatingRead
 
     class Config:
         orm_mode = True
@@ -55,9 +55,9 @@ class TeamCreate(BaseModel):
         orm_mode = True
 
 
-class TeamOut(BaseModel):
-    defender: UserOut
-    attacker: UserOut
+class TeamRead(BaseModel):
+    defender: UserRead
+    attacker: UserRead
     id: int
     created_dt: datetime
 
@@ -73,15 +73,15 @@ class ResultSubmissionCreate(BaseModel):
     goals_team2: int
 
 
-class ResultSubmissionOut(BaseModel):
+class ResultSubmissionRead(BaseModel):
     id: int
-    submitter: UserOut
-    team1: TeamOut
-    team2: TeamOut
+    submitter: UserRead
+    team1: TeamRead
+    team2: TeamRead
     goals_team1: int
     goals_team2: int
     approved: Optional[bool]
-    validator: Optional[UserOut]
+    validator: Optional[UserRead]
     validation_dt: Optional[datetime]
     created_dt: datetime
 

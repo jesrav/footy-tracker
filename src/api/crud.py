@@ -151,7 +151,7 @@ def get_result(db: Session, result_id: int) -> Optional[models.ResultSubmission]
 
 
 def simple_elo(
-        team1: schemas.TeamOut, team2: schemas.TeamOut, team1_goals: int, team2_goals: int
+        team1: schemas.TeamRead, team2: schemas.TeamRead, team1_goals: int, team2_goals: int
 ) -> List[schemas.UserRatingCreate]:
     if team1_goals > team2_goals:
         return [
@@ -188,7 +188,7 @@ def _add_rating(db: Session, user_rating: schemas.UserRatingCreate) -> models.Us
     return db_user_rating
 
 
-def update_ratings(db: Session, result: schemas.ResultSubmissionOut) -> List[models.UserRating]:
+def update_ratings(db: Session, result: schemas.ResultSubmissionRead) -> List[models.UserRating]:
     new_ratings = simple_elo(
         team1_goals=result.goals_team1,
         team2_goals=result.goals_team2,

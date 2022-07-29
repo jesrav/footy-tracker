@@ -21,7 +21,7 @@ def get_db():
         db.close()
 
 
-@app.post("/users/", response_model=schemas.UserOut)
+@app.post("/users/", response_model=schemas.UserRead)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
@@ -29,7 +29,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return crud.create_user(db=db, user=user)
 
 
-@app.post("/users/login/", response_model=schemas.UserOut)
+@app.post("/users/login/", response_model=schemas.UserRead)
 def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
     db_user = crud.login_user(db, email=user.email, password=user.password)
     if not db_user:
@@ -37,13 +37,13 @@ def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.get("/users/", response_model=List[schemas.UserOut])
+@app.get("/users/", response_model=List[schemas.UserRead])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_users = crud.get_users(db, skip=skip, limit=limit)
     return db_users
 
 
-@app.get("/users/{user_id}", response_model=schemas.UserOut)
+@app.get("/users/{user_id}", response_model=schemas.UserRead)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
@@ -51,7 +51,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.get("/users/by_email/{email}", response_model=schemas.UserOut)
+@app.get("/users/by_email/{email}", response_model=schemas.UserRead)
 def read_users_by_email(email: str, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=email)
     if db_user is None:
@@ -59,7 +59,7 @@ def read_users_by_email(email: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.get("/users/by_nickname/{nickname}", response_model=schemas.UserOut)
+@app.get("/users/by_nickname/{nickname}", response_model=schemas.UserRead)
 def read_users_by_email(nickname: str, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_nickname(db, nickname=nickname)
     if db_user is None:
@@ -67,7 +67,7 @@ def read_users_by_email(nickname: str, db: Session = Depends(get_db)):
     return db_user
 
 
-@app.get("/users/{user_id}/results_for_approval/", response_model=List[schemas.ResultSubmissionOut])
+@app.get("/users/{user_id}/results_for_approval/", response_model=List[schemas.ResultSubmissionRead])
 def read_results_for_approval(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
@@ -75,7 +75,7 @@ def read_results_for_approval(user_id: int, db: Session = Depends(get_db)):
     return crud.get_results_for_validation(db, validator_id=db_user.id)
 
 
-@app.post("/users/{user_id}/validate_result/{result_id}/", response_model=schemas.ResultSubmissionOut)
+@app.post("/users/{user_id}/validate_result/{result_id}/", response_model=schemas.ResultSubmissionRead)
 def validate_result(user_id: int, result_id: int, approved: bool, db: Session = Depends(get_db)):
 
     db_user = crud.get_user(db, user_id=user_id)
@@ -106,7 +106,7 @@ def validate_result(user_id: int, result_id: int, approved: bool, db: Session = 
     validated_result = crud.validate_result(db, validator_id=db_user.id, result_id=result_id, approved=approved)
     updated_user_ratings = crud.update_ratings(
         db,
-        result=schemas.ResultSubmissionOut(
+        result=schemas.ResultSubmissionRead(
             id=validated_result.id,
             submitter=validated_result.submitter,
             team1=validated_result.team1,
@@ -123,18 +123,18 @@ def validate_result(user_id: int, result_id: int, approved: bool, db: Session = 
     return validated_result
 
 
-@app.post("/results/", response_model=schemas.ResultSubmissionOut)
+@app.post("/results/", response_model=schemas.ResultSubmissionRead)
 def create_result(result: schemas.ResultSubmissionCreate, db: Session = Depends(get_db)):
     return crud.create_result(db=db, result=result)
 
 
-@app.get("/results/", response_model=List[schemas.UserOut])
+@app.get("/results/", response_model=List[schemas.UserRead])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_results = crud.get_results(db, skip=skip, limit=limit)
     return db_results
 
 
-@app.get("/results/{result_id}", response_model=schemas.ResultSubmissionOut)
+@app.get("/results/{result_id}", response_model=schemas.ResultSubmissionRead)
 def read_result(result_id: int, db: Session = Depends(get_db)):
     db_result = crud.get_result(db, result_id=result_id)
     if db_result is None:
