@@ -104,21 +104,24 @@ def validate_result(user_id: int, result_id: int, approved: bool, db: Session = 
         )
 
     validated_result = crud.validate_result(db, validator_id=db_user.id, result_id=result_id, approved=approved)
-    updated_user_ratings = crud.update_ratings(
-        db,
-        result=schemas.ResultSubmissionRead(
-            id=validated_result.id,
-            submitter=validated_result.submitter,
-            team1=validated_result.team1,
-            team2=validated_result.team2,
-            goals_team1=validated_result.goals_team1,
-            goals_team2=validated_result.goals_team2,
-            approved=validated_result.approved,
-            validator=validated_result.validator,
-            validation_dt=validated_result.validation_dt,
-            created_dt=validated_result.created_dt,
+
+    if approved:
+        _ = crud.update_ratings(
+            db,
+            result=schemas.ResultSubmissionRead(
+                id=validated_result.id,
+                submitter=validated_result.submitter,
+                team1=validated_result.team1,
+                team2=validated_result.team2,
+                goals_team1=validated_result.goals_team1,
+                goals_team2=validated_result.goals_team2,
+                approved=validated_result.approved,
+                validator=validated_result.validator,
+                validation_dt=validated_result.validation_dt,
+                created_dt=validated_result.created_dt,
+            )
         )
-    )
+
     db.refresh(validated_result)
     return validated_result
 
