@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from starlette.requests import Request
 
-from models.user import UserOut
+from models.user import UserRead
 from services import user_service
 from viewmodels.shared.viewmodel import ViewModelBase
 
@@ -17,10 +17,10 @@ class SubmitResultViewModel(ViewModelBase):
         self.team2_attacker: Optional[int] = None
         self.goals_team1: Optional[int] = None
         self.goals_team2: Optional[int] = None
-        self.users: Optional[List[UserOut]] = None
+        self.users: Optional[List[UserRead]] = None
 
     async def load(self):
-        self.users: List[UserOut] = await user_service.get_all_users()
+        self.users: List[UserRead] = await user_service.get_all_users()
 
     async def load_form(self):
         form = await self.request.form()

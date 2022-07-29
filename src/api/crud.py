@@ -1,12 +1,19 @@
 from datetime import datetime
 from typing import Optional, List
 
+import elo
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
 import models
 import schemas
+
+
+INITIAL_USER_RATING = 1200
+
+# User lager K factor than the default
+elo.K_FACTOR = 32
 
 
 def get_user(db: Session, user_id: int) -> Optional[models.User]:
@@ -32,20 +39,29 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    add_rating(db, db_user.id, rating=INITIAL_USER_RATING)
     return db_user
 
 
+def add_rating(db: Session, user_id: int, rating: float):
+    user_rating = models.UserRating(
+        user_id=user_id,
+        rating=rating,
+    )
+    db.add(user_rating)
+    db.commit()
+    db.refresh(user_rating)
+    return user_rating
+
+
 def login_user(db: Session, email: str, password: str) -> Optional[models.User]:
-    try:
-        user = get_user_by_email(db, email)
-        if not user:
-            return None
-        if not crypto.verify(password, user.hash_password):
-            return None
-        else:
-            return user
-    finally:
-        db.close()
+    user = get_user_by_email(db, email)
+    if not user:
+        return None
+    if not crypto.verify(password, user.hash_password):
+        return None
+    else:
+        return user
 
 
 def get_team(db: Session, team: schemas.TeamCreate) -> Optional[models.Team]:
@@ -125,7 +141,7 @@ def get_results_for_validation(db: Session, validator_id: int) -> List[models.Re
     return results_validator_and_submitter_not_teammates
 
 
-def validate_results(db: Session, validator_id: int, result_id: int, approved: bool) -> models.ResultSubmission:
+def validate_result(db: Session, validator_id: int, result_id: int, approved: bool) -> models.ResultSubmission:
     db_result = db.query(models.ResultSubmission).filter(models.ResultSubmission.id == result_id).first()
     db_result.validator_id = validator_id
     db_result.approved = approved
@@ -137,18 +153,52 @@ def validate_results(db: Session, validator_id: int, result_id: int, approved: b
 def get_result(db: Session, result_id: int) -> Optional[models.ResultSubmission]:
     return db.query(models.ResultSubmission).filter(models.ResultSubmission.id == result_id).first()
 
-#
-# def create_result_approval(db: Session, result_approval: schemas.ResultApprovalBase):
-#     db_result_approval = models.ResultApproval(
-#         result_submission_id=result_approval.result_submission_id,
-#         reviewer_id=result_approval.reviewer_id,
-#         approved=result_approval.approved,
-#     )
-#     db.add(db_result_approval)
-#     db.commit()
-#     db.refresh(db_result_approval)
-#     return db_result_approval
-#
-#
-# def get_result_approval_by_match(db: Session, result_submission_id: int):
-#     return db.query(models.ResultSubmission).filter(models.ResultApproval.result_submission_id == result_submission_id).all()
+
+def get_updated_elo_player_ratings(
+        team1: schemas.TeamRead, team2: schemas.TeamRead, team1_goals: int, team2_goals: int
+) -> List[schemas.UserRatingCreate]:
+    team1_rating = team1.defender.latest_rating.rating + team1.attacker.latest_rating.rating
+    team2_rating = team2.defender.latest_rating.rating + team2.attacker.latest_rating.rating
+
+    if team1_goals > team2_goals:
+        new_team1_rating, new_team2_rating = elo.rate_1vs1(team1_rating, team2_rating)
+    elif team1_goals < team2_goals:
+        new_team2_rating, new_team1_rating = elo.rate_1vs1(team2_rating, team1_rating)
+    else:
+        new_team1_rating, new_team2_rating = team1_rating, team2_rating
+
+    team1_rating_delta = new_team1_rating - team1_rating
+    team2_rating_delta = new_team2_rating - team2_rating
+
+    return [
+        team1.defender.latest_rating.get_new_rating(rating_delta=team1_rating_delta),
+        team1.attacker.latest_rating.get_new_rating(rating_delta=team1_rating_delta),
+        team2.defender.latest_rating.get_new_rating(rating_delta=team2_rating_delta),
+        team2.attacker.latest_rating.get_new_rating(rating_delta=team2_rating_delta),
+    ]
+
+
+def _add_rating(db: Session, user_rating: schemas.UserRatingCreate) -> models.UserRating:
+    db_user_rating = models.UserRating(
+        user_id=user_rating.user_id,
+        rating=user_rating.rating,
+        latest_result_at_update_id=user_rating.latest_result_at_update_id,
+    )
+    db.add(db_user_rating)
+    db.commit()
+    db.refresh(db_user_rating)
+    return db_user_rating
+
+
+def update_ratings(db: Session, result: schemas.ResultSubmissionRead) -> List[models.UserRating]:
+    new_ratings = get_updated_elo_player_ratings(
+        team1_goals=result.goals_team1,
+        team2_goals=result.goals_team2,
+        team1=result.team1,
+        team2=result.team2,
+    )
+    db_ratings = []
+    for user_rating in new_ratings:
+        user_rating.latest_result_at_update_id = result.id
+        db_ratings.append(_add_rating(db, user_rating=user_rating))
+    return db_ratings

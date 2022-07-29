@@ -1,18 +1,25 @@
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 
-import models
+import crud
+import schemas
 from database import SessionLocal
 
 db = SessionLocal()
 
+nicknames = [
+    "TheMan",
+    "Elo",
+    "Fock",
+    "Nanny"
+]
 
 users = [
-    models.User(
-        nickname=name,
-        email=f"{name}@mail.com",
-        hash_password=crypto.hash(f"{name}", rounds=172_434)
-    ) for name in ["a", "b", "c", "d"]
+    schemas.UserCreate(
+        nickname=nicname,
+        email=f"{nicname.lower()}@mail.com",
+        password=nicname.lower(),
+    ) for nicname in nicknames
 ]
 for user in users:
-    db.add(user)
-db.commit()
+    crud.create_user(db, user)
+

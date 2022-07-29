@@ -4,8 +4,10 @@
         <div class="section">
 
         <h1 class="title">Welcome to your account ${ user.nickname }!</h1>
-
-            <div class="container">
+        <br>
+        <h1 class="subtitle">Your rating is ${ user.latest_rating.rating }!</h1>
+        <br>
+            <div tal:condition="results_to_approve" class="container">
                 <h2 class="subtitle">Results for you to validate</h2>
                 <div class="b-table">
                   <div class="table-wrapper has-mobile-cards">
@@ -14,12 +16,11 @@
                       <tr>
                         <th></th>
                         <th>Submitter</th>
-                        <th>Team 1 defender</th>
-                        <th>Team 1 attacker</th>
-                        <th>Team 2 defender</th>
-                        <th>Team 2 attacker</th>
                         <th>Goals your team</th>
                         <th>Goals opposition</th>
+                        <th>Teammate</th>
+                        <th>Opposing defender</th>
+                        <th>Opposing attacker</th>
                         <th>Created</th>
                         <th></th>
                       </tr>
@@ -32,18 +33,13 @@
                           </div>
                         </td>
                         <td data-label="Submitter">${r.submitter.nickname}</td>
-                        <td data-label="Team 1 defender">${r.team1.defender.nickname}</td>
-                        <td data-label="Team 1 attacker">${r.team1.attacker.nickname}</td>
-                        <td data-label="Team 1 defender">${r.team2.defender.nickname}</td>
-                        <td data-label="Team 1 attacker">${r.team2.attacker.nickname}</td>
-                        <td data-label="Goals team 1" class="is-progress-cell">
-                          <progress max="10" class="progress is-small is-primary" value="${r.goals_team1}">${r.goals_team1}</progress>
-                        </td>
-                        <td data-label="Goals team 2" class="is-progress-cell">
-                          <progress max="10" class="progress is-small is-primary" value="${r.goals_team2}">${r.goals_team2}</progress>
-                        </td>
+                        <td data-label="Goals your team">${r.goals_user_team}</td>
+                        <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
+                        <td data-label="Teammate">${r.teammate.nickname}</td>
+                        <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
+                        <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
                         <td data-label="Created">
-                          <small class="has-text-grey is-abbr-like" title="Oct 25, 2020">${r.created_dt}</small>
+                          <small class="has-text-grey is-abbr-like" >${r.created_dt}</small>
                         </td>
                         <td class="is-actions-cell">
                           <div class="buttons is-right">
