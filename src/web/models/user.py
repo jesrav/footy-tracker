@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from models.ratings import UserRating
 
 
-class UserOut(BaseModel):
+class UserRead(BaseModel):
     id: int
     nickname: str
     email: str
