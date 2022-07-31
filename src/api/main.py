@@ -128,7 +128,7 @@ def validate_result(user_id: int, result_id: int, approved: bool, db: Session = 
 
 @app.post("/results/", response_model=schemas.ResultSubmissionRead)
 def create_result(result: schemas.ResultSubmissionCreate, db: Session = Depends(get_db)):
-    return crud.create_result(db=db, result=result)
+    return crud.create_result(session=db, result=result)
 
 
 @app.get("/results/", response_model=List[schemas.UserRead])

@@ -1,13 +1,8 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
-SQLALCHEMY_DATABASE_URL = "sqlite:///./footy_tracker.db"
+from sqlmodel import SQLModel, create_engine
+from schemas import User, Team, ResultSubmission, UserRating
+DATABASE_URL = "sqlite:///./footy_tracker_sqlmodel.db"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(DATABASE_URL, echo=True)
 
-SqlAlchemyBase = declarative_base()
+SQLModel.metadata.create_all(engine)

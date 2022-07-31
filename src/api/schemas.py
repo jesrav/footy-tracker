@@ -1,32 +1,52 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
+from sqlmodel import SQLModel, Field, Relationship
 
 
-class UserRatingCreate(BaseModel):
-    user_id: int
+class UserRating(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(default=None, foreign_key="user.id")
     rating: float
-    latest_result_at_update_id: Optional[int]
+    latest_result_at_update_id: Optional[int] = Field(default=None, foreign_key="result_submissions.id")
+    created_dt: Optional[datetime] = Field(default=datetime.utcnow())
 
+    user: "User" = Relationship(back_populates="ratings")
 
-class UserRatingRead(UserRatingCreate):
-    id: int
-    created_dt: datetime
-
-    def get_new_rating(self, rating_delta: float) -> UserRatingCreate:
+    def get_new_rating(self, rating_delta: float) -> "UserRatingBase":
         return UserRatingCreate(
             user_id=self.user_id,
             rating=self.rating + rating_delta
         )
 
-    class Config:
-        orm_mode = True
+
+class UserRatingBase(SQLModel):
+    user_id: int
+    rating: float
+    latest_result_at_update_id: Optional[int]
 
 
-class UserBase(BaseModel):
+class UserRatingCreate(UserRatingBase):
+    pass
+
+
+class UserRatingRead(UserRatingBase):
+    id: int
+    created_dt: datetime
+
+
+class UserBase(SQLModel):
     nickname: str
     email: str
+
+
+class User(UserBase, table=True):
+    id: Optional[int] = Field(index=True, primary_key=True)
+    hash_password: str
+    created_dt: datetime = Field(default=datetime.utcnow())
+
+    ratings: List["UserRating"] = Relationship(back_populates="user")
 
 
 class UserCreate(UserBase):
@@ -43,48 +63,65 @@ class UserRead(UserBase):
     created_dt: datetime
     latest_rating: UserRatingRead
 
-    class Config:
-        orm_mode = True
+
+class Team(SQLModel, table=True):
+    id: Optional[int] = Field(index=True, primary_key=True)
+    defender_user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    attacker_user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    created_dt: Optional[datetime] = Field(default=datetime.utcnow())
+
+    defender: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Team.defender_user_id]"))
+    attacker: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Team.attacker_user_id]"))
 
 
-class TeamCreate(BaseModel):
+class TeamBase(SQLModel):
     defender_user_id: int
     attacker_user_id: int
 
-    class Config:
-        orm_mode = True
+
+class TeamCreate(TeamBase):
+    pass
 
 
-class TeamRead(BaseModel):
-    defender: UserRead
-    attacker: UserRead
+class TeamRead(TeamBase):
     id: int
     created_dt: datetime
 
-    class Config:
-        orm_mode = True
+
+class ResultSubmission(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    submitter_id: int = Field(default=None, foreign_key="user.id")
+    team1_id: int = Field(default=None, foreign_key="team.id")
+    team2_id: int = Field(default=None, foreign_key="team.id")
+    goals_team1: int
+    goals_team2: int
+    approved: Optional[bool]
+    validator_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    validation_dt: Optional[datetime]
+    created_dt: Optional[datetime] = Field(default=datetime.utcnow())
+
+    submitter: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.submitter_id]"))
+    validator: Optional[User] = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.validator_id]"))
+    team1: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team1_id]"))
+    team2: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team2_id]"))
 
 
-class ResultSubmissionCreate(BaseModel):
+class ResultSubmissionBase(SQLModel):
     submitter_id: int
     team1: TeamCreate
     team2: TeamCreate
     goals_team1: int
     goals_team2: int
-
-
-class ResultSubmissionRead(BaseModel):
-    id: int
-    submitter: UserRead
-    team1: TeamRead
-    team2: TeamRead
-    goals_team1: int
-    goals_team2: int
     approved: Optional[bool]
-    validator: Optional[UserRead]
+    validator_id: Optional[int]
     validation_dt: Optional[datetime]
-    created_dt: datetime
 
-    class Config:
-        orm_mode = True
+
+class ResultSubmissionCreate(ResultSubmissionBase):
+    pass
+
+
+class ResultSubmissionRead(ResultSubmissionBase):
+    id: int
+    created_dt: datetime
 

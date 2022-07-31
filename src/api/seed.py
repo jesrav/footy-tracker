@@ -1,10 +1,9 @@
-from passlib.handlers.sha2_crypt import sha512_crypt as crypto
+from sqlmodel import Session, select
 
 import crud
 import schemas
-from database import SessionLocal
+from database import engine
 
-db = SessionLocal()
 
 nicknames = [
     "TheMan",
@@ -20,6 +19,31 @@ users = [
         password=nicname.lower(),
     ) for nicname in nicknames
 ]
-for user in users:
-    crud.create_user(db, user)
 
+with Session(engine) as session:
+    for user in users:
+        crud.create_user(session=session, user=user)
+
+with Session(engine) as session:
+    crud.create_result(
+        session=session,
+        result=schemas.ResultSubmissionCreate(
+            submitter_id=1,
+            team1=schemas.TeamCreate(
+                defender_user_id=1,
+                attacker_user_id=2,
+            ),
+            team2=schemas.TeamCreate(
+                defender_user_id=3,
+                attacker_user_id=4,
+            ),
+            goals_team1=1,
+            goals_team2=10,
+        )
+    )
+
+
+with Session(engine) as session:
+    statement = select(schemas.ResultSubmission)
+    r = session.exec(statement).first()
+    print(r.team1)
