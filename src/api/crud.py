@@ -204,7 +204,7 @@ def _add_rating(db: Session, user_rating: schemas.UserRatingCreate) -> schemas.U
     return db_user_rating
 
 
-def update_ratings(db: Session, result: schemas.ResultSubmission) -> List[schemas.UserRating]:
+def update_ratings(session: Session, result: schemas.ResultSubmission) -> List[schemas.UserRating]:
     new_ratings = get_updated_elo_player_ratings(
         team1_goals=result.goals_team1,
         team2_goals=result.goals_team2,
@@ -214,5 +214,23 @@ def update_ratings(db: Session, result: schemas.ResultSubmission) -> List[schema
     db_ratings = []
     for user_rating in new_ratings:
         user_rating.latest_result_at_update_id = result.id
-        db_ratings.append(_add_rating(db, user_rating=user_rating))
+        db_ratings.append(_add_rating(session, user_rating=user_rating))
     return db_ratings
+
+
+def get_latest_user_rating(session: Session, user_id: int) -> schemas.UserRating:
+    statement = (
+        select(schemas.UserRating)
+        .filter(schemas.UserRating.user_id == user_id)
+        .order_by(schemas.UserRating.created_dt.desc())
+    )
+    return session.exec(statement).first()
+
+
+def get_ratings(session: Session, user_id: int, skip: int = 0, limit: int = 100) -> List[schemas.UserRating]:
+    statement = (
+        select(schemas.UserRating)
+        .filter(schemas.UserRating.user_id == user_id)
+        .offset(skip).limit(limit)
+    )
+    return session.exec(statement).all()

@@ -9,7 +9,7 @@ class UserRating(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(default=None, foreign_key="user.id")
     rating: float
-    latest_result_at_update_id: Optional[int] = Field(default=None, foreign_key="result_submissions.id")
+    latest_result_at_update_id: Optional[int] = Field(default=None, foreign_key="resultsubmission.id")
     created_dt: Optional[datetime] = Field(default=datetime.utcnow())
 
     user: "User" = Relationship(back_populates="ratings")
@@ -61,7 +61,6 @@ class UserLogin(BaseModel):
 class UserRead(UserBase):
     id: int
     created_dt: datetime
-    latest_rating: UserRatingRead
 
 
 class Team(SQLModel, table=True):

@@ -2,6 +2,7 @@ from typing import Optional, List
 
 from starlette.requests import Request
 
+from models.ratings import UserRating
 from models.user import UserRead
 from models.result import ResultSubmissionRead, ResultForUserValidation
 from services import user_service, tracking_service
@@ -12,6 +13,7 @@ class AccountViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
         self.user: Optional[UserRead] = None
+        self.latest_user_rating: Optional[UserRating] = None
         self.results_to_approve: List[ResultSubmissionRead] = []
         self.result_id: Optional[int] = None
         self.approved: Optional[bool] = None
@@ -19,6 +21,7 @@ class AccountViewModel(ViewModelBase):
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)
         results_to_approve = await tracking_service.get_results_for_approval(self.user_id)
+        self.latest_user_rating = await tracking_service.get_latest_user_rating(self.user_id)
         self.results_to_approve = [
             ResultForUserValidation.from_result_submission(
                 user_id=self.user_id,

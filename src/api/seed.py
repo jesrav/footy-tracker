@@ -1,4 +1,4 @@
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 import crud
 import schemas
@@ -41,9 +41,3 @@ with Session(engine) as session:
             goals_team2=10,
         )
     )
-
-
-with Session(engine) as session:
-    statement = select(schemas.ResultSubmission)
-    r = session.exec(statement).first()
-    print(r.team1)
