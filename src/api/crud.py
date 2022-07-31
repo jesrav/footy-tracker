@@ -169,7 +169,7 @@ def get_result(session: Session, result_id: int) -> Optional[schemas.ResultSubmi
 
 
 def get_updated_elo_player_ratings(
-        team1: schemas.TeamRead, team2: schemas.TeamRead, team1_goals: int, team2_goals: int
+        team1: schemas.Team, team2: schemas.Team, team1_goals: int, team2_goals: int
 ) -> List[schemas.UserRatingCreate]:
     team1_rating = team1.defender.latest_rating.rating + team1.attacker.latest_rating.rating
     team2_rating = team2.defender.latest_rating.rating + team2.attacker.latest_rating.rating
@@ -204,7 +204,7 @@ def _add_rating(db: Session, user_rating: schemas.UserRatingCreate) -> schemas.U
     return db_user_rating
 
 
-def update_ratings(db: Session, result: schemas.ResultSubmissionRead) -> List[schemas.UserRating]:
+def update_ratings(db: Session, result: schemas.ResultSubmission) -> List[schemas.UserRating]:
     new_ratings = get_updated_elo_player_ratings(
         team1_goals=result.goals_team1,
         team2_goals=result.goals_team2,
