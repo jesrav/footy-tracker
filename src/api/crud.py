@@ -103,17 +103,17 @@ def create_result(session: Session, result: schemas.ResultSubmissionCreate) -> s
     if not team2_db:
         team2_db = create_team(session, team=result.team2)
 
-    db_match = schemas.ResultSubmission(
+    result = schemas.ResultSubmission(
         submitter_id=result.submitter_id,
         team1_id=team1_db.id,
         team2_id=team2_db.id,
         goals_team1=result.goals_team1,
         goals_team2=result.goals_team2,
     )
-    session.add(db_match)
+    session.add(result)
     session.commit()
-    session.refresh(db_match)
-    return db_match
+    session.refresh(result)
+    return result
 
 
 def get_results(session: Session, skip: int = 0, limit: int = 100) -> List[schemas.ResultSubmission]:
@@ -131,7 +131,7 @@ def get_results_for_validation(session: Session, validator_id: int) -> List[sche
     :return: A list of result submissions.
     """
     statement = select(schemas.ResultSubmission).filter(
-        schemas.ResultSubmission.approved is None,
+        schemas.ResultSubmission.approved == None,
         schemas.ResultSubmission.submitter_id != validator_id
     )
     results = session.exec(statement).all()

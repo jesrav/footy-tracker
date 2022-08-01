@@ -82,8 +82,10 @@ class TeamCreate(TeamBase):
     pass
 
 
-class TeamRead(TeamBase):
+class TeamRead(SQLModel):
     id: int
+    defender: UserRead
+    attacker: UserRead
     created_dt: datetime
 
 
@@ -120,7 +122,15 @@ class ResultSubmissionCreate(ResultSubmissionBase):
     pass
 
 
-class ResultSubmissionRead(ResultSubmissionBase):
+class ResultSubmissionRead(SQLModel):
     id: int
+    submitter: UserRead
+    team1: TeamRead
+    team2: TeamRead
+    goals_team1: int
+    goals_team2: int
+    approved: Optional[bool]
+    validator: Optional[UserRead]
+    validation_dt: Optional[datetime]
     created_dt: datetime
 

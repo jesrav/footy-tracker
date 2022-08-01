@@ -29,7 +29,6 @@ class AccountViewModel(ViewModelBase):
             ) for r in results_to_approve
         ]
 
-
     async def load_form(self):
         form = await self.request.form()
         self.result_id = int(form.get('result_id'))
