@@ -192,16 +192,16 @@ def get_updated_elo_player_ratings(
     ]
 
 
-def _add_rating(db: Session, user_rating: schemas.UserRatingCreate) -> schemas.UserRating:
-    db_user_rating = schemas.UserRating(
+def _add_rating(session: Session, user_rating: schemas.UserRatingCreate) -> schemas.UserRating:
+    user_rating = schemas.UserRating(
         user_id=user_rating.user_id,
         rating=user_rating.rating,
         latest_result_at_update_id=user_rating.latest_result_at_update_id,
     )
-    db.add(db_user_rating)
-    db.commit()
-    db.refresh(db_user_rating)
-    return db_user_rating
+    session.add(user_rating)
+    session.commit()
+    session.refresh(user_rating)
+    return user_rating
 
 
 def update_ratings(session: Session, result: schemas.ResultSubmission) -> List[schemas.UserRating]:
@@ -211,11 +211,11 @@ def update_ratings(session: Session, result: schemas.ResultSubmission) -> List[s
         team1=result.team1,
         team2=result.team2,
     )
-    db_ratings = []
+    ratings = []
     for user_rating in new_ratings:
         user_rating.latest_result_at_update_id = result.id
-        db_ratings.append(_add_rating(session, user_rating=user_rating))
-    return db_ratings
+        ratings.append(_add_rating(session, user_rating=user_rating))
+    return ratings
 
 
 def get_latest_user_rating(session: Session, user_id: int) -> schemas.UserRating:
