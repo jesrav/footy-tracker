@@ -10,7 +10,7 @@ class UserRating(SQLModel, table=True):
     user_id: int = Field(default=None, foreign_key="user.id")
     rating: float
     latest_result_at_update_id: Optional[int] = Field(default=None, foreign_key="resultsubmission.id")
-    created_dt: Optional[datetime] = Field(default=datetime.utcnow())
+    created_dt: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
     user: "User" = Relationship(back_populates="ratings")
 
@@ -44,7 +44,7 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     id: Optional[int] = Field(index=True, primary_key=True)
     hash_password: str
-    created_dt: datetime = Field(default=datetime.utcnow())
+    created_dt: datetime = Field(default_factory=datetime.utcnow)
 
     ratings: List["UserRating"] = Relationship(back_populates="user")
 
@@ -71,7 +71,7 @@ class Team(SQLModel, table=True):
     id: Optional[int] = Field(index=True, primary_key=True)
     defender_user_id: Optional[int] = Field(default=None, foreign_key="user.id")
     attacker_user_id: Optional[int] = Field(default=None, foreign_key="user.id")
-    created_dt: Optional[datetime] = Field(default=datetime.utcnow())
+    created_dt: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
     defender: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Team.defender_user_id]"))
     attacker: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Team.attacker_user_id]"))
@@ -103,7 +103,7 @@ class ResultSubmission(SQLModel, table=True):
     approved: Optional[bool]
     validator_id: Optional[int] = Field(default=None, foreign_key="user.id")
     validation_dt: Optional[datetime]
-    created_dt: Optional[datetime] = Field(default=datetime.utcnow())
+    created_dt: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
     submitter: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.submitter_id]"))
     validator: Optional[User] = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.validator_id]"))
@@ -137,4 +137,3 @@ class ResultSubmissionRead(SQLModel):
     validator: Optional[UserRead]
     validation_dt: Optional[datetime]
     created_dt: datetime
-
