@@ -1,5 +1,9 @@
 from sqlmodel import SQLModel, create_engine, Session
-from schemas import User, Team, ResultSubmission, UserRating
+from models.result import ResultSubmission
+from models.team import Team
+from models.rating import UserRating
+from models.user import User
+
 DATABASE_URL = "sqlite:///./footy_tracker_sqlmodel.db"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 

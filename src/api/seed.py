@@ -1,7 +1,12 @@
 from sqlmodel import Session
 
 import crud
-import schemas
+import crud.result
+import crud.user
+import models
+import models.result
+import models.team
+import models.user
 from database import engine
 
 
@@ -13,7 +18,7 @@ nicknames = [
 ]
 
 users = [
-    schemas.UserCreate(
+    models.user.UserCreate(
         nickname=nicname,
         email=f"{nicname.lower()}@mail.com",
         password=nicname.lower(),
@@ -22,18 +27,18 @@ users = [
 
 with Session(engine) as session:
     for user in users:
-        crud.create_user(session=session, user=user)
+        crud.user.create_user(session=session, user=user)
 
 with Session(engine) as session:
-    crud.create_result(
+    crud.result.create_result(
         session=session,
-        result=schemas.ResultSubmissionCreate(
+        result=models.result.ResultSubmissionCreate(
             submitter_id=1,
-            team1=schemas.TeamCreate(
+            team1=models.team.TeamCreate(
                 defender_user_id=1,
                 attacker_user_id=2,
             ),
-            team2=schemas.TeamCreate(
+            team2=models.team.TeamCreate(
                 defender_user_id=3,
                 attacker_user_id=4,
             ),
