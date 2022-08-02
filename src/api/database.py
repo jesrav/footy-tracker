@@ -4,7 +4,7 @@ from models.team import Team
 from models.rating import UserRating
 from models.user import User
 
-DATABASE_URL = "sqlite:///./footy_tracker_sqlmodel.db"
+DATABASE_URL = "sqlite:///./footy_tracker.db"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
 engine = create_engine(DATABASE_URL, echo=True)
