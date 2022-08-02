@@ -32,11 +32,11 @@ class SubmitResultViewModel(ViewModelBase):
         self.goals_team2 = int(form.get('goals_team2'))
 
         if not all([
-            self.team1_defender,
-            self.team1_attacker,
-            self.team2_defender,
-            self.team2_attacker,
-            self.goals_team1,
-            self.goals_team2,
+            self.team1_defender is not None,
+            self.team1_attacker is not None,
+            self.team2_defender is not None,
+            self.team2_attacker is not None,
+            self.goals_team1 is not None,
+            self.goals_team2 is not None,
             ]):
             self.error = "All fields need to be filled."

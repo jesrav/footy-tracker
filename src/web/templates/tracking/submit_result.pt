@@ -153,7 +153,7 @@
 
 
     function updateGoalInputStatus(goalInputElement, goalWarningTextElement, goalInputStatusIconElement) {
-        if (isPositiveInteger(goalInputElement.value)) {
+        if (isLargerThanZeroInteger(goalInputElement.value)) {
             goalInputElement.classList.remove('is-danger')
             goalInputElement.classList.add('is-success')
 
@@ -215,9 +215,9 @@
         element.classList.remove('is-hidden')
     }
 
-    function isPositiveInteger(integerInput) {
+    function isLargerThanZeroInteger(integerInput) {
       const num = Number(integerInput);
-      return Number.isInteger(num) && num > 0;
+      return Number.isInteger(num) && num >= 0;
     }
     
 </script>
