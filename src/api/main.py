@@ -25,8 +25,8 @@ def on_startup():
 
 @app.post("/users/", response_model=models.user.UserRead)
 def create_user(user: models.user.UserCreate, session: Session = Depends(get_session)):
-    user = crud.user.get_user_by_email(session, email=user.email)
-    if user:
+    preexisting_user = crud.user.get_user_by_email(session, email=user.email)
+    if preexisting_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.user.create_user(session=session, user=user)
 
