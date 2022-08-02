@@ -11,5 +11,4 @@ starlette==0.16.0
 SQLAlchemy==1.4.35
 passlib
 
-elo
 sqlmodel
