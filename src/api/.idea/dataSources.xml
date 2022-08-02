@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="footy_tracker" uuid="a30b37ba-7523-4158-a1e5-41f6951a2f60">
+    <data-source source="LOCAL" name="footy_tracker_sqlmodel" uuid="3ee442d1-32d3-496a-b15a-fa0eabda45e2">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/footy_tracker.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/footy_tracker_sqlmodel.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
+      <libraries>
+        <library>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.38.0/sqlite-jdbc-3.38.0.jar</url>
+        </library>
+      </libraries>
     </data-source>
   </component>
 </project>

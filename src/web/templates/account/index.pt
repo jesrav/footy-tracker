@@ -5,7 +5,7 @@
 
         <h1 class="title">Welcome to your account ${ user.nickname }!</h1>
         <br>
-        <h1 class="subtitle">Your rating is ${ user.latest_rating.rating }!</h1>
+        <h1 class="subtitle">Your rating is ${ latest_user_rating.rating }!</h1>
         <br>
             <div tal:condition="results_to_approve" class="container">
                 <h2 class="subtitle">Results for you to validate</h2>
