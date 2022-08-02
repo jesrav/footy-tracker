@@ -14,12 +14,12 @@ def get_user(session: Session, user_id: int) -> Optional[user_models.User]:
 
 def get_user_by_email(session: Session, email: str) -> Optional[user_models.User]:
     statement = select(user_models.User).filter(user_models.User.email == email)
-    return session.exec(statement).one()
+    return session.exec(statement).first()
 
 
 def get_user_by_nickname(session: Session, nickname: str) -> Optional[user_models.User]:
     statement = select(user_models.User).filter(user_models.User.nickname == nickname)
-    return session.exec(statement).one()
+    return session.exec(statement).first()
 
 
 def get_users(session: Session, skip: int = 0, limit: int = 100) -> List[user_models.User]:
