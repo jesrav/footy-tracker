@@ -31,7 +31,7 @@
             <div class="field">
                 <label class="label">Password</label>
                 <div class="control has-icons-left has-icons-right">
-                    <input class="input" type="text" name="password" placeholder=" Password" value="${ password }" id="password-input">
+                    <input class="input" type="password" name="password" placeholder=" Password" value="${ password }" id="password-input">
                     <span class="icon is-small is-left">
                         <ion-icon name="lock-closed"></ion-icon>
                      </span>

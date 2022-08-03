@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import httpx
@@ -7,7 +8,7 @@ from models.result import ResultSubmissionCreate, ResultSubmissionRead
 from models.ratings import UserRating
 from models.validation_error import ValidationError
 
-BASE_WEB_API_URL = "http://127.0.0.1:8000"
+BASE_WEB_API_URL = os.environ.get("API_URL")
 
 
 async def register_result(result: ResultSubmissionCreate) -> ResultSubmissionRead:

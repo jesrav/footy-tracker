@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP" />
+    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/templates/account/register.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/account/register.pt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/viewmodels/tracking/submit_result_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/tracking/submit_result_viewmodel.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,13 +48,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/jesravnbol/code/personal/footy-tracker/src/web",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/web" />
       <recent name="$PROJECT_DIR$/src/api" />
       <recent name="$PROJECT_DIR$/services" />
       <recent name="$PROJECT_DIR$/viewmodels/tracking" />
       <recent name="$PROJECT_DIR$/views" />
-      <recent name="$PROJECT_DIR$/data" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/web" />
@@ -73,6 +88,7 @@
       <workItem from="1657563613024" duration="11058000" />
       <workItem from="1657884171357" duration="26588000" />
       <workItem from="1658131124592" duration="323000" />
+      <workItem from="1659450072010" duration="6124000" />
     </task>
     <task id="LOCAL-00001" summary="Playing around">
       <created>1657400976590</created>
@@ -200,7 +216,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658093343758</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="WIP">
+      <created>1659510372889</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1659510372889</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

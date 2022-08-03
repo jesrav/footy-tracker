@@ -3,7 +3,7 @@
         <div class="content">
         <div class="section">
 
-        <h1 class="title">Welcome to your account ${ user.nickname }!</h1>
+        <h1 class="title">Welcome to your account ${ user.nickname }!!!!!!!!</h1>
         <br>
         <h1 class="subtitle">Your rating is ${ latest_user_rating.rating }!</h1>
         <br>

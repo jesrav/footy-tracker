@@ -12,3 +12,6 @@ SQLAlchemy==1.4.35
 passlib
 
 sqlmodel
+
+asyncpg==0.24.0
+psycopg2
