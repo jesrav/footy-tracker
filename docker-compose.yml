@@ -8,7 +8,7 @@ services:
     #volumes:
     #  - ./project:/usr/src/web
     ports:
-      - 8004:8000
+      - 80:8000
     environment:
       - API_URL=http://api:8001
     depends_on:
