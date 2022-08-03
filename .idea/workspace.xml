@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP" />
+    <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/.idea/web.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/services/tracking_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/services/tracking_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/services/user_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/services/user_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/templates/account/index.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/account/index.pt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -44,13 +52,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/Users/jesravnbol/code/personal/footy-tracker/src/web",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/web" />
       <recent name="$PROJECT_DIR$/src/api" />
       <recent name="$PROJECT_DIR$/services" />
       <recent name="$PROJECT_DIR$/viewmodels/tracking" />
       <recent name="$PROJECT_DIR$/views" />
-      <recent name="$PROJECT_DIR$/data" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/web" />
@@ -73,6 +92,7 @@
       <workItem from="1657563613024" duration="11058000" />
       <workItem from="1657884171357" duration="26588000" />
       <workItem from="1658131124592" duration="323000" />
+      <workItem from="1659450072010" duration="4077000" />
     </task>
     <task id="LOCAL-00001" summary="Playing around">
       <created>1657400976590</created>

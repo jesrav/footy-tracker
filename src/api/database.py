@@ -1,10 +1,9 @@
-from sqlmodel import SQLModel, create_engine, Session
-from models.result import ResultSubmission
-from models.team import Team
-from models.rating import UserRating
-from models.user import User
+import os
 
-DATABASE_URL = "sqlite:///./footy_tracker.db"
+from sqlmodel import SQLModel, create_engine, Session
+
+#DATABASE_URL = "sqlite:///./footy_tracker.db"
+DATABASE_URL = os.environ.get("DATABASE_URL")
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
 engine = create_engine(DATABASE_URL, echo=True)

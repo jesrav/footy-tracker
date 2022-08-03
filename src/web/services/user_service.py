@@ -1,3 +1,4 @@
+import os
 from typing import Optional, List
 
 import httpx
@@ -6,7 +7,7 @@ from httpx import Response
 from models.user import UserRead
 from models.validation_error import ValidationError
 
-BASE_WEB_API_URL = "http://127.0.0.1:8000"
+BASE_WEB_API_URL = os.environ.get("API_URL")
 
 
 async def create_account(nickname: str, email: str, password: str) -> Optional[UserRead]:
