@@ -1,10 +1,15 @@
+import os
 from typing import List
 
+import sendgrid
+from sendgrid.helpers.mail import Mail, Email, To, Content
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 from sqlmodel import SQLModel
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from starlette.background import BackgroundTasks
+from starlette.responses import JSONResponse
 
-import crud, models
 import crud.rating
 import crud.result
 import crud.user
@@ -114,8 +119,15 @@ def validate_result(user_id: int, result_id: int, approved: bool, session: Sessi
 
 
 @app.post("/results/", response_model=models.result.ResultSubmissionRead)
-def create_result(result: models.result.ResultSubmissionCreate, session: Session = Depends(get_session)):
-    return crud.result.create_result(session=session, result=result)
+def create_result(
+        result: models.result.ResultSubmissionCreate,
+        background_tasks: BackgroundTasks,
+        session: Session = Depends(get_session)
+):
+    result = crud.result.create_result(session=session, result=result)
+    for user in result.users_to_notify:
+        background_tasks.add_task(send_results_for_validation_email, user.email)
+    return result
 
 
 @app.get("/results/", response_model=List[models.user.UserRead])
@@ -147,15 +159,18 @@ def read_latest_rating(user_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="User not found")
     return crud.rating.get_latest_user_rating(session, user_id=user_id)
 
-#
-# @app.post("/results/approve/", response_model=schemas.ResultSubmissionOut)
-# def approve_result(result_approval: schemas.ResultApprovalBase, session: Session = Depends(get_session)):
-#     result = crud.get_result(session, result_id=result_approval.result_submission_id)
-#     if result is None:
-#         raise HTTPException(status_code=404, detail="Result to be validated not found")
-#     if result_approval.reviewer_id == result.submitter_id:
-#         raise HTTPException(
-#             status_code=400, detail="Review user can not be the same as the user that submitted the result"
-#         )
-#
-#     return crud.create_result_approval(session=session, result_approval=result_approval)
+
+async def send_results_for_validation_email(email: str):
+    sg = sendgrid.SendGridAPIClient(api_key=os.environ.get("SENDGRID_API_KEY"))
+    from_email = Email("jesravnbol@hotmail.com")
+    to_email = To(email)
+    subject = "You have new results to validate. See them at https://footy-tracker.azurewebsites.net/account."
+    content = Content("text/plain", "and easy to do anywhere, even with Python")
+    mail = Mail(from_email, to_email, subject, content)
+
+    # Get a JSON-ready representation of the Mail object
+    mail_json = mail.get()
+
+    # Send an HTTP POST request to /mail/send
+    response = sg.client.mail.send.post(request_body=mail_json)
+    return response.status_code

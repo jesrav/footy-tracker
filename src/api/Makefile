@@ -1,3 +1,6 @@
+include .env
+export
+
 run:
 	uvicorn main:app --reload
 

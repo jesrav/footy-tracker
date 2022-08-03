@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -24,6 +24,13 @@ class ResultSubmission(SQLModel, table=True):
     team1: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team1_id]"))
     team2: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team2_id]"))
 
+    @property
+    def users_to_notify(self) -> List[User]:
+        if self.team2.user_in_team(self.submitter_id):
+            return self.team2.get_team_members()
+        elif self.team1.user_in_team(self.submitter_id):
+            return self.team1.get_team_members()
+
 
 class ResultSubmissionBase(SQLModel):
     submitter_id: int
@@ -31,9 +38,12 @@ class ResultSubmissionBase(SQLModel):
     team2: TeamCreate
     goals_team1: int
     goals_team2: int
-    approved: Optional[bool]
-    validator_id: Optional[int]
-    validation_dt: Optional[datetime]
+    #approved: Optional[bool]
+    #validator_id: Optional[int]
+    #validation_dt: Optional[datetime]
+
+
+
 
 
 class ResultSubmissionCreate(ResultSubmissionBase):
