@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.rating import UserRating
@@ -9,7 +9,7 @@ from models.rating import UserRating
 
 class UserBase(SQLModel):
     nickname: str
-    email: str
+    email: EmailStr
 
 
 class User(UserBase, table=True):
@@ -29,7 +29,7 @@ class UserCreate(UserBase):
 
 
 class UserLogin(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 

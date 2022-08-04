@@ -16,7 +16,6 @@ async def register_result(result: ResultSubmissionCreate) -> ResultSubmissionRea
         resp: Response = await client.post(url=BASE_WEB_API_URL + "/results/", json=result.dict())
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
-        print(resp.json())
     return ResultSubmissionRead(**resp.json())
 
 
