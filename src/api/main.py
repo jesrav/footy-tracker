@@ -1,17 +1,8 @@
-from typing import List
-
-from fastapi import Depends, FastAPI, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
 from sqlmodel import SQLModel
 
-import crud, models
-import crud.rating
-import crud.result
-import crud.user
-import models.rating
-import models.result
-import models.user
-from database import engine, create_db_and_tables, get_session
+from database import engine, create_db_and_tables
+from routes import user, result, rating
 
 SQLModel.metadata.create_all(engine)
 
@@ -23,139 +14,10 @@ def on_startup():
     create_db_and_tables()
 
 
-@app.post("/users/", response_model=models.user.UserRead)
-def create_user(user: models.user.UserCreate, session: Session = Depends(get_session)):
-    preexisting_user = crud.user.get_user_by_email(session, email=user.email)
-    if preexisting_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.user.create_user(session=session, user=user)
+def configure_routing():
+    app.include_router(user.router)
+    app.include_router(result.router)
+    app.include_router(rating.router)
 
 
-@app.post("/users/login/", response_model=models.user.UserRead)
-def login_user(user: models.user.UserLogin, session: Session = Depends(get_session)):
-    user = crud.user.login_user(session, email=user.email, password=user.password)
-    if not user:
-        raise HTTPException(status_code=404, detail="Email or password not correct")
-    return user
-
-
-@app.get("/users/", response_model=List[models.user.UserRead])
-def read_users(skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
-    users = crud.user.get_users(session, skip=skip, limit=limit)
-    return users
-
-
-@app.get("/users/{user_id}", response_model=models.user.UserRead)
-def read_user(user_id: int, session: Session = Depends(get_session)):
-    users = crud.user.get_user(session, user_id=user_id)
-    if users is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return users
-
-
-@app.get("/users/by_email/{email}", response_model=models.user.UserRead)
-def read_users_by_email(email: str, session: Session = Depends(get_session)):
-    user = crud.user.get_user_by_email(session, email=email)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-@app.get("/users/by_nickname/{nickname}", response_model=models.user.UserRead)
-def read_users_by_email(nickname: str, session: Session = Depends(get_session)):
-    user = crud.user.get_user_by_nickname(session, nickname=nickname)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-@app.get("/users/{user_id}/results_for_approval/", response_model=List[models.result.ResultSubmissionRead])
-def read_results_for_approval(user_id: int, session: Session = Depends(get_session)):
-    user = crud.user.get_user(session, user_id=user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return crud.result.get_results_for_validation(session, validator_id=user.id)
-
-
-@app.post("/users/{user_id}/validate_result/{result_id}/", response_model=models.result.ResultSubmissionRead)
-def validate_result(user_id: int, result_id: int, approved: bool, session: Session = Depends(get_session)):
-    user = crud.user.get_user(session, user_id=user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    result = crud.result.get_result(session, result_id=result_id)
-    if result is None:
-        raise HTTPException(status_code=404, detail="Result submission not found")
-
-    if result.submitter_id == user_id:
-        raise HTTPException(status_code=400, detail="User can not validate result that they submitted themselves")
-
-    # Validator must not be on one of the teams and must not be the same team as the submitter
-    if user_id in [result.team1.defender_user_id, result.team1.attacker_user_id]:
-        validator_team = result.team1
-    elif user_id in [result.team2.defender_user_id, result.team2.attacker_user_id]:
-        validator_team = result.team2
-    else:
-        validator_team = None
-    if not validator_team:
-        raise HTTPException(status_code=400, detail="Validating user must be part of one of the teams int the match")
-    if result.submitter_id in [validator_team.defender_user_id, validator_team.attacker_user_id]:
-        raise HTTPException(
-            status_code=400, detail="Validating user can not be on the same team as the user that submitted the result"
-        )
-
-    validated_result = crud.result.validate_result(session, validator_id=user.id, result_id=result_id, approved=approved)
-
-    if approved:
-        _ = crud.rating.update_ratings(session, result=validated_result)
-
-    session.refresh(validated_result)
-    return validated_result
-
-
-@app.post("/results/", response_model=models.result.ResultSubmissionRead)
-def create_result(result: models.result.ResultSubmissionCreate, session: Session = Depends(get_session)):
-    return crud.result.create_result(session=session, result=result)
-
-
-@app.get("/results/", response_model=List[models.user.UserRead])
-def read_users(skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
-    results = crud.result.get_results(session, skip=skip, limit=limit)
-    return results
-
-
-@app.get("/results/{result_id}", response_model=models.result.ResultSubmissionRead)
-def read_result(result_id: int, session: Session = Depends(get_session)):
-    result = crud.result.get_result(session, result_id=result_id)
-    if result is None:
-        raise HTTPException(status_code=404, detail="User result found")
-    return result
-
-
-@app.get("/ratings/{user_id}", response_model=List[models.rating.UserRatingRead])
-def read_ratings(user_id: int, skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
-    user = crud.user.get_user(session, user_id=user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return crud.rating.get_ratings(session, user_id=user_id, skip=skip, limit=limit)
-
-
-@app.get("/ratings/{user_id}/latest", response_model=models.rating.UserRatingRead)
-def read_latest_rating(user_id: int, session: Session = Depends(get_session)):
-    user = crud.user.get_user(session, user_id=user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return crud.rating.get_latest_user_rating(session, user_id=user_id)
-
-#
-# @app.post("/results/approve/", response_model=schemas.ResultSubmissionOut)
-# def approve_result(result_approval: schemas.ResultApprovalBase, session: Session = Depends(get_session)):
-#     result = crud.get_result(session, result_id=result_approval.result_submission_id)
-#     if result is None:
-#         raise HTTPException(status_code=404, detail="Result to be validated not found")
-#     if result_approval.reviewer_id == result.submitter_id:
-#         raise HTTPException(
-#             status_code=400, detail="Review user can not be the same as the user that submitted the result"
-#         )
-#
-#     return crud.create_result_approval(session=session, result_approval=result_approval)
+configure_routing()
