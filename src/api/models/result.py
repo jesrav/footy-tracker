@@ -47,6 +47,16 @@ class ResultSubmissionCreate(SQLModel):
             raise ValueError('Submitter must be on one of the teams.')
         return values
 
+    @root_validator(pre=False)
+    def all_contestants_must_differ(cls, values):
+        team1 = values.get('team1')
+        team2 = values.get('team2')
+        if team1 and team1 and len(
+            {team1.defender_user_id, team1.attacker_user_id, team2.defender_user_id, team2.attacker_user_id}
+        ) != 4:
+            raise ValueError('Match contestants must be 4 unique users.')
+        return values
+
 
 class ResultSubmissionRead(SQLModel):
     id: int

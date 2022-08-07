@@ -17,7 +17,7 @@ class Team(SQLModel, table=True):
     attacker: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Team.attacker_user_id]"))
 
 
-class TeamBase(SQLModel):
+class TeamCreate(SQLModel):
     defender_user_id: int
     attacker_user_id: int
 
@@ -30,10 +30,6 @@ class TeamBase(SQLModel):
 
     def user_in_team(self, user_id: int) -> bool:
         return user_id in [self.defender_user_id, self.attacker_user_id]
-
-
-class TeamCreate(TeamBase):
-    pass
 
 
 class TeamRead(SQLModel):
