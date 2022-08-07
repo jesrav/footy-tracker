@@ -24,20 +24,17 @@ class UserRating(SQLModel, table=True):
         )
 
 
-class UserRatingBase(SQLModel):
+class UserRatingCreate(SQLModel):
     user_id: int
     rating_defence: float
     rating_offence: float
     latest_result_at_update_id: Optional[int]
 
 
-class UserRatingCreate(UserRatingBase):
-    pass
-
-
 class UserRatingRead(SQLModel):
     id: int
     user: UserRead
-    rating: float
+    rating_defence: float
+    rating_offence: float
     latest_result_at_update_id: Optional[int]
     created_dt: datetime

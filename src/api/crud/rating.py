@@ -6,10 +6,11 @@ from services.rating import get_updated_elo_player_ratings
 from models import rating as rating_models, result as result_models
 
 
-def add_rating(session: Session, user_id: int, rating: float):
+def add_rating(session: Session, user_id: int, rating_defence: float, rating_offence: float):
     user_rating = rating_models.UserRating(
         user_id=user_id,
-        rating=rating,
+        rating_defence=rating_defence,
+        rating_offence=rating_offence,
     )
     session.add(user_rating)
     session.commit()
@@ -27,7 +28,12 @@ def update_ratings(session: Session, result: result_models.ResultSubmission) -> 
     user_ratings = []
     for user_rating in new_user_ratings:
         user_rating.latest_result_at_update_id = result.id
-        user_ratings.append(add_rating(session, user_id=user_rating.user_id, rating=user_rating.rating))
+        user_ratings.append(add_rating(
+            session,
+            user_id=user_rating.user_id,
+            rating_defence=user_rating.rating_defence,
+            rating_offence=user_rating.rating_defence
+        ))
     return user_ratings
 
 

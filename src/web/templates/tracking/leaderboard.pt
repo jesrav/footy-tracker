@@ -15,7 +15,8 @@
                 <th></th>
                 <th>Ranking</th>
                 <th>Nickname</th>
-                <th>Rating</th>
+                <th>Rating as defender</th>
+                <th>Rating as attacker</th>
                 <th></th>
               </tr>
               </thead>
@@ -28,7 +29,8 @@
                 </td>
                 <td data-label="Ranking">${r.ranking}</td>
                 <td data-label="Nickname">${r.user.nickname}</td>
-                <td data-label="Rating">${r.rating}</td>
+                <td data-label="Rating as defender">${r.rating}</td>
+                <td data-label="Rating as attacker">${r.rating}</td>
               </tr>
 
               </tbody>
