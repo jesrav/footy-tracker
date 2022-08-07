@@ -20,7 +20,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr tal:repeat="r latest_user_ratings">
+              <tr tal:repeat="r latest_user_ratings" class="table-row" id="${r.user.id}">
                 <td class="is-image-cell">
                   <div class="image">
                     <img src="https://avatars.dicebear.com/v2/initials/${r.user.nickname}.svg" class="is-rounded">
