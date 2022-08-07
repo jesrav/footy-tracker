@@ -16,8 +16,9 @@ def get_new_elo_ratings(winner_old_rating: float, looser_old_rating: float) -> T
 def get_updated_elo_player_ratings(
         team1: team_models.Team, team2: team_models.Team, team1_goals: int, team2_goals: int
 ) -> List[rating_models.UserRatingCreate]:
-    team1_rating = team1.defender.latest_rating.rating + team1.attacker.latest_rating.rating
-    team2_rating = team2.defender.latest_rating.rating + team2.attacker.latest_rating.rating
+
+    team1_rating = team1.defender.latest_rating.rating_defence + team1.attacker.latest_rating.rating_offence
+    team2_rating = team2.defender.latest_rating.rating_defence + team2.attacker.latest_rating.rating_offence
 
     if team1_goals > team2_goals:
         new_team1_rating, new_team2_rating = get_new_elo_ratings(team1_rating, team2_rating)
@@ -30,8 +31,8 @@ def get_updated_elo_player_ratings(
     team2_rating_delta = new_team2_rating - team2_rating
 
     return [
-        team1.defender.latest_rating.get_new_rating(rating_delta=team1_rating_delta),
-        team1.attacker.latest_rating.get_new_rating(rating_delta=team1_rating_delta),
-        team2.defender.latest_rating.get_new_rating(rating_delta=team2_rating_delta),
-        team2.attacker.latest_rating.get_new_rating(rating_delta=team2_rating_delta),
+        team1.defender.latest_rating.get_new_rating(rating_delta_defence=team1_rating_delta),
+        team1.attacker.latest_rating.get_new_rating(rating_delta_offence=team1_rating_delta),
+        team2.defender.latest_rating.get_new_rating(rating_delta_defence=team2_rating_delta),
+        team2.attacker.latest_rating.get_new_rating(rating_delta_offence=team2_rating_delta),
     ]

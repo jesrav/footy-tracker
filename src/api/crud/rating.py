@@ -18,17 +18,17 @@ def add_rating(session: Session, user_id: int, rating: float):
 
 
 def update_ratings(session: Session, result: result_models.ResultSubmission) -> List[rating_models.UserRating]:
-    new_ratings = get_updated_elo_player_ratings(
+    new_user_ratings = get_updated_elo_player_ratings(
         team1_goals=result.goals_team1,
         team2_goals=result.goals_team2,
         team1=result.team1,
         team2=result.team2,
     )
-    ratings = []
-    for user_rating in new_ratings:
+    user_ratings = []
+    for user_rating in new_user_ratings:
         user_rating.latest_result_at_update_id = result.id
-        ratings.append(add_rating(session, user_id=user_rating.user_id, rating=user_rating.rating))
-    return ratings
+        user_ratings.append(add_rating(session, user_id=user_rating.user_id, rating=user_rating.rating))
+    return user_ratings
 
 
 def get_latest_user_rating(session: Session, user_id: int) -> rating_models.UserRating:
