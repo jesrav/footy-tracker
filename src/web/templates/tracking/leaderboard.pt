@@ -3,7 +3,7 @@
 
 
         <div class="content">
-            Bla bla
+            <h1 tal:repeat="r latest_user_ratings" class="subtitle">User ${ r.user_id } has rating ${ r.rating }!</h1>
         </div>
     </div>
 </div>
