@@ -1,10 +1,11 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
         <div class="content">
-        <div class="section">
+
             <div class="columns">
                 <div class="column is-one-third">
                     <div class="card">
+
                         <div class="card-image">
                             <figure class="image is-4by3">
                                 <img src="https://avatars.dicebear.com/v2/initials/${user.nickname}.svg"
@@ -19,18 +20,28 @@
                             </div>
 
                             <div class="content">
-                                Overall rating is:  ${ latest_user_rating.rating }
-                                Rating as a defender is: ${ latest_user_rating.rating_defence }
-                                Rating as an attacker is ${ latest_user_rating.rating_offence }
-                                <br>
-
+                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                  <tr>
+                                    <th>Overall rating</th>
+                                    <th>${ latest_user_rating.rating }</th>
+                                  </tr>
+                                  <tr>
+                                      <th>Rating as a defender</th>
+                                      <th>${ latest_user_rating.rating_defence }</th>
+                                  </tr>
+                                  <tr>
+                                      <th>Rating as an attacker</th>
+                                      <th>${ latest_user_rating.rating_offence }</th>
+                                  </tr>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="column is-two-third">
-<div tal:condition="results_to_approve" class="container">
+                <div class="section">
+                <div tal:condition="results_to_approve" class="container">
                 <h2 class="subtitle">Results for you to validate</h2>
                 <div class="b-table">
                   <div class="table-wrapper has-mobile-cards">
@@ -83,10 +94,7 @@
               </div>
 
             </div>
-
-
-
-
+            </div>
 
 
             </div>
@@ -137,7 +145,6 @@
                     </div>
                 </div>
 
-        </div>
         </div>
 
 
