@@ -3,6 +3,8 @@ from typing import Optional
 
 from sqlmodel import SQLModel, Field, Relationship
 
+from models.user import UserRead
+
 
 class UserRating(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -30,6 +32,9 @@ class UserRatingCreate(UserRatingBase):
     pass
 
 
-class UserRatingRead(UserRatingBase):
+class UserRatingRead(SQLModel):
     id: int
+    user: UserRead
+    rating: float
+    latest_result_at_update_id: Optional[int]
     created_dt: datetime
