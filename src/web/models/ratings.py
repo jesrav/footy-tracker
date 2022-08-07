@@ -15,3 +15,7 @@ class UserRating(BaseModel):
     latest_result_at_update_id: Optional[int]
     created_dt: datetime
 
+    @property
+    def rating(self):
+        return (self.rating_defence + self.rating_offence) / 2
+

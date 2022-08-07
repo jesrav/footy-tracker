@@ -2,12 +2,35 @@
     <div metal:fill-slot="content" tal:omit-tag="True">
         <div class="content">
         <div class="section">
+            <div class="columns">
+                <div class="column is-one-third">
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image is-4by3">
+                                <img src="https://avatars.dicebear.com/v2/initials/${user.nickname}.svg"
+                                     class="is-rounded">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-content">
+                                    <p class="title is-1">${user.nickname}</p>
+                                </div>
+                            </div>
 
-        <h1 class="title">Welcome to your account ${ user.nickname }!!!!!!!!</h1>
-        <br>
-        <h1 class="subtitle">Your rating is ${ latest_user_rating.rating }!</h1>
-        <br>
-            <div tal:condition="results_to_approve" class="container">
+                            <div class="content">
+                                Overall rating is:  ${ latest_user_rating.rating }
+                                Rating as a defender is: ${ latest_user_rating.rating_defence }
+                                Rating as an attacker is ${ latest_user_rating.rating_offence }
+                                <br>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column is-two-third">
+<div tal:condition="results_to_approve" class="container">
                 <h2 class="subtitle">Results for you to validate</h2>
                 <div class="b-table">
                   <div class="table-wrapper has-mobile-cards">
@@ -58,6 +81,12 @@
                   </div>
                 </div>
               </div>
+
+            </div>
+
+
+
+
 
 
             </div>
@@ -113,6 +142,7 @@
 
 
     </div>
+</div>
 </div>
 
 <script>

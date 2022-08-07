@@ -44,7 +44,8 @@ def update_ratings(session: Session, result: result_models.ResultSubmission) -> 
             session,
             user_id=user_rating.user_id,
             rating_defence=user_rating.rating_defence,
-            rating_offence=user_rating.rating_defence
+            rating_offence=user_rating.rating_offence,
+            result_id=result.id,
         ))
     return user_ratings
 
@@ -83,11 +84,3 @@ def get_latest_ratings(session: Session) -> List[rating_models.UserRating]:
         )
     )
     return session.exec(statement).all()
-
-
-
-
-
-
-
-

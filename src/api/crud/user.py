@@ -38,7 +38,8 @@ def create_user(session: Session, user: user_models.UserCreate) -> user_models.U
     # Create initial rating
     user_rating = rating_models.UserRating(
         user_id=user.id,
-        rating=INITIAL_USER_RATING,
+        rating_defence=INITIAL_USER_RATING,
+        rating_offence=INITIAL_USER_RATING,
     )
     session.add(user_rating)
     session.commit()

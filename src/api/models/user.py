@@ -1,13 +1,13 @@
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlmodel import SQLModel, Field, Relationship
 
 
 class UserBase(SQLModel):
     nickname: str
-    email: str
+    email: EmailStr
 
 
 class User(UserBase, table=True):
