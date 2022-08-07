@@ -4,8 +4,6 @@ from typing import Optional, List
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.rating import UserRating
-
 
 class UserBase(SQLModel):
     nickname: str

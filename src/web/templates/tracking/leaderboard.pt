@@ -3,7 +3,39 @@
 
 
         <div class="content">
-            Bla bla
+
+        <div class="container">
+        <br>
+        <h2 class="subtitle">Learderboard</h2>
+        <div class="b-table">
+          <div class="table-wrapper has-mobile-cards">
+            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+              <thead>
+              <tr>
+                <th></th>
+                <th>Ranking</th>
+                <th>Nickname</th>
+                <th>Rating</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr tal:repeat="r latest_user_ratings" class="table-row" id="${r.user.id}">
+                <td class="is-image-cell">
+                  <div class="image">
+                    <img src="https://avatars.dicebear.com/v2/initials/${r.user.nickname}.svg" class="is-rounded">
+                  </div>
+                </td>
+                <td data-label="Ranking">${r.ranking}</td>
+                <td data-label="Nickname">${r.user.nickname}</td>
+                <td data-label="Rating">${r.rating}</td>
+              </tr>
+
+              </tbody>
+            </table>
         </div>
     </div>
+</div>
+</div>
+</div>
 </div>
