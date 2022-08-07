@@ -31,6 +31,7 @@ class SubmitResultViewModel(ViewModelBase):
         self.team2_attacker = form.get('team2_attacker')
         self.goals_team1 = form.get('goals_team1')
         self.goals_team2 = form.get('goals_team2')
+        self.users: List[UserRead] = await user_service.get_all_users()
 
         if not all([
             self.team1_defender != "",
@@ -41,3 +42,10 @@ class SubmitResultViewModel(ViewModelBase):
             self.goals_team2 != "",
             ]):
             self.error = "All fields need to be filled."
+        elif len({
+                self.team1_defender,
+                self.team1_attacker,
+                self.team2_defender,
+                self.team2_attacker,
+            }):
+                self.error = "Match contestants must be 4 unique users."
