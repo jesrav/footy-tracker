@@ -8,6 +8,7 @@ from models.user import UserRead
 
 class UserRating(BaseModel):
     id: int
+    ranking: Optional[int]
     user: UserRead
     rating: float
     latest_result_at_update_id: Optional[int]

@@ -19,3 +19,5 @@ class LeaderboardViewModel(ViewModelBase):
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)
         self.latest_user_ratings = await tracking_service.get_latest_user_ratings()
+        for i, user_rating in enumerate(self.latest_user_ratings, start=1):
+            user_rating.ranking = i

@@ -65,5 +65,6 @@ def get_latest_ratings(session: Session) -> List[rating_models.UserRating]:
             subquery, and_(rating_models.UserRating.user_id == subquery.c.user_id,
             rating_models.UserRating.created_dt == subquery.c.maxdate)
         )
+        .order_by(rating_models.UserRating.rating.asc())
     )
     return session.exec(statement).all()
