@@ -62,7 +62,7 @@ def create_result(result: result_models.ResultSubmissionCreate, session: Session
     return result_crud.create_result(session=session, result=result)
 
 
-@router.get("/results/", response_model=List[user_models.UserRead])
+@router.get("/results/", response_model=List[result_models.ResultSubmissionRead])
 def read_results(skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
     results = result_crud.get_results(session, skip=skip, limit=limit)
     return results
