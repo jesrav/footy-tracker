@@ -13,12 +13,20 @@ from database import get_session
 router = APIRouter()
 
 
-@router.get("/users/{user_id}/results_for_approval/", response_model=List[result_models.ResultSubmissionRead])
+@router.get("/users/{user_id}/results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead])
 def read_results_for_approval(user_id: int, session: Session = Depends(get_session)):
     user = user_crud.get_user(session, user_id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return result_crud.get_results_for_validation(session, validator_id=user.id)
+    return result_crud.get_results_for_approval_by_user(session, user_id=user.id)
+
+
+@router.get("/users/{user_id}/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead])
+def read_results_for_approval(user_id: int, session: Session = Depends(get_session)):
+    user = user_crud.get_user(session, user_id=user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return result_crud.get_results_for_approval_submitted_by_users_team(session, user_id=user.id)
 
 
 @router.post("/users/{user_id}/validate_result/{result_id}/", response_model=result_models.ResultSubmissionRead)
@@ -48,7 +56,7 @@ def validate_result(user_id: int, result_id: int, approved: bool, session: Sessi
             status_code=400, detail="Validating user can not be on the same team as the user that submitted the result"
         )
 
-    validated_result = result_crud.validate_result(session, validator_id=user.id, result_id=result_id, approved=approved)
+    validated_result = result_crud.approve_result(session, validator_id=user.id, result_id=result_id, approved=approved)
 
     if approved:
         _ = ratings_crud.update_ratings(session, result=validated_result)

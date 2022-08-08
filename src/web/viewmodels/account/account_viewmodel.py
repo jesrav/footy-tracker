@@ -15,18 +15,26 @@ class AccountViewModel(ViewModelBase):
         self.user: Optional[UserRead] = None
         self.latest_user_rating: Optional[UserRating] = None
         self.results_to_approve: List[ResultSubmissionRead] = []
+        self.results_for_opposition_to_approve: List[ResultSubmissionRead] = []
         self.result_id: Optional[int] = None
         self.approved: Optional[bool] = None
 
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)
-        results_to_approve = await tracking_service.get_results_for_approval(self.user_id)
+        results_to_approve = await tracking_service.get_results_for_approval_by_user(self.user_id)
+        results_for_opposition_to_approve = await tracking_service.get_results_for_approval_submitted_by_users_team(self.user_id)
         self.latest_user_rating = await tracking_service.get_latest_user_rating(self.user_id)
         self.results_to_approve = [
             ResultForUserValidation.from_result_submission(
                 user_id=self.user_id,
                 result=r,
             ) for r in results_to_approve
+        ]
+        self.results_for_opposition_to_approve = [
+            ResultForUserValidation.from_result_submission(
+                user_id=self.user_id,
+                result=r,
+            ) for r in results_for_opposition_to_approve
         ]
 
     async def load_form(self):

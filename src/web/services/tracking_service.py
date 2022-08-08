@@ -19,9 +19,19 @@ async def register_result(result: ResultSubmissionCreate) -> ResultSubmissionRea
     return ResultSubmissionRead(**resp.json())
 
 
-async def get_results_for_approval(user_id: int) -> List[ResultSubmissionRead]:
+async def get_results_for_approval_by_user(user_id: int) -> List[ResultSubmissionRead]:
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval/")
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval_by_user/")
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [ResultSubmissionRead(**r) for r in resp.json()]
+
+
+async def get_results_for_approval_submitted_by_users_team(user_id: int) -> List[ResultSubmissionRead]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(
+            url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval_submitted_by_users_team/"
+        )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [ResultSubmissionRead(**r) for r in resp.json()]
