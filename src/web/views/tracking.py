@@ -14,8 +14,9 @@ router = fastapi.APIRouter()
 
 @router.get('/leaderboard')
 @template()
-def leaderboard(request: Request):
+async def leaderboard(request: Request):
     vm = LeaderboardViewModel(request)
+    await vm.load()
     return vm.to_dict()
 
 

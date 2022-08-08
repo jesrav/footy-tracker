@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
+from pydantic import root_validator
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.team import Team, TeamCreate, TeamRead
@@ -25,19 +26,36 @@ class ResultSubmission(SQLModel, table=True):
     team2: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team2_id]"))
 
 
-class ResultSubmissionBase(SQLModel):
+class ResultSubmissionCreate(SQLModel):
     submitter_id: int
     team1: TeamCreate
     team2: TeamCreate
     goals_team1: int
     goals_team2: int
-    approved: Optional[bool]
-    validator_id: Optional[int]
-    validation_dt: Optional[datetime]
 
+    @root_validator(pre=False)
+    def submitter_must_be_in_match(cls, values):
+        submitter_id = values.get('submitter_id')
+        team1 = values.get('team1')
+        team2 = values.get('team2')
+        if team1 and team2 and submitter_id not in [
+            team1.defender_user_id,
+            team1.attacker_user_id,
+            team2.defender_user_id,
+            team2.attacker_user_id,
+        ]:
+            raise ValueError('Submitter must be on one of the teams.')
+        return values
 
-class ResultSubmissionCreate(ResultSubmissionBase):
-    pass
+    @root_validator(pre=False)
+    def all_contestants_must_differ(cls, values):
+        team1 = values.get('team1')
+        team2 = values.get('team2')
+        if team1 and team1 and len(
+            {team1.defender_user_id, team1.attacker_user_id, team2.defender_user_id, team2.attacker_user_id}
+        ) != 4:
+            raise ValueError('Match contestants must be 4 unique users.')
+        return values
 
 
 class ResultSubmissionRead(SQLModel):

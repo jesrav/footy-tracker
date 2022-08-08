@@ -16,7 +16,6 @@ async def register_result(result: ResultSubmissionCreate) -> ResultSubmissionRea
         resp: Response = await client.post(url=BASE_WEB_API_URL + "/results/", json=result.dict())
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
-        print(resp.json())
     return ResultSubmissionRead(**resp.json())
 
 
@@ -44,3 +43,11 @@ async def get_latest_user_rating(user_id: int) -> UserRating:
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return UserRating(**resp.json())
+
+
+async def get_latest_user_ratings() -> List[UserRating]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/ratings/")
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [UserRating(**r) for r in resp.json()]

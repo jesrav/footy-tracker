@@ -12,6 +12,7 @@ SQLAlchemy==1.4.35
 passlib
 
 sqlmodel
+pydantic[email]
 
 asyncpg==0.24.0
 psycopg2

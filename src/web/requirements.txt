@@ -3,6 +3,7 @@ uvicorn==0.15.0
 aiofiles
 python-multipart
 httpx
+pydantic[email]
 
 # This is now available on PyPI.org so we'll be using that one going forward.
 fastapi-chameleon==0.1.12

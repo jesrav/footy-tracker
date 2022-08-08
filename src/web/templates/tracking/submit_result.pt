@@ -14,7 +14,7 @@
                     <div class="field">
                         <label class="label">Goals</label>
                         <div class="control has-icons-left has-icons-right">
-                            <input class="input" name="goals_team1" type="text" placeholder="Goals for team 1" id="goals-team1">
+                            <input class="input" name="goals_team1" type="text" value="${ goals_team1 }" placeholder="Goals for team 1" id="goals-team1">
                             <span class="icon is-small is-left">
                               <ion-icon name="football"></ion-icon>
                             </span>
@@ -64,7 +64,7 @@
                     <div class="field">
                         <label class="label">Goals</label>
                         <div class="control has-icons-left has-icons-right">
-                            <input class="input" name="goals_team2" type="text" placeholder="Goals for team 2" id="goals-team2">
+                            <input class="input" name="goals_team2" type="text" value="${ goals_team1 }" placeholder="Goals for team 2" id="goals-team2">
                             <span class="icon is-small is-left">
                               <ion-icon name="football"></ion-icon>
                             </span>
