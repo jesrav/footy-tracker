@@ -71,8 +71,8 @@ def create_result(result: result_models.ResultSubmissionCreate, session: Session
 
 
 @router.get("/results/", response_model=List[result_models.ResultSubmissionRead])
-def read_results(skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
-    results = result_crud.get_results(session, skip=skip, limit=limit)
+def read_results(for_approval: bool = False, skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
+    results = result_crud.get_results(session, skip=skip, limit=limit, for_approval=for_approval)
     return results
 
 

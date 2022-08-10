@@ -28,8 +28,15 @@ def create_result(session: Session, result: result_models.ResultSubmissionCreate
     return result
 
 
-def get_results(session: Session, skip: int = 0, limit: int = 100) -> List[result_models.ResultSubmission]:
-    statement = select(result_models.ResultSubmission).offset(skip).limit(limit)
+def get_results(session: Session, skip: int = 0, limit: int = 100, for_approval: bool = False) -> List[result_models.ResultSubmission]:
+    if for_approval:
+        statement = select(result_models.ResultSubmission).offset(skip).limit(limit).filter(
+        result_models.ResultSubmission.approved == None
+        )
+    else:
+        statement = select(result_models.ResultSubmission).offset(skip).limit(limit).filter(
+            result_models.ResultSubmission.approved != None
+        )
     return session.exec(statement).all()
 
 

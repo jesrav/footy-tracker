@@ -13,17 +13,26 @@ class AccountViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
         self.user: Optional[UserRead] = None
+        self.latest_ratings: List[UserRating] = []
+        self.user_ratings: List[UserRating] = []
+        self.latest_results = List[ResultSubmissionRead]
         self.latest_user_rating: Optional[UserRating] = None
         self.results_to_approve: List[ResultSubmissionRead] = []
         self.results_for_opposition_to_approve: List[ResultSubmissionRead] = []
+
+
         self.result_id: Optional[int] = None
         self.approved: Optional[bool] = None
 
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)
+        self.latest_results = await tracking_service.get_approved_results()
+        user_ratings = await tracking_service.get_user_ratings(self.user_id)
+        self.user_ratings = [(r.created_dt.strftime("%Y-%m-%d, %H:%M:%S"), r.rating) for r in sorted(user_ratings, key= lambda x: x.created_dt)]
         results_to_approve = await tracking_service.get_results_for_approval_by_user(self.user_id)
         results_for_opposition_to_approve = await tracking_service.get_results_for_approval_submitted_by_users_team(self.user_id)
         self.latest_user_rating = await tracking_service.get_latest_user_rating(self.user_id)
+
         self.results_to_approve = [
             ResultForUserValidation.from_result_submission(
                 user_id=self.user_id,

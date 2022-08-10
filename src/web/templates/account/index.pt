@@ -55,7 +55,7 @@
                         <div class="section">
 
                             <div tal:condition="results_to_approve" class="container">
-                                <h2 class="subtitle">Results for your approval</h2>
+                                <h2 class="subtitle">Awaiting your approval</h2>
                                 <div class="b-table">
                                     <div class="table-wrapper has-mobile-cards">
                                         <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
@@ -115,7 +115,7 @@
                             <br tal:condition="results_to_approve">
 
                             <div tal:condition="results_for_opposition_to_approve" class="container">
-                                <h2 class="subtitle">Results awaiting opponent approval</h2>
+                                <h2 class="subtitle">Awaiting opponent approval</h2>
                                 <div class="b-table">
                                     <div class="table-wrapper has-mobile-cards">
                                         <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
@@ -163,16 +163,19 @@
 
                     </div>
                     <div id="historical-ratings" class="tabcontent  is-hidden">
-                        <section>Historical ratings ...</section>
+                        <section>
+                        <div>
+                            <canvas id="myChart"></canvas>
+                        </div>
+                        </section>
                     </div>
                     <div id="results" class="tabcontent  is-hidden">
-                        <section>Results</section>
+                        <section> ${latest_results}} </section>
                     </div>
                 </div>
 
 
             </div>
-
 
             </div>
 
@@ -295,6 +298,30 @@ function TabclickHandle(evt, tabId) {
   document.getElementById(tabId).classList.remove('is-hidden');
   evt.currentTarget.parentElement.classList.add('is-active');
 }
+</script>
 
+<script>
+  const labels = ${[r[0] for r in user_ratings]};
 
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'My First dataset',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: ${[r[1] for r in user_ratings]},
+    }]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+    }
+  };
+
+  const myChart = new Chart(
+          document.getElementById('myChart'),
+          config
+  );
 </script>
