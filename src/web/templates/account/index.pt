@@ -44,9 +44,9 @@
                 <div id="tabs-with-content">
                   <div class="tabs">
                     <ul>
-                        <li class="is-active"><a class="tablinks" onclick="TabclickHandle(event, 'results-approval')">Results awaiting approval </a></li>
-                        <li><a class="tablinks" onclick="TabclickHandle(event, 'historical-ratings')">Historical ratings </a></li>
-                        <li><a class="tablinks" onclick="TabclickHandle(event, 'results')">Results </a></li>
+                        <li class="is-active"><a class="tablinks" onclick="TabclickHandle(event, 'results-approval')"> Approvals </a></li>
+                        <li><a class="tablinks" onclick="TabclickHandle(event, 'historical-ratings')"> Rating </a></li>
+                        <li><a class="tablinks" onclick="TabclickHandle(event, 'results')"> Results </a></li>
                     </ul>
                   </div>
                     <div id="results-approval" class="tabcontent">
@@ -163,11 +163,11 @@
 
                     </div>
                     <div id="historical-ratings" class="tabcontent  is-hidden">
-                        <section>
+                        <div class="section">
                         <div>
                             <canvas id="myChart"></canvas>
                         </div>
-                        </section>
+                        </div>
                     </div>
                     <div id="results" class="tabcontent  is-hidden">
                         <section> ${latest_results}} </section>
@@ -301,23 +301,82 @@ function TabclickHandle(evt, tabId) {
 </script>
 
 <script>
-  const labels = ${[r[0] for r in user_ratings]};
+  const labels = ${ [r.created_dt.strftime("%Y-%m-%d, %H:%M:%S") for r in user_ratings] };
 
-  const data = {
+  const overall_rating_data = {
     labels: labels,
     datasets: [{
-      label: 'My First dataset',
+      label: 'Overall rating',
       backgroundColor: 'rgb(255, 99, 132)',
       borderColor: 'rgb(255, 99, 132)',
-      data: ${[r[1] for r in user_ratings]},
+      data: ${ [r.rating for r in user_ratings] },
     }]
+  };
+
+  const defensive_rating_data = {
+      labels: labels,
+      datasets: [{
+          label: 'Overall rating',
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: ${ [r.rating_defence for r in user_ratings] },
+      }]
+  };
+
+  const data = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Overall rating',
+          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(255, 99, 132)',
+          data: ${ [r.rating for r in user_ratings] },
+        },
+        {
+          label: 'Offensive rating',
+          backgroundColor: 'rgb(10, 200, 132)',
+          borderColor: 'rgb(10, 200, 132)',
+          data: ${ [r.rating_offence for r in user_ratings] },
+        },
+        {
+          label: 'Defensive rating',
+          backgroundColor: 'rgb(0, 99, 132)',
+          borderColor: 'rgb(0, 99, 132)',
+          data: ${ [r.rating_defence for r in user_ratings] },
+      }
+      ]
   };
 
   const config = {
     type: 'line',
     data: data,
-    options: {
-    }
+      options: {
+          scales: {
+              x: {
+                  grid: {
+                    display: false
+                  },
+                  ticks: {
+                      display: false
+                  }
+              },
+              y: {
+                  grid: {
+                      display: false
+                  },
+                  ticks: {
+                      maxTicksLimit: 6,
+                  }
+              }
+          },
+          plugins: {
+              legend: {
+                  display: true,
+                  position: "bottom"
+              },
+          }
+
+      }
   };
 
   const myChart = new Chart(
