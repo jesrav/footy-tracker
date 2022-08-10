@@ -43,7 +43,7 @@
 
                 <div id="tabs-with-content">
                     <div class="columns is-mobile">
-                  <div class="column is-three-fifths">
+                  <div class="column is-11">
                   <div class="tabs">
                     <ul>
                         <li class="is-active"><a class="tablinks" onclick="TabclickHandle(event, 'results-approval')"> Approvals </a></li>
@@ -167,12 +167,10 @@
 
                     </div>
                     <div id="historical-ratings" class="tabcontent  is-hidden">
-                        <div class="section">
                         <div class="columns is-mobile">
                           <div class="column is-11">
                             <canvas id="myChart"></canvas>
                           </div>
-                        </div>
                         </div>
 
                     </div>
@@ -391,8 +389,12 @@ function TabclickHandle(evt, tabId) {
           plugins: {
               legend: {
                   display: true,
-                  position: "bottom"
-              },
+                  position: "bottom",
+                  labels: {
+                      boxWidth: 15,
+                      fontSize: 3
+                  }
+              }
           }
 
       }
