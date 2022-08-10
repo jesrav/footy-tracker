@@ -42,6 +42,8 @@
                 <div class="column is-two-third">
 
                 <div id="tabs-with-content">
+                    <div class="columns is-mobile">
+                  <div class="column is-three-fifths">
                   <div class="tabs">
                     <ul>
                         <li class="is-active"><a class="tablinks" onclick="TabclickHandle(event, 'results-approval')"> Approvals </a></li>
@@ -49,6 +51,8 @@
                         <li><a class="tablinks" onclick="TabclickHandle(event, 'results')"> Results </a></li>
                     </ul>
                   </div>
+                  </div>
+                    </div>
                     <div id="results-approval" class="tabcontent">
 
 
@@ -164,10 +168,13 @@
                     </div>
                     <div id="historical-ratings" class="tabcontent  is-hidden">
                         <div class="section">
-                        <div>
+                        <div class="columns is-mobile">
+                          <div class="column is-11">
                             <canvas id="myChart"></canvas>
+                          </div>
                         </div>
                         </div>
+
                     </div>
                     <div id="results" class="tabcontent  is-hidden">
                         <section> ${latest_results}} </section>
@@ -301,49 +308,47 @@ function TabclickHandle(evt, tabId) {
 </script>
 
 <script>
-  const labels = ${ [r.created_dt.strftime("%Y-%m-%d, %H:%M:%S") for r in user_ratings] };
+    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in user_ratings]};
 
-  const overall_rating_data = {
-    labels: labels,
-    datasets: [{
-      label: 'Overall rating',
-      backgroundColor: 'rgb(255, 99, 132)',
-      borderColor: 'rgb(255, 99, 132)',
-      data: ${ [r.rating for r in user_ratings] },
-    }]
-  };
+    let overall_ratings = []
+    const overall_rating_values= ${ [r.rating for r in user_ratings]};
+    rating_dates.forEach((date, date_index) => {
+      overall_ratings.push({x: date, y: overall_rating_values[date_index]})
+    });
 
-  const defensive_rating_data = {
-      labels: labels,
-      datasets: [{
-          label: 'Overall rating',
-          backgroundColor: 'rgb(255, 99, 132)',
-          borderColor: 'rgb(255, 99, 132)',
-          data: ${ [r.rating_defence for r in user_ratings] },
-      }]
-  };
+
+    let defensive_ratings = []
+    const defensive_rating_values = ${ [r.rating_defence for r in user_ratings]};
+    rating_dates.forEach((date, date_index) => {
+        defensive_ratings.push({x: date, y: defensive_rating_values[date_index]})
+    });
+
+    let offensive_ratings = []
+    const offensive_rating_values = ${ [r.rating_offence for r in user_ratings]};
+    rating_dates.forEach((date, date_index) => {
+        offensive_ratings.push({x: date, y: offensive_rating_values[date_index]})
+    });
 
   const data = {
-      labels: labels,
       datasets: [
         {
           label: 'Overall rating',
           backgroundColor: 'rgb(255, 99, 132)',
           borderColor: 'rgb(255, 99, 132)',
-          data: ${ [r.rating for r in user_ratings] },
-        },
-        {
-          label: 'Offensive rating',
-          backgroundColor: 'rgb(10, 200, 132)',
-          borderColor: 'rgb(10, 200, 132)',
-          data: ${ [r.rating_offence for r in user_ratings] },
+          data: overall_ratings,
         },
         {
           label: 'Defensive rating',
+          backgroundColor: 'rgb(100, 400, 0)',
+          borderColor: 'rgb(100, 400, 0)',
+          data: defensive_ratings,
+        },
+        {
+          label: 'Offensive rating',
           backgroundColor: 'rgb(0, 99, 132)',
           borderColor: 'rgb(0, 99, 132)',
-          data: ${ [r.rating_defence for r in user_ratings] },
-      }
+          data: offensive_ratings,
+        },
       ]
   };
 
@@ -353,11 +358,25 @@ function TabclickHandle(evt, tabId) {
       options: {
           scales: {
               x: {
+                  type: 'time',
+                  time: {
+                      displayFormats: {
+                          'millisecond': 'MMM d yyyy',
+                          'second': 'MMM d yyyy',
+                          'minute': 'MMM d yyyy',
+                          'hour': 'MMM d yyyy',
+                          'day': 'MMM d yyyy',
+                          'week': 'MMM d yyyy',
+                          'month': 'MMM d yyyy',
+                          'quarter': 'MMM d yyyy',
+                          'year': 'MMM d yyyy',
+                      }
+                  },
                   grid: {
                     display: false
                   },
                   ticks: {
-                      display: false
+                      maxTicksLimit: 6,
                   }
               },
               y: {

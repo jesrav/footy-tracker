@@ -19,7 +19,7 @@ class AccountViewModel(ViewModelBase):
         self.latest_user_rating: Optional[UserRating] = None
         self.results_to_approve: List[ResultSubmissionRead] = []
         self.results_for_opposition_to_approve: List[ResultSubmissionRead] = []
-
+        self.test = []
 
         self.result_id: Optional[int] = None
         self.approved: Optional[bool] = None
@@ -29,6 +29,7 @@ class AccountViewModel(ViewModelBase):
         self.latest_results = await tracking_service.get_approved_results()
         user_ratings = await tracking_service.get_user_ratings(self.user_id)
         self.user_ratings = sorted(user_ratings, key= lambda x: x.created_dt)
+        self.test = [{'x': r.created_dt.strftime("%Y-%m-%d, %H:%M:%S"), 'y': r.rating} for r in user_ratings]
         results_to_approve = await tracking_service.get_results_for_approval_by_user(self.user_id)
         results_for_opposition_to_approve = await tracking_service.get_results_for_approval_submitted_by_users_team(self.user_id)
         self.latest_user_rating = await tracking_service.get_latest_user_rating(self.user_id)
