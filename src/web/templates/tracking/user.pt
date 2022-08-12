@@ -1,0 +1,248 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+        <div class="content">
+
+            <div class="columns">
+                <div class="column is-one-third">
+                    <div class="card">
+
+                        <div class="card-image">
+                            <figure class="image is-4by3">
+                                <img src="https://avatars.dicebear.com/v2/initials/${user.nickname}.svg"
+                                     class="is-rounded">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="media">
+                                <div class="media-content">
+                                    <p class="title is-1">${user.nickname}</p>
+                                </div>
+                            </div>
+
+                            <div class="content">
+                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                    <tr>
+                                        <th>Overall rating</th>
+                                        <th>${ latest_user_rating.rating }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Rating as a defender</th>
+                                        <th>${ latest_user_rating.rating_defence }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Rating as an attacker</th>
+                                        <th>${ latest_user_rating.rating_offence }</th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column is-two-third">
+
+                    <div id="tabs-with-content">
+                        <div class="columns is-mobile">
+                            <div class="column is-11">
+                                <div class="tabs">
+                                    <ul>
+                                        <li class="is-active"><a class="tablinks"
+                                                                 onclick="TabclickHandle(event, 'historical-ratings')">
+                                            Rating </a></li>
+                                        <li><a class="tablinks" onclick="TabclickHandle(event, 'results')"> Results </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="historical-ratings" class="tabcontent">
+                            <div class="columns is-mobile">
+                                <div class="column is-11">
+                                    <canvas id="myChart"></canvas>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div id="results" class="tabcontent  is-hidden">
+                            <section> ${latest_results}}</section>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Functions to open and close a modal
+        function openModal($el) {
+            $el.classList.add('is-active');
+        }
+
+        function closeModal($el) {
+            $el.classList.remove('is-active');
+        }
+
+        function closeAllModals() {
+            (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                closeModal($modal);
+            });
+        }
+
+        // Add a click event on buttons to open a specific modal
+        (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+            const modal = $trigger.dataset.target;
+            const $target = document.getElementById(modal);
+
+            $trigger.addEventListener('click', () => {
+                openModal($target);
+            });
+        });
+
+        // Add a click event on various child elements to close the parent modal
+        (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+            const $target = $close.closest('.modal');
+
+            $close.addEventListener('click', () => {
+                closeModal($target);
+            });
+        });
+
+        // Add a keyboard event to close all modals
+        document.addEventListener('keydown', (event) => {
+            const e = event || window.event;
+
+            if (e.keyCode === 27) { // Escape key
+                closeAllModals();
+            }
+        });
+    });
+
+
+    function TabclickHandle(evt, tabId) {
+        let i, tabcontent, tablinks;
+
+        // This is to clear the previous clicked content.
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.add('is-hidden');
+        }
+
+        // Set the tab to be "active".
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].parentElement.classList.remove('is-active');
+        }
+
+        // Display the clicked tab and set it to active.
+        document.getElementById(tabId).classList.remove('is-hidden');
+        evt.currentTarget.parentElement.classList.add('is-active');
+    }
+</script>
+
+<script>
+    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in user_ratings]};
+
+    let overall_ratings = []
+    const overall_rating_values = ${ [r.rating for r in user_ratings]};
+    rating_dates.forEach((date, date_index) => {
+        overall_ratings.push({x: date, y: overall_rating_values[date_index]})
+    });
+
+
+    let defensive_ratings = []
+    const defensive_rating_values = ${ [r.rating_defence for r in user_ratings]};
+    rating_dates.forEach((date, date_index) => {
+        defensive_ratings.push({x: date, y: defensive_rating_values[date_index]})
+    });
+
+    let offensive_ratings = []
+    const offensive_rating_values = ${ [r.rating_offence for r in user_ratings]};
+    rating_dates.forEach((date, date_index) => {
+        offensive_ratings.push({x: date, y: offensive_rating_values[date_index]})
+    });
+
+    const data = {
+        datasets: [
+            {
+                label: 'Overall rating',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: overall_ratings,
+            },
+            {
+                label: 'Defensive rating',
+                backgroundColor: 'rgb(100, 400, 0)',
+                borderColor: 'rgb(100, 400, 0)',
+                data: defensive_ratings,
+            },
+            {
+                label: 'Offensive rating',
+                backgroundColor: 'rgb(0, 99, 132)',
+                borderColor: 'rgb(0, 99, 132)',
+                data: offensive_ratings,
+            },
+        ]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            'millisecond': 'MMM d yyyy',
+                            'second': 'MMM d yyyy',
+                            'minute': 'MMM d yyyy',
+                            'hour': 'MMM d yyyy',
+                            'day': 'MMM d yyyy',
+                            'week': 'MMM d yyyy',
+                            'month': 'MMM d yyyy',
+                            'quarter': 'MMM d yyyy',
+                            'year': 'MMM d yyyy',
+                        }
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        boxWidth: 15,
+                        fontSize: 3
+                    }
+                }
+            }
+
+        }
+    };
+
+    const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+    );
+</script>

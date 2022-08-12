@@ -23,10 +23,15 @@
               <tbody>
               <tr tal:repeat="r latest_user_ratings" class="table-row" id="${r.user.id}">
                 <td class="is-image-cell">
+
                   <div class="image">
+<a href="/user/${r.user.id}">
                     <img src="https://avatars.dicebear.com/v2/initials/${r.user.nickname}.svg" class="is-rounded">
+</a>
                   </div>
+
                 </td>
+
                 <td data-label="Ranking">${r.ranking}</td>
                 <td data-label="Nickname">${r.user.nickname}</td>
                 <td data-label="Rating as defender">${r.rating}</td>

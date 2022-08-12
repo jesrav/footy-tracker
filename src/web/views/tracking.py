@@ -8,11 +8,20 @@ from models.team import TeamCreate
 from services import tracking_service
 from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
 from viewmodels.tracking.leaderboard_viewmodel import LeaderboardViewModel
+from viewmodels.tracking.user import UserViewModel
 
 router = fastapi.APIRouter()
 
 
-@router.get('/leaderboard')
+@router.get('/user/{user_in_view_id}/')
+@template()
+async def user(user_in_view_id, request: Request):
+    vm = UserViewModel(user_in_view_id, request, )
+    await vm.load()
+    return vm.to_dict()
+
+
+@router.get('/leaderboard/')
 @template()
 async def leaderboard(request: Request):
     vm = LeaderboardViewModel(request)
