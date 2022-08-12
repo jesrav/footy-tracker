@@ -84,7 +84,7 @@ async def login_post(request: Request):
         vm.error = "The account does not exist or the password is wrong."
         return vm.to_dict()
 
-    resp = fastapi.responses.RedirectResponse('/account', status_code=status.HTTP_302_FOUND)
+    resp = fastapi.responses.RedirectResponse(f'/user/{user.id}', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_auth(resp, user.id)
 
     return resp
