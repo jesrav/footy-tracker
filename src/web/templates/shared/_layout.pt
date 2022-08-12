@@ -39,6 +39,10 @@
                 Submit a result
             </a>
 
+            <a tal:condition="is_logged_in" class="navbar-item" href="/results_for_approval">
+                Results awaiting approval
+            </a>
+
             <a tal:condition="is_logged_in" class="navbar-item" href="/leaderboard">
                 Leader board
             </a>

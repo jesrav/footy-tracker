@@ -18,12 +18,10 @@ class UserViewModel(ViewModelBase):
         self.user_ratings: List[UserRating] = []
         self.latest_results = List[ResultSubmissionRead]
         self.latest_user_rating: Optional[UserRating] = None
-        self.test = []
 
     async def load(self):
         self.user = await user_service.get_user_by_id(user_id=self.user_in_view_id)
         self.latest_results = await tracking_service.get_approved_results()
         user_ratings = await tracking_service.get_user_ratings(user_id=self.user_in_view_id)
         self.user_ratings = sorted(user_ratings, key= lambda x: x.created_dt)
-        self.test = [{'x': r.created_dt.strftime("%Y-%m-%d, %H:%M:%S"), 'y': r.rating} for r in user_ratings]
         self.latest_user_rating = await tracking_service.get_latest_user_rating(user_id=self.user_in_view_id)

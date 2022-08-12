@@ -15,7 +15,6 @@ class LeaderboardViewModel(ViewModelBase):
         self.user: Optional[UserRead] = None
         self.latest_user_ratings: List[UserRating] = []
 
-
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)
         self.latest_user_ratings = await tracking_service.get_latest_user_ratings()

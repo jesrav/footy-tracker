@@ -25,9 +25,9 @@
                 <td class="is-image-cell">
 
                   <div class="image">
-<a href="/user/${r.user.id}">
+                    <a href="/user/${r.user.id}">
                     <img src="https://avatars.dicebear.com/v2/initials/${r.user.nickname}.svg" class="is-rounded">
-</a>
+                    </a>
                   </div>
 
                 </td>

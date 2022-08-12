@@ -20,23 +20,6 @@ async def index(request: Request):
     return vm.to_dict()
 
 
-@router.post('/account')
-@template()
-async def index(request: Request):
-    vm = AccountViewModel(request)
-    await vm.load_form()
-
-    if vm.error:
-        return vm.to_dict()
-
-    _ = await tracking_service.validate_result(
-        validator_id=vm.user_id,
-        result_id=vm.result_id,
-        approved=vm.approved,
-    )
-    return fastapi.responses.RedirectResponse('/account', status_code=status.HTTP_302_FOUND)
-
-
 @router.get('/account/register')
 @template()
 def register(request: Request):
