@@ -1,0 +1,216 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+        <div class="content">
+
+            <div class="section">
+
+                <div tal:condition="results_to_approve" class="container">
+                    <h2 class="subtitle">Awaiting your approval</h2>
+                    <div class="b-table">
+                        <div class="table-wrapper has-mobile-cards">
+                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Submitter</th>
+                                    <th>Goals your team</th>
+                                    <th>Goals opposition</th>
+                                    <th>Your position</th>
+                                    <th>Teammate</th>
+                                    <th>Opposing defender</th>
+                                    <th>Opposing attacker</th>
+                                    <th>Created</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr tal:repeat="r results_to_approve">
+                                    <td class="is-image-cell">
+                                        <div class="image">
+                                            <img tal:condition="r.win" src="/static/img/win.png">
+                                            <img tal:condition="not r.win" src="/static/img/loss.png">
+                                        </div>
+                                    </td>
+                                    <td data-label="Submitter">${r.submitter.nickname}</td>
+                                    <td data-label="Goals your team">${r.goals_user_team}</td>
+                                    <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
+                                    <td data-label="Goals opposing team">${r.user_position}</td>
+                                    <td data-label="Teammate">${r.teammate.nickname}</td>
+                                    <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
+                                    <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
+                                    <td data-label="Created">
+                                        <small class="has-text-grey is-abbr-like">${r.created_dt}</small>
+                                    </td>
+                                    <td class="is-actions-cell">
+                                        <div class="buttons is-right">
+                                            <button class="button is-small is-primary js-modal-trigger"
+                                                    data-target="modal-approve-result-${r.id}"
+                                                    type="button">
+                                                            <span class="icon"><span class="icon"> <ion-icon
+                                                                    name="checkmark"></ion-icon></span></span>
+                                            </button>
+                                            <button class="button is-small is-danger js-modal-trigger"
+                                                    data-target="modal-reject-result-${r.id}" type="button">
+                                                <span class="icon"> <ion-icon name="ban"></ion-icon></span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <br tal:condition="results_to_approve">
+                <br tal:condition="results_to_approve">
+
+                <div tal:condition="results_for_opposition_to_approve" class="container">
+                    <h2 class="subtitle">Awaiting opponent approval</h2>
+                    <div class="b-table">
+                        <div class="table-wrapper has-mobile-cards">
+                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Submitter</th>
+                                    <th>Goals your team</th>
+                                    <th>Goals opposition</th>
+                                    <th>Your position</th>
+                                    <th>Teammate</th>
+                                    <th>Opposing defender</th>
+                                    <th>Opposing attacker</th>
+                                    <th>Created</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr tal:repeat="r results_for_opposition_to_approve">
+                                    <td class="is-image-cell">
+                                        <div class="image">
+                                            <img tal:condition="r.win" src="/static/img/win.png">
+                                            <img tal:condition="not r.win" src="/static/img/loss.png">
+                                        </div>
+                                    </td>
+                                    <td data-label="Submitter">${r.submitter.nickname}</td>
+                                    <td data-label="Goals your team">${r.goals_user_team}</td>
+                                    <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
+                                    <td data-label="Goals opposing team">${r.user_position}</td>
+                                    <td data-label="Teammate">${r.teammate.nickname}</td>
+                                    <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
+                                    <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
+                                    <td data-label="Created">
+                                        <small class="has-text-grey is-abbr-like">${r.created_dt}</small>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div tal:repeat="r results_to_approve" tal:omit-tag="True">
+
+                <div class="modal" id="modal-approve-result-${r.id}">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Approve result?</p>
+                            <button class="delete" aria-label="close"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <p>Are you sure you want to approve the result?</p>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <form action="" method="POST" class="form">
+                                <input type="hidden" name="approved" value=true>
+                                <input type="hidden" name="user_id" value="${user.id}">
+                                <input type="hidden" name="result_id" value="${r.id}">
+                                <button class="button is-success" type="submit">Approve</button>
+                            </form>
+                            <button class="button">Cancel</button>
+                        </footer>
+                    </div>
+                </div>
+
+                <div class="modal" id="modal-reject-result-${r.id}">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Reject result?</p>
+                            <button class="delete" aria-label="close"></button>
+                        </header>
+                        <section class="modal-card-body">
+                            <p>Are you sure you want to reject the result?</p>
+                        </section>
+                        <footer class="modal-card-foot">
+                            <form action="" method="POST" class="form">
+                                <input type="hidden" name="approved" value=false>
+                                <input type="hidden" name="user_id" value="${user.id}">
+                                <input type="hidden" name="result_id" value="${r.id}">
+                                <button class="button is-danger" type="submit">Reject</button>
+                            </form>
+                            <button class="button">Cancel</button>
+                        </footer>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Functions to open and close a modal
+        function openModal($el) {
+            $el.classList.add('is-active');
+        }
+
+        function closeModal($el) {
+            $el.classList.remove('is-active');
+        }
+
+        function closeAllModals() {
+            (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                closeModal($modal);
+            });
+        }
+
+        // Add a click event on buttons to open a specific modal
+        (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+            const modal = $trigger.dataset.target;
+            const $target = document.getElementById(modal);
+
+            $trigger.addEventListener('click', () => {
+                openModal($target);
+            });
+        });
+
+        // Add a click event on various child elements to close the parent modal
+        (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+            const $target = $close.closest('.modal');
+
+            $close.addEventListener('click', () => {
+                closeModal($target);
+            });
+        });
+
+        // Add a keyboard event to close all modals
+        document.addEventListener('keydown', (event) => {
+            const e = event || window.event;
+
+            if (e.keyCode === 27) { // Escape key
+                closeAllModals();
+            }
+        });
+    });
+</script>

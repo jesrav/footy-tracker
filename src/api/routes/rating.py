@@ -12,7 +12,7 @@ from database import get_session
 router = APIRouter()
 
 
-@router.get("/ratings/{user_id}", response_model=List[rating_models.UserRatingRead])
+@router.get("/ratings/{user_id}/", response_model=List[rating_models.UserRatingRead])
 def read_user_rating(user_id: int, skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
     user = crud_user.get_user(session, user_id=user_id)
     if user is None:

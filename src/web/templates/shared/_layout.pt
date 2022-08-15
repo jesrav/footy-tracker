@@ -28,7 +28,7 @@
     <div class="navbar-menu" id="navbar-links">
         <div class="navbar-start">
 
-            <a tal:condition="is_logged_in" class="navbar-item" href="/account">
+            <a tal:condition="is_logged_in" class="navbar-item" href="/user/${user_id}">
                 Home
             </a>
             <a tal:condition="not is_logged_in" class="navbar-item" href="/">
@@ -37,6 +37,10 @@
 
             <a tal:condition="is_logged_in" class="navbar-item" href="/submit_result">
                 Submit a result
+            </a>
+
+            <a tal:condition="is_logged_in" class="navbar-item" href="/results_for_approval">
+                Results awaiting approval
             </a>
 
             <a tal:condition="is_logged_in" class="navbar-item" href="/leaderboard">
@@ -84,6 +88,8 @@
 </script>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
 <div metal:define-slot="additional-js" tal:omit-tag="True"></div>
 

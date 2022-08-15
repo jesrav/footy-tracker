@@ -23,6 +23,14 @@ class TeamRead(BaseModel):
     def get_team_members(self) -> List[UserRead]:
         return [self.defender, self.attacker]
 
+    def get_user_position(self, user_id: int) -> bool:
+        if user_id == self.defender.id:
+            return 'defender'
+        elif user_id == self.attacker.id:
+            return 'attacker'
+        else:
+            return None
+
     def get_teammate(self, user_id) -> Optional[UserRead]:
         if not self.user_in_team(user_id):
             return None

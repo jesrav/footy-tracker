@@ -19,9 +19,29 @@ async def register_result(result: ResultSubmissionCreate) -> ResultSubmissionRea
     return ResultSubmissionRead(**resp.json())
 
 
-async def get_results_for_approval(user_id: int) -> List[ResultSubmissionRead]:
+async def get_approved_results(skip: int = 0, limit: int = 100) -> List[ResultSubmissionRead]:
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval/")
+        resp: Response = await client.get(
+            url=BASE_WEB_API_URL + f"/results/?for_approval=false&skip={skip}&limit={limit}"
+        )
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [ResultSubmissionRead(**r) for r in resp.json()]
+
+
+async def get_results_for_approval_by_user(user_id: int) -> List[ResultSubmissionRead]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval_by_user/")
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [ResultSubmissionRead(**r) for r in resp.json()]
+
+
+async def get_results_for_approval_submitted_by_users_team(user_id: int) -> List[ResultSubmissionRead]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(
+            url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval_submitted_by_users_team/"
+        )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [ResultSubmissionRead(**r) for r in resp.json()]
@@ -35,6 +55,14 @@ async def validate_result(validator_id: int, result_id: int, approved: bool) -> 
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return ResultSubmissionRead(**resp.json())
+
+
+async def get_user_ratings(user_id: int, skip: int = 0, limit: int = 100) -> List[UserRating]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/ratings/{user_id}/?skip={skip}&limit={limit}")
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [UserRating(**r) for r in resp.json()]
 
 
 async def get_latest_user_rating(user_id: int) -> UserRating:

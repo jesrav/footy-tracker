@@ -28,44 +28,91 @@ def create_result(session: Session, result: result_models.ResultSubmissionCreate
     return result
 
 
-def get_results(session: Session, skip: int = 0, limit: int = 100) -> List[result_models.ResultSubmission]:
-    statement = select(result_models.ResultSubmission).offset(skip).limit(limit)
+def get_results(session: Session, skip: int = 0, limit: int = 100, for_approval: bool = False) -> List[result_models.ResultSubmission]:
+    if for_approval:
+        statement = select(result_models.ResultSubmission).offset(skip).limit(limit).filter(
+        result_models.ResultSubmission.approved == None
+        )
+    else:
+        statement = select(result_models.ResultSubmission).offset(skip).limit(limit).filter(
+            result_models.ResultSubmission.approved != None
+        )
     return session.exec(statement).all()
 
 
-def get_results_for_validation(session: Session, validator_id: int) -> List[result_models.ResultSubmission]:
-    """Get results for validation for user
+def _get_results_with_user_participation(
+        results: List[result_models.ResultSubmission],
+        user_id: int,
+) -> List[result_models.ResultSubmission]:
+
+    return [
+        r for r in results if user_id in
+        [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
+    ]
+
+
+def get_results_for_approval_by_user(session: Session, user_id: int) -> List[result_models.ResultSubmission]:
+    """Get results for approval by user
 
     A user will only get results where they participated, that were not submitted by a teammate.
 
     :param session: Database session
-    :param validator_id: User id of validator (reviewer)
+    :param user_id: User id of validator (reviewer)
     :return: A list of result submissions.
     """
+
     statement = select(result_models.ResultSubmission).filter(
         result_models.ResultSubmission.approved == None,
-        result_models.ResultSubmission.submitter_id != validator_id
+        result_models.ResultSubmission.submitter_id != user_id
     )
     results = session.exec(statement).all()
 
-    results_with_validator_participation = [
-        r for r in results if validator_id in
-       [r.team1.defender_user_id, r.team1.attacker_user_id, r.team2.defender_user_id, r.team2.attacker_user_id]
-    ]
-    validator_teams = [
+    results_with_user_participation = _get_results_with_user_participation(results, user_id)
+
+    user_teams = [
         r.team1
-        if validator_id in [r.team1.defender_user_id, r.team1.attacker_user_id]
+        if user_id in [r.team1.defender_user_id, r.team1.attacker_user_id]
         else r.team2
-        for r in results_with_validator_participation
+        for r in results_with_user_participation
     ]
-    results_validator_and_submitter_not_teammates = [
-        r for i, r in enumerate(results_with_validator_participation)
-        if r.submitter_id not in [validator_teams[i].defender_user_id, validator_teams[i].attacker_user_id]
+
+    results_user_and_submitter_not_teammates = [
+        r for i, r in enumerate(results_with_user_participation)
+        if r.submitter_id not in [user_teams[i].defender_user_id, user_teams[i].attacker_user_id]
     ]
-    return results_validator_and_submitter_not_teammates
+    return results_user_and_submitter_not_teammates
 
 
-def validate_result(
+def get_results_for_approval_submitted_by_users_team(session: Session, user_id: int) -> List[result_models.ResultSubmission]:
+    """Get results for approval submitted by the user or the users teammate.
+
+    :param session: Database session
+    :param user_id: User id of validator (reviewer)
+    :return: A list of result submissions.
+    """
+
+    statement = select(result_models.ResultSubmission).filter(
+        result_models.ResultSubmission.approved == None,
+    )
+    results = session.exec(statement).all()
+
+    results_with_user_participation = _get_results_with_user_participation(results, user_id)
+
+    user_teams = [
+        r.team1
+        if user_id in [r.team1.defender_user_id, r.team1.attacker_user_id]
+        else r.team2
+        for r in results_with_user_participation
+    ]
+
+    results_submitter_in_users_team = [
+        r for i, r in enumerate(results_with_user_participation)
+        if r.submitter_id in [user_teams[i].defender_user_id, user_teams[i].attacker_user_id]
+    ]
+    return results_submitter_in_users_team
+
+
+def approve_result(
         session: Session, validator_id: int, result_id: int, approved: bool
 ) -> result_models.ResultSubmission:
     statement = select(result_models.ResultSubmission).filter(result_models.ResultSubmission.id == result_id)
