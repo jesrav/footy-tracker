@@ -73,8 +73,10 @@
                                 <tr>
                                     <th></th>
                                     <th>Submitter</th>
+                                    <th>Result</th>
                                     <th>Goals your team</th>
                                     <th>Goals opposition</th>
+                                    <th>Your position</th>
                                     <th>Teammate</th>
                                     <th>Opposing defender</th>
                                     <th>Opposing attacker</th>
@@ -91,8 +93,10 @@
                                         </div>
                                     </td>
                                     <td data-label="Submitter">${r.submitter.nickname}</td>
+                                    <td data-label="Result">${"Win 🥳" if r.win else "Loss 😭"}</td>
                                     <td data-label="Goals your team">${r.goals_user_team}</td>
                                     <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
+                                    <td data-label="Goals opposing team">${r.user_position}</td>
                                     <td data-label="Teammate">${r.teammate.nickname}</td>
                                     <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
                                     <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>

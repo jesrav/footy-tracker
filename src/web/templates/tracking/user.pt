@@ -61,7 +61,12 @@
                                 <div class="column is-11">
                                     <canvas id="myChart"></canvas>
                                 </div>
+                                <br>
+                                <br>
+                                <br>
                             </div>
+                            <br>
+                            <br>
 
                         </div>
                         <div id="results" class="tabcontent  is-hidden">
@@ -74,24 +79,32 @@
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <thead>
                                                 <tr>
+                                                    <th></th>
                                                     <th>Goals your team</th>
                                                     <th>Goals opposition</th>
-                                                    <th>Team 1 defender</th>
-                                                    <th>Team 1 attacker</th>
-                                                    <th>Team 2 defender</th>
-                                                    <th>Team 2 attacker</th>
+                                                    <th>Your position</th>
+                                                    <th>Teammate</th>
+                                                    <th>Opposing defender</th>
+                                                    <th>Opposing attacker</th>
                                                     <th>Created</th>
                                                     <th></th>
                                                 </tr>
                                                 </thead>
-                                                <tbody>
+                                                   <tbody>
                                                 <tr tal:repeat="r latest_results">
-                                                    <td data-label="Goals team 1">${r.goals_team1}</td>
-                                                    <td data-label="Goals team 2">${r.goals_team2}</td>
-                                                    <td data-label="Team 1 deffender">${r.team1.defender.nickname}</td>
-                                                    <td data-label="Team 1 attacker">${r.team1.attacker.nickname}</td>
-                                                    <td data-label="Team 2 defender">${r.team2.defender.nickname}</td>
-                                                    <td data-label="Team 2 attacker">${r.team2.attacker.nickname}</td>
+
+                                                    <td class="is-image-cell">
+                                                            <div class="image">
+                                                                <img tal:condition="r.win" src="/static/img/win.png">
+                                                                <img tal:condition="not r.win" src="/static/img/loss.png">
+                                                            </div>
+                                                    </td>
+                                                    <td data-label="Goals user team">${r.goals_user_team}</td>
+                                                    <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
+                                                    <td data-label="User position">${r.user_position}</td>
+                                                    <td data-label="Teammate">${r.teammate.nickname}</td>
+                                                    <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
+                                                    <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
                                                     <td data-label="Created">
                                                         <small class="has-text-grey is-abbr-like">${r.created_dt}</small>
                                                     </td>
@@ -168,8 +181,8 @@
             },
             {
                 label: 'Defensive rating',
-                backgroundColor: 'rgb(100, 400, 0)',
-                borderColor: 'rgb(100, 400, 0)',
+                backgroundColor: 'rgb(255,183,0)',
+                borderColor: 'rgb(255,183,0)',
                 data: defensive_ratings,
             },
             {
