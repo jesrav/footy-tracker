@@ -34,6 +34,12 @@ class ResultSubmissionCreate(SQLModel):
     goals_team2: int
 
     @root_validator(pre=False)
+    def result_must_have_winner(cls, values):
+        if values.get('goals_team1') == values.get('goals_team2'):
+            raise ValueError('Result must have winner. goals_team1 must be different than goals_team2')
+        return values
+
+    @root_validator(pre=False)
     def submitter_must_be_in_match(cls, values):
         submitter_id = values.get('submitter_id')
         team1 = values.get('team1')

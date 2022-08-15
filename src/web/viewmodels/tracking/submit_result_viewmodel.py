@@ -50,3 +50,6 @@ class SubmitResultViewModel(ViewModelBase):
                 self.team2_attacker,
             }) != 4:
                 self.error = "Match contestants must be 4 unique users."
+
+        elif self.goals_team1 == self.goals_team2:
+            self.error = "A table soccer match must have a winner. Please finish tha match!"
