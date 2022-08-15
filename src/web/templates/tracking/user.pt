@@ -65,7 +65,45 @@
 
                         </div>
                         <div id="results" class="tabcontent  is-hidden">
-                            <section> ${latest_results}}</section>
+                            <section>
+
+                                <div tal:condition="latest_results" class="container">
+                                    <h2 class="subtitle">Recent results</h2>
+                                    <div class="b-table">
+                                        <div class="table-wrapper has-mobile-cards">
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <thead>
+                                                <tr>
+                                                    <th>Goals your team</th>
+                                                    <th>Goals opposition</th>
+                                                    <th>Team 1 defender</th>
+                                                    <th>Team 1 attacker</th>
+                                                    <th>Team 2 defender</th>
+                                                    <th>Team 2 attacker</th>
+                                                    <th>Created</th>
+                                                    <th></th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr tal:repeat="r latest_results">
+                                                    <td data-label="Goals team 1">${r.goals_team1}</td>
+                                                    <td data-label="Goals team 2">${r.goals_team2}</td>
+                                                    <td data-label="Team 1 deffender">${r.team1.defender.nickname}</td>
+                                                    <td data-label="Team 1 attacker">${r.team1.attacker.nickname}</td>
+                                                    <td data-label="Team 2 defender">${r.team2.defender.nickname}</td>
+                                                    <td data-label="Team 2 attacker">${r.team2.attacker.nickname}</td>
+                                                    <td data-label="Created">
+                                                        <small class="has-text-grey is-abbr-like">${r.created_dt}</small>
+                                                    </td>
+                                                </tr>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </section>
                         </div>
                     </div>
 
