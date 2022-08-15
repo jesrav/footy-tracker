@@ -15,6 +15,7 @@
                                     <th>Submitter</th>
                                     <th>Goals your team</th>
                                     <th>Goals opposition</th>
+                                    <th>Your position</th>
                                     <th>Teammate</th>
                                     <th>Opposing defender</th>
                                     <th>Opposing attacker</th>
@@ -26,13 +27,14 @@
                                 <tr tal:repeat="r results_to_approve">
                                     <td class="is-image-cell">
                                         <div class="image">
-                                            <img src="https://avatars.dicebear.com/v2/initials/${r.submitter.nickname}.svg"
-                                                 class="is-rounded">
+                                            <img tal:condition="r.win" src="/static/img/win.png">
+                                            <img tal:condition="not r.win" src="/static/img/loss.png">
                                         </div>
                                     </td>
                                     <td data-label="Submitter">${r.submitter.nickname}</td>
                                     <td data-label="Goals your team">${r.goals_user_team}</td>
                                     <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
+                                    <td data-label="Goals opposing team">${r.user_position}</td>
                                     <td data-label="Teammate">${r.teammate.nickname}</td>
                                     <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
                                     <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
@@ -73,7 +75,6 @@
                                 <tr>
                                     <th></th>
                                     <th>Submitter</th>
-                                    <th>Result</th>
                                     <th>Goals your team</th>
                                     <th>Goals opposition</th>
                                     <th>Your position</th>
@@ -88,12 +89,11 @@
                                 <tr tal:repeat="r results_for_opposition_to_approve">
                                     <td class="is-image-cell">
                                         <div class="image">
-                                            <img src="https://avatars.dicebear.com/v2/initials/${r.submitter.nickname}.svg"
-                                                 class="is-rounded">
+                                            <img tal:condition="r.win" src="/static/img/win.png">
+                                            <img tal:condition="not r.win" src="/static/img/loss.png">
                                         </div>
                                     </td>
                                     <td data-label="Submitter">${r.submitter.nickname}</td>
-                                    <td data-label="Result">${"Win 🥳" if r.win else "Loss 😭"}</td>
                                     <td data-label="Goals your team">${r.goals_user_team}</td>
                                     <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
                                     <td data-label="Goals opposing team">${r.user_position}</td>
