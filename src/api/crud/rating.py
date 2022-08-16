@@ -2,7 +2,7 @@ from typing import List
 
 from sqlmodel import Session, select
 
-from services.rating import get_updated_elo_player_ratings
+from services.rating import get_updated_player_ratings
 from models import rating as rating_models, result as result_models
 
 
@@ -11,7 +11,7 @@ from typing import List, Optional
 from sqlalchemy import func, and_
 from sqlmodel import Session, select
 
-from services.rating import get_updated_elo_player_ratings
+from services.rating import get_updated_player_ratings
 from models import rating as rating_models, result as result_models
 
 
@@ -31,7 +31,7 @@ def add_rating(
 
 
 def update_ratings(session: Session, result: result_models.ResultSubmission) -> List[rating_models.UserRating]:
-    new_user_ratings = get_updated_elo_player_ratings(
+    new_user_ratings = get_updated_player_ratings(
         team1_goals=result.goals_team1,
         team2_goals=result.goals_team2,
         team1=result.team1,
