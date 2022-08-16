@@ -44,7 +44,7 @@
                     <div id="tabs-with-content">
                         <div class="columns is-mobile">
                             <div class="column is-11">
-                                <div class="tabs">
+                                <div class="tabs is-centered">
                                     <ul>
                                         <li class="is-active"><a class="tablinks"
                                                                  onclick="TabclickHandle(event, 'historical-ratings')">
@@ -70,7 +70,7 @@
 
                         </div>
                         <div id="results" class="tabcontent  is-hidden">
-                            <section>
+                            <div class="section">
 
                                 <div tal:condition="latest_results" class="container">
                                     <h2 class="subtitle">Recent results</h2>
@@ -116,7 +116,7 @@
                                     </div>
                                 </div>
 
-                            </section>
+                            </div>
                         </div>
                     </div>
 
