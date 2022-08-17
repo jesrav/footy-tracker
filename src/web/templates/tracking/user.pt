@@ -71,7 +71,6 @@
                         </div>
                         <div id="results" class="tabcontent  is-hidden">
                             <div class="section">
-
                                 <div tal:condition="latest_results" class="container">
                                     <h2 class="subtitle">Recent results</h2>
                                     <div class="b-table">

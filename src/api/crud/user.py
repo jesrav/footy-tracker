@@ -9,7 +9,7 @@ from models import user as user_models, rating as rating_models
 
 def get_user(session: Session, user_id: int) -> Optional[user_models.User]:
     statement = select(user_models.User).filter(user_models.User.id == user_id)
-    return session.exec(statement).one()
+    return session.exec(statement).first()
 
 
 def get_user_by_email(session: Session, email: str) -> Optional[user_models.User]:

@@ -28,16 +28,20 @@ def create_result(session: Session, result: result_models.ResultSubmissionCreate
     return result
 
 
-def get_results(session: Session, skip: int = 0, limit: int = 100, for_approval: bool = False) -> List[result_models.ResultSubmission]:
+def get_results(
+        session: Session, skip: int = 0, limit: int = 100, for_approval: bool = False, user_id: Optional[int] = None
+) -> List[result_models.ResultSubmission]:
+    statement = select(result_models.ResultSubmission).offset(skip).limit(limit)
     if for_approval:
-        statement = select(result_models.ResultSubmission).offset(skip).limit(limit).filter(
-        result_models.ResultSubmission.approved == None
-        )
+        statement = statement.filter(result_models.ResultSubmission.approved == None)
     else:
-        statement = select(result_models.ResultSubmission).offset(skip).limit(limit).filter(
-            result_models.ResultSubmission.approved != None
-        )
-    return session.exec(statement).all()
+        statement = statement.filter(result_models.ResultSubmission.approved != None)
+
+    if not user_id:
+        return session.exec(statement).all()
+    else:
+        all_results = session.exec(statement).all()
+        return [r for r in all_results if r.user_in_match(user_id)]
 
 
 def _get_results_with_user_participation(

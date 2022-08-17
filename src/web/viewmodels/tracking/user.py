@@ -22,10 +22,10 @@ class UserViewModel(ViewModelBase):
     async def load(self):
         self.user = await user_service.get_user_by_id(user_id=self.user_in_view_id)
 
-        _latest_results_api_format = await tracking_service.get_approved_results()
+        _latest_results_api_format = await tracking_service.get_approved_results(user_id=self.user_in_view_id)
         self.latest_results = [
             ResultForUserDisplay.from_result_submission(
-                user_id=self.user_id,
+                user_id=int(self.user_in_view_id),
                 result=r,
             ) for r in _latest_results_api_format
         ]

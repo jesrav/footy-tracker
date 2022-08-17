@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 
 import httpx
 from httpx import Response
@@ -19,11 +19,13 @@ async def register_result(result: ResultSubmissionCreate) -> ResultSubmissionRea
     return ResultSubmissionRead(**resp.json())
 
 
-async def get_approved_results(skip: int = 0, limit: int = 100) -> List[ResultSubmissionRead]:
+async def get_approved_results(skip: int = 0, limit: int = 100, user_id: Optional[int] = None) -> List[ResultSubmissionRead]:
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(
-            url=BASE_WEB_API_URL + f"/results/?for_approval=false&skip={skip}&limit={limit}"
-        )
+        if user_id:
+            url = BASE_WEB_API_URL + f"/results/?for_approval=false&skip={skip}&limit={limit}&user_id={user_id}"
+        else:
+            url = BASE_WEB_API_URL + f"/results/?for_approval=false&skip={skip}&limit={limit}"
+        resp: Response = await client.get(url=url)
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [ResultSubmissionRead(**r) for r in resp.json()]
