@@ -48,11 +48,11 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Rating</th>
-                                                    <th>${ latest_user_rating.overall_rating }</th>
+                                                    <th>${ '{:.0f}'.format(latest_user_rating.overall_rating) }</th>
                                                 </tr>
                                                 <tr>
                                                     <th>Win rate</th>
-                                                    <th>${ user_stats.win_rate }</th>
+                                                    <th>${ '{:.0f}'.format(user_stats.win_rate ) }%</th>
                                                 </tr>
                                             </table>
 
@@ -85,11 +85,11 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Rating</th>
-                                                    <th>${ latest_user_rating.rating_defence }</th>
+                                                    <th>${ '{:.0f}'.format(latest_user_rating.rating_defence) }</th>
                                                 </tr>
                                                 <tr>
                                                     <th>Win rate</th>
-                                                    <th>${ user_stats.win_rate_defence }</th>
+                                                    <th>${ '{:.0f}'.format(user_stats.win_rate_defence) }%</th>
                                                 </tr>
                                             </table>
 
@@ -122,11 +122,11 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Rating</th>
-                                                    <th>${ latest_user_rating.rating_offence }</th>
+                                                    <th>${ '{:.0f}'.format(latest_user_rating.rating_offence) }</th>
                                                 </tr>
                                                 <tr>
                                                     <th>Win rate</th>
-                                                    <th>${ user_stats.win_rate_offence }</th>
+                                                    <th>${ '{:.0f}'.format(user_stats.win_rate_offence) }%</th>
                                                 </tr>
                                             </table>
 

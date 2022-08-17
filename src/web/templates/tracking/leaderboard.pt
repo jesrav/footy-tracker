@@ -39,9 +39,9 @@
                 <td data-label="Overall ranking">${r.overall_ranking}</td>
                 <td data-label="Ranking as defender">${r.defensive_ranking}</td>
                 <td data-label="Ranking as attacker">${r.offensive_ranking}</td>
-                <td data-label="Overall rating">${r.overall_rating}</td>
-                <td data-label="Rating as defender">${r.rating_defence}</td>
-                <td data-label="Rating as attacker">${r.rating_offence}</td>
+                <td data-label="Overall rating">${ '{:.0f}'.format(r.overall_rating) }</td>
+                <td data-label="Rating as defender">${ '{:.0f}'.format(r.rating_defence) }</td>
+                <td data-label="Rating as attacker">${ '{:.0f}'.format(r.rating_offence) }</td>
               </tr>
 
               </tbody>
