@@ -23,6 +23,10 @@ class UserRating(SQLModel, table=True):
             rating_offence=self.rating_offence + rating_delta_offence
         )
 
+    @property
+    def rating(self):
+        return (self.rating_defence + self.rating_offence) / 2
+
 
 class UserRatingCreate(SQLModel):
     user_id: int

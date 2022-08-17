@@ -41,7 +41,7 @@ def get_results(
         return session.exec(statement).all()
     else:
         all_results = session.exec(statement).all()
-        return [r for r in all_results if r.user_in_match(user_id)]
+        return [r for r in all_results if user_id in r.match_participants]
 
 
 def _get_results_with_user_participation(

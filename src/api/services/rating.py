@@ -1,3 +1,4 @@
+"""Services for updating user rankings"""
 from typing import List
 
 from models import team as team_models
