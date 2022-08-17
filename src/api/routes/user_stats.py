@@ -11,6 +11,6 @@ from database import get_session
 router = APIRouter()
 
 
-@router.get("/user_stats", response_model=List[UserStatsRead])
+@router.get("/user_stats/", response_model=List[UserStatsRead])
 def read_user_stats(session: Session = Depends(get_session)):
     return get_user_stats(session)

@@ -7,6 +7,7 @@ from httpx import Response
 from models.rankings import UserRanking
 from models.result import ResultSubmissionCreate, ResultSubmissionRead
 from models.ratings import UserRating
+from models.user_stats import UserStats
 from models.validation_error import ValidationError
 
 BASE_WEB_API_URL = os.environ.get("API_URL")
@@ -90,3 +91,11 @@ async def get_user_rankings() -> List[UserRanking]:
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [UserRanking(**r) for r in resp.json()]
+
+
+async def get_user_stats() -> List[UserStats]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/user_stats/")
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [UserStats(**r) for r in resp.json()]

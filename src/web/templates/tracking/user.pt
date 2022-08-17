@@ -26,24 +26,36 @@
                                         <th>${ user_ranking.overall_ranking }</th>
                                     </tr>
                                     <tr>
-                                        <th>Ranking as a defender</th>
-                                        <th>${ user_ranking.defensive_ranking }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Ranking as an attacker</th>
-                                        <th>${ user_ranking.offensive_ranking }</th>
-                                    </tr>
-                                    <tr>
                                         <th>Overall rating</th>
                                         <th>${ latest_user_rating.overall_rating }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Overall win rate</th>
+                                        <th>${ user_stats.win_rate }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Ranking as a defender</th>
+                                        <th>${ user_ranking.defensive_ranking }</th>
                                     </tr>
                                     <tr>
                                         <th>Rating as a defender</th>
                                         <th>${ latest_user_rating.rating_defence }</th>
                                     </tr>
                                     <tr>
+                                        <th>Win rate as a defender</th>
+                                        <th>${ user_stats.win_rate_defence }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Ranking as an attacker</th>
+                                        <th>${ user_ranking.offensive_ranking }</th>
+                                    </tr>
+                                    <tr>
                                         <th>Rating as an attacker</th>
                                         <th>${ latest_user_rating.rating_offence }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Win rate as an attacker</th>
+                                        <th>${ user_stats.win_rate_offence }</th>
                                     </tr>
                                 </table>
                             </div>

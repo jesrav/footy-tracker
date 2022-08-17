@@ -22,6 +22,7 @@ def add_rating(
         user_id=user_id,
         rating_defence=rating_defence,
         rating_offence=rating_offence,
+        overall_rating=(rating_defence + rating_offence) / 2,
         latest_result_at_update_id=result_id,
     )
     session.add(user_rating)
