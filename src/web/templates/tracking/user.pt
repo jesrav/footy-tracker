@@ -20,45 +20,121 @@
                             </div>
 
                             <div class="content">
-                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
-                                    <tr>
-                                        <th>Overall ranking</th>
-                                        <th>${ user_ranking.overall_ranking }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Overall rating</th>
-                                        <th>${ latest_user_rating.overall_rating }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Overall win rate</th>
-                                        <th>${ user_stats.win_rate }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Ranking as a defender</th>
-                                        <th>${ user_ranking.defensive_ranking }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Rating as a defender</th>
-                                        <th>${ latest_user_rating.rating_defence }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Win rate as a defender</th>
-                                        <th>${ user_stats.win_rate_defence }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Ranking as an attacker</th>
-                                        <th>${ user_ranking.offensive_ranking }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Rating as an attacker</th>
-                                        <th>${ latest_user_rating.rating_offence }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Win rate as an attacker</th>
-                                        <th>${ user_stats.win_rate_offence }</th>
-                                    </tr>
-                                </table>
-                            </div>
+
+                                    <div class="card">
+
+                                        <header class="card-header">
+                                              <div class="card-image mt-2">
+                                                  <figure class="image is-32x32">
+                                                      <img src="/static/img/sword-and-shield.jpeg"
+                                                           alt="Placeholder image">
+                                                  </figure>
+
+                                              </div>
+
+                                            <p class="card-header-title">
+                                                Overall
+                                            </p>
+                                        </header>
+
+                                        <div class="card-content">
+                                            <div class="content">
+
+                                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th>Ranking</th>
+                                                    <th>${ user_ranking.overall_ranking }</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Rating</th>
+                                                    <th>${ latest_user_rating.overall_rating }</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Win rate</th>
+                                                    <th>${ user_stats.win_rate }</th>
+                                                </tr>
+                                            </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+
+                                    <div class="card">
+                                        <header class="card-header">
+
+                                            <div class="card-image mt-2">
+                                                  <figure class="image is-32x32">
+                                                      <img src="/static/img/shield.jpeg"
+                                                           alt="Placeholder image">
+                                                  </figure>
+                                              </div>
+
+                                            <p class="card-header-title">
+                                                Defence
+                                            </p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+
+                                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                    <tr>
+                                                        <th>Ranking</th>
+                                                        <th>${ user_ranking.defensive_ranking }</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Rating</th>
+                                                        <th>${ latest_user_rating.rating_defence }</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Win rate</th>
+                                                        <th>${ user_stats.win_rate_defence }</th>
+                                                    </tr>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+
+                                    <div class="card">
+
+                                        <header class="card-header">
+                                            <div class="card-image mt-2">
+                                                  <figure class="image is-32x32">
+                                                      <img src="/static/img/sword.png"
+                                                           alt="Placeholder image">
+                                                  </figure>
+                                              </div>
+
+                                            <p class="card-header-title">
+                                                Offence
+                                            </p>
+                                        </header>
+                                        <div class="card-content">
+                                            <div class="content">
+
+                                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                    <tr>
+                                                        <th>Ranking</th>
+                                                        <th>${ user_ranking.offensive_ranking }</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Rating</th>
+                                                        <th>${ latest_user_rating.rating_offence }</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Win rate</th>
+                                                        <th>${ user_stats.win_rate_offence }</th>
+                                                    </tr>
+                                                </table>
+
+                                            </div>
+                                        </div>
+
+                                </div>
+                                </div>
+
                         </div>
                     </div>
                 </div>
@@ -198,20 +274,20 @@
         datasets: [
             {
                 label: 'Overall rating',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgb(0, 209, 178)',
+                borderColor: 'rgb(0, 209, 178)',
                 data: overall_ratings,
             },
             {
                 label: 'Defensive rating',
-                backgroundColor: 'rgb(255,183,0)',
-                borderColor: 'rgb(255,183,0)',
+                backgroundColor: 'rgb(255, 221, 87)',
+                borderColor: 'rgb(255, 221, 87)',
                 data: defensive_ratings,
             },
             {
                 label: 'Offensive rating',
-                backgroundColor: 'rgb(0, 99, 132)',
-                borderColor: 'rgb(0, 99, 132)',
+                backgroundColor: 'rgb(32, 156, 238)',
+                borderColor: 'rgb(32, 156, 238)',
                 data: offensive_ratings,
             },
         ]
