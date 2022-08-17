@@ -14,29 +14,34 @@
               <thead>
               <tr>
                 <th></th>
-                <th>Ranking</th>
                 <th>Nickname</th>
+                <th>Overall ranking</th>
+                <th>Ranking as defender</th>
+                <th>Ranking as attacker</th>
+                <th>Overall rating</th>
                 <th>Rating as defender</th>
                 <th>Rating as attacker</th>
                 <th></th>
               </tr>
               </thead>
               <tbody>
-              <tr tal:repeat="r latest_user_ratings" class="table-row" id="${r.user.id}">
+              <tr tal:repeat="r user_infos" class="table-row" id="${r.user.id}">
                 <td class="is-image-cell">
 
                   <div class="image">
-                    <a href="/user/${r.user.id}">
+                    <a href="/user/${r.user_id}">
                     <img src="https://avatars.dicebear.com/v2/initials/${r.user.nickname}.svg" class="is-rounded">
                     </a>
                   </div>
 
                 </td>
-
-                <td data-label="Ranking">${r.ranking}</td>
                 <td data-label="Nickname">${r.user.nickname}</td>
-                <td data-label="Rating as defender">${r.rating}</td>
-                <td data-label="Rating as attacker">${r.rating}</td>
+                <td data-label="Overall ranking">${r.overall_ranking}</td>
+                <td data-label="Ranking as defender">${r.defensive_ranking}</td>
+                <td data-label="Ranking as attacker">${r.offensive_ranking}</td>
+                <td data-label="Overall rating">${r.overall_rating}</td>
+                <td data-label="Rating as defender">${r.rating_defence}</td>
+                <td data-label="Rating as attacker">${r.rating_offence}</td>
               </tr>
 
               </tbody>

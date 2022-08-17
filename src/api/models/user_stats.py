@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
+from models.ranking import UserRanking
 
 
 class UserStats(SQLModel, table=True):
@@ -14,3 +16,15 @@ class UserStats(SQLModel, table=True):
     games_won_defence: int = Field(default=0)
     games_won_offence: int = Field(default=0)
     created_dt: datetime = Field(default_factory=datetime.utcnow)
+
+
+class UserStatsRead(SQLModel):
+    id: int
+    user_id: int
+    eggs_received: int
+    eggs_given: int
+    games_played_defence: int
+    games_played_offence: int
+    games_won_defence: int
+    games_won_offence: int
+    created_dt: datetime

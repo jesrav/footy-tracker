@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
 
 from crud import user as user_crud
+from crud import ranking as ranking_crud
 from models import user as user_models
 from database import get_session
 
@@ -15,7 +16,9 @@ def create_user(user: user_models.UserCreate, session: Session = Depends(get_ses
     preexisting_user = user_crud.get_user_by_email(session, email=user.email)
     if preexisting_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return user_crud.create_user(session=session, user=user)
+    user = user_crud.create_user(session=session, user=user)
+    ranking_crud.update_user_rankings(session=session)
+    return user
 
 
 @router.post("/users/login/", response_model=user_models.UserRead)

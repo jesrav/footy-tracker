@@ -22,8 +22,20 @@
                             <div class="content">
                                 <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                     <tr>
+                                        <th>Overall ranking</th>
+                                        <th>${ user_ranking.overall_ranking }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Ranking as a defender</th>
+                                        <th>${ user_ranking.defensive_ranking }</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Ranking as an attacker</th>
+                                        <th>${ user_ranking.offensive_ranking }</th>
+                                    </tr>
+                                    <tr>
                                         <th>Overall rating</th>
-                                        <th>${ latest_user_rating.rating }</th>
+                                        <th>${ latest_user_rating.overall_rating }</th>
                                     </tr>
                                     <tr>
                                         <th>Rating as a defender</th>
@@ -149,23 +161,23 @@
         evt.currentTarget.parentElement.classList.add('is-active');
     }
 
-    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in user_ratings]};
+    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in historical_user_ratings]};
 
     let overall_ratings = []
-    const overall_rating_values = ${ [r.rating for r in user_ratings]};
+    const overall_rating_values = ${ [r.overall_rating for r in historical_user_ratings]};
     rating_dates.forEach((date, date_index) => {
         overall_ratings.push({x: date, y: overall_rating_values[date_index]})
     });
 
 
     let defensive_ratings = []
-    const defensive_rating_values = ${ [r.rating_defence for r in user_ratings]};
+    const defensive_rating_values = ${ [r.rating_defence for r in historical_user_ratings]};
     rating_dates.forEach((date, date_index) => {
         defensive_ratings.push({x: date, y: defensive_rating_values[date_index]})
     });
 
     let offensive_ratings = []
-    const offensive_rating_values = ${ [r.rating_offence for r in user_ratings]};
+    const offensive_rating_values = ${ [r.rating_offence for r in historical_user_ratings]};
     rating_dates.forEach((date, date_index) => {
         offensive_ratings.push({x: date, y: offensive_rating_values[date_index]})
     });

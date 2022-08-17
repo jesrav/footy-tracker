@@ -11,3 +11,12 @@ class UserRanking(SQLModel, table=True):
     offensive_ranking: int
     overall_ranking: int
     updated_dt: datetime = Field(default_factory=datetime.utcnow)
+
+
+class UserRankingRead(SQLModel):
+    id: int
+    user_id: int
+    defensive_ranking: int
+    offensive_ranking: int
+    overall_ranking: int
+    updated_dt: datetime
