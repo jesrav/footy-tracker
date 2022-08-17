@@ -142,10 +142,16 @@
 
                 <div class="column is-two-third">
 
+
+
+
                     <div id="tabs-with-content">
+
+                            <h1 class="title is-3 ml-5 mt-3">Historical performance</h1>
+
                         <div class="columns is-mobile">
                             <div class="column is-11">
-                                <div class="tabs is-centered">
+                                <div class="tabs">
                                     <ul>
                                         <li class="is-active"><a class="tablinks"
                                                                  onclick="TabclickHandle(event, 'historical-ratings')">
