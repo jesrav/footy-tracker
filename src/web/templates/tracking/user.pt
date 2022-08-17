@@ -5,29 +5,52 @@
             <div class="columns">
                 <div class="column is-one-third">
                     <div class="card">
-
-                        <div class="card-image">
-                            <figure class="image is-4by3">
-                                <img src="https://avatars.dicebear.com/v2/initials/${user.nickname}.svg"
-                                     class="is-rounded">
-                            </figure>
-                        </div>
-                        <div class="card-content">
-                            <div class="media">
-                                <div class="media-content">
-                                    <p class="title is-1">${user.nickname}</p>
-                                </div>
+                    <header class="card-header p-3">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-64x64 mt-3">
+                                    <img src="/static/img/user.svg" alt="user-icon">
+                                </figure>
                             </div>
+                            <div class="media-content">
+                                <p class="title is-2">${user.nickname}</p>
+                                <p class="subtitle is-6">I shoot the ball hard!</p>
+                            </div>
+                        </div>
+</header>
+    <div class="card-content">
+
+
+
+<!--?                        <section class="hero is-fullwidth">-->
+<!--?                          <div class="hero-body">-->
+<!--?                              <div class="card-image mt-2">-->
+<!--?                                  <figure class="image is-32x32">-->
+<!--?                                      <img src="/static/img/sword-and-shield.jpeg"-->
+<!--?                                           alt="Overall">-->
+<!--?                                  </figure>-->
+
+<!--?                              </div>-->
+<!--?                            <p class="title">-->
+<!--?                              ${user.nickname}-->
+<!--?                            </p>-->
+<!--?                            <p class="subtitle">-->
+<!--?                              Hero subtitle-->
+<!--?                            </p>-->
+<!--?                          </div>-->
+<!--?                        </section>-->
+<!--?                            <h1 class="title is-1">${user.nickname}</h1>-->
+
 
                             <div class="content">
 
                                     <div class="card">
 
-                                        <header class="card-header">
+                                        <header class="card-header has-background-primary">
                                               <div class="card-image mt-2">
                                                   <figure class="image is-32x32">
                                                       <img src="/static/img/sword-and-shield.jpeg"
-                                                           alt="Placeholder image">
+                                                           alt="Overall">
                                                   </figure>
 
                                               </div>
@@ -61,7 +84,7 @@
                                     <br>
 
                                     <div class="card">
-                                        <header class="card-header">
+                                        <header class="card-header has-background-info">
 
                                             <div class="card-image mt-2">
                                                   <figure class="image is-32x32">
@@ -99,7 +122,7 @@
 
                                     <div class="card">
 
-                                        <header class="card-header">
+                                        <header class="card-header has-background-warning">
                                             <div class="card-image mt-2">
                                                   <figure class="image is-32x32">
                                                       <img src="/static/img/sword.png"
@@ -194,8 +217,8 @@
 
                                                     <td class="is-image-cell">
                                                             <div class="image">
-                                                                <img tal:condition="r.win" src="/static/img/win.png">
-                                                                <img tal:condition="not r.win" src="/static/img/loss.png">
+                                                                <img tal:condition="r.win" src="/static/img/trophy.svg">
+                                                                <img tal:condition="not r.win" src="/static/img/skull.svg">
                                                             </div>
                                                     </td>
                                                     <td data-label="Goals user team">${r.goals_user_team}</td>
