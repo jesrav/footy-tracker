@@ -9,7 +9,7 @@
                             <div class="media">
                                 <div class="media-left">
                                     <figure class="image is-64x64 mt-3">
-                                        <img src="/static/img/user.svg" alt="user-icon">
+                                        <img src="/static/img/user.svg" class="is-rounded" alt="user-icon">
                                     </figure>
                                 </div>
                                 <div class="media-content">
