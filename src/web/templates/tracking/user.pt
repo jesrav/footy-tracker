@@ -5,46 +5,191 @@
             <div class="columns">
                 <div class="column is-one-third">
                     <div class="card">
-
-                        <div class="card-image">
-                            <figure class="image is-4by3">
-                                <img src="https://avatars.dicebear.com/v2/initials/${user.nickname}.svg"
-                                     class="is-rounded">
-                            </figure>
-                        </div>
-                        <div class="card-content">
+                        <header class="card-header p-3">
                             <div class="media">
+                                <div class="media-left">
+                                    <figure class="image is-64x64 mt-3">
+                                        <img src="/static/img/user.svg" class="is-rounded" alt="user-icon">
+                                    </figure>
+                                </div>
                                 <div class="media-content">
-                                    <p class="title is-1">${user.nickname}</p>
+                                    <p class="title is-2">${user.nickname}</p>
+                                    <p class="subtitle is-6">I shoot the ball hard!</p>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-content">
+
+                            <div class="content">
+
+                                <div class="card">
+
+                                    <header class="card-header has-background-primary">
+                                        <div class="card-image mt-2">
+                                            <figure class="image is-32x32">
+                                                <img src="/static/img/sword-and-shield.jpeg"
+                                                     alt="Overall">
+                                            </figure>
+
+                                        </div>
+
+                                        <p class="card-header-title">
+                                            Overall
+                                        </p>
+                                    </header>
+
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left">${ user_ranking.overall_ranking }</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">Rating</th>
+                                                    <td class="has-text-left">
+                                                    ${ '{:.0f}'.format(latest_user_rating.overall_rating) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_up"
+                                                                class="icon has-text-success is-right">
+                                                            <ion-icon name="trending-up-outline"></ion-icon>
+                                                        </span>
+                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_down"
+                                                                class="icon icon has-text-danger is-right">
+                                                            <ion-icon name="trending-down-outline"></ion-icon>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">Win rate</th>
+                                                    <td class="has-text-left">${ user_stats.win_rate }</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">🥚's given</th>
+                                                    <td class="has-text-left">${ user_stats.eggs_given  }</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">🥚's received</th>
+                                                    <td class="has-text-left">${ user_stats.eggs_received  }</td>
+                                                </tr>
+
+
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+
+                                <div class="card">
+                                    <header class="card-header has-background-info">
+
+                                        <div class="card-image mt-2">
+                                            <figure class="image is-32x32">
+                                                <img src="/static/img/shield.jpeg"
+                                                     alt="Placeholder image">
+                                            </figure>
+                                        </div>
+
+                                        <p class="card-header-title">
+                                            Defence
+                                        </p>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left">${ user_ranking.defensive_ranking }</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">Rating</th>
+                                                    <td class="has-text-left">
+                                                    ${ '{:.0f}'.format(latest_user_rating.rating_defence) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_up"
+                                                                class="icon has-text-success is-right">
+                                                            <ion-icon name="trending-up-outline"></ion-icon>
+                                                        </span>
+                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_down"
+                                                                class="icon icon has-text-danger is-right">
+                                                            <ion-icon name="trending-down-outline"></ion-icon>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">Win rate</th>
+                                                    <td class="has-text-left">${ user_stats.win_rate_defence }</td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+
+                                <div class="card">
+
+                                    <header class="card-header has-background-warning">
+                                        <div class="card-image mt-2">
+                                            <figure class="image is-32x32">
+                                                <img src="/static/img/sword.png"
+                                                     alt="Placeholder image">
+                                            </figure>
+                                        </div>
+
+                                        <p class="card-header-title">
+                                            Offence
+                                        </p>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th>Ranking</th>
+                                                    <td>${ user_ranking.offensive_ranking }</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Rating</th>
+                                                    <td>
+                                                    ${ '{:.0f}'.format(latest_user_rating.rating_offence) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_offence_trending_up"
+                                                                class="icon has-text-success is-right">
+                                                                <ion-icon name="trending-up-outline"></ion-icon>
+                                                            </span>
+                                                        <span tal:condition="historical_user_ratings.user_ranking_offence_trending_down"
+                                                                class="icon icon has-text-danger is-right">
+                                                                <ion-icon name="trending-down-outline"></ion-icon>
+                                                            </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Win rate</th>
+                                                    <td>${ user_stats.win_rate_offence }</td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
-                            <div class="content">
-                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
-                                    <tr>
-                                        <th>Overall rating</th>
-                                        <th>${ latest_user_rating.rating }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Rating as a defender</th>
-                                        <th>${ latest_user_rating.rating_defence }</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Rating as an attacker</th>
-                                        <th>${ latest_user_rating.rating_offence }</th>
-                                    </tr>
-                                </table>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="column is-two-third">
 
+
                     <div id="tabs-with-content">
+
+                        <h1 class="title is-3 ml-5 mt-3">Historical performance</h1>
+
                         <div class="columns is-mobile">
                             <div class="column is-11">
-                                <div class="tabs is-centered">
+                                <div class="tabs">
                                     <ul>
                                         <li class="is-active"><a class="tablinks"
                                                                  onclick="TabclickHandle(event, 'historical-ratings')">
@@ -69,7 +214,7 @@
                             <br>
 
                         </div>
-                        <div id="results" class="tabcontent  is-hidden">
+                        <div id="results" class="tabcontent is-hidden">
                             <div class="section">
                                 <div tal:condition="latest_results" class="container">
                                     <h2 class="subtitle">Recent results</h2>
@@ -89,14 +234,14 @@
                                                     <th></th>
                                                 </tr>
                                                 </thead>
-                                                   <tbody>
+                                                <tbody>
                                                 <tr tal:repeat="r latest_results">
 
                                                     <td class="is-image-cell">
-                                                            <div class="image">
-                                                                <img tal:condition="r.win" src="/static/img/win.png">
-                                                                <img tal:condition="not r.win" src="/static/img/loss.png">
-                                                            </div>
+                                                        <div class="image">
+                                                            <img tal:condition="r.win" src="/static/img/trophy.svg">
+                                                            <img tal:condition="not r.win" src="/static/img/skull.svg">
+                                                        </div>
                                                     </td>
                                                     <td data-label="Goals user team">${r.goals_user_team}</td>
                                                     <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
@@ -149,23 +294,23 @@
         evt.currentTarget.parentElement.classList.add('is-active');
     }
 
-    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in user_ratings]};
+    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in historical_user_ratings.ratings]};
 
     let overall_ratings = []
-    const overall_rating_values = ${ [r.rating for r in user_ratings]};
+    const overall_rating_values = ${ [r.overall_rating for r in historical_user_ratings.ratings]};
     rating_dates.forEach((date, date_index) => {
         overall_ratings.push({x: date, y: overall_rating_values[date_index]})
     });
 
 
     let defensive_ratings = []
-    const defensive_rating_values = ${ [r.rating_defence for r in user_ratings]};
+    const defensive_rating_values = ${ [r.rating_defence for r in historical_user_ratings.ratings]};
     rating_dates.forEach((date, date_index) => {
         defensive_ratings.push({x: date, y: defensive_rating_values[date_index]})
     });
 
     let offensive_ratings = []
-    const offensive_rating_values = ${ [r.rating_offence for r in user_ratings]};
+    const offensive_rating_values = ${ [r.rating_offence for r in historical_user_ratings.ratings]};
     rating_dates.forEach((date, date_index) => {
         offensive_ratings.push({x: date, y: offensive_rating_values[date_index]})
     });
@@ -174,20 +319,20 @@
         datasets: [
             {
                 label: 'Overall rating',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgb(0, 209, 178)',
+                borderColor: 'rgb(0, 209, 178)',
                 data: overall_ratings,
             },
             {
                 label: 'Defensive rating',
-                backgroundColor: 'rgb(255,183,0)',
-                borderColor: 'rgb(255,183,0)',
+                backgroundColor: 'rgb(32, 156, 238)',
+                borderColor: 'rgb(32, 156, 238)',
                 data: defensive_ratings,
             },
             {
                 label: 'Offensive rating',
-                backgroundColor: 'rgb(0, 99, 132)',
-                borderColor: 'rgb(0, 99, 132)',
+                backgroundColor: 'rgb(255, 221, 87)',
+                borderColor: 'rgb(255, 221, 87)',
                 data: offensive_ratings,
             },
         ]
@@ -247,4 +392,6 @@
             document.getElementById('myChart'),
             config
     );
+
+
 </script>

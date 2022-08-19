@@ -1,10 +1,7 @@
 from fastapi import FastAPI
-from sqlmodel import SQLModel
 
-from database import engine, create_db_and_tables
-from routes import user, result, rating
-
-SQLModel.metadata.create_all(engine)
+from database import create_db_and_tables
+from routes import user, result, rating, ranking, user_stats
 
 app = FastAPI()
 
@@ -18,6 +15,8 @@ def configure_routing():
     app.include_router(user.router)
     app.include_router(result.router)
     app.include_router(rating.router)
+    app.include_router(ranking.router)
+    app.include_router(user_stats.router)
 
 
 configure_routing()

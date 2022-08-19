@@ -6,22 +6,36 @@
                 <br>
                 <br>
 
+                <form method="post" enctype="multipart/form-data" runat="server">
                 <div class="file has-name is-fullwidth is-primary">
                     <label class="file-label">
-                        <input class="file-input" type="file" name="resume">
+                        <input class="file-input" type="file" accept=".jpg,.jpeg,.png" name="user-image" onchange="loadFile(event)">
                         <span class="file-cta">
-              <span class="file-icon">
-                <ion-icon name="cloud-upload-outline"></ion-icon>
-              </span>
-              <span class="file-label">
-                Choose a file…
-              </span>
-            </span>
+                  <span class="file-icon">
+                    <ion-icon name="cloud-upload-outline"></ion-icon>
+                  </span>
+                  <span class="file-label">
+                    Choose a file…
+                  </span>
+                </span>
                     </label>
                 </div>
+                <input class="button" type="submit" value="Upload image">
+                </form>
 
+                <img class="image" id="output"/>
             </div>
 
         </div>
     </div>
 </div>
+
+<script>
+    var loadFile = function (event) {
+        var output = document.getElementById('output');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function () {
+            URL.revokeObjectURL(output.src) // free memory
+        }
+    };
+</script>

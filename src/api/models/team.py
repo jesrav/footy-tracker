@@ -16,6 +16,11 @@ class Team(SQLModel, table=True):
     defender: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Team.defender_user_id]"))
     attacker: User = Relationship(sa_relationship_kwargs=dict(foreign_keys="[Team.attacker_user_id]"))
 
+    def __contains__(self, user_id: int):
+        if not isinstance(user_id, int):
+            raise ValueError("Can only check if user is in a team for an integer user id.")
+        return user_id in [self.defender_user_id, self.attacker_user_id]
+
 
 class TeamCreate(SQLModel):
     defender_user_id: int
@@ -28,7 +33,9 @@ class TeamCreate(SQLModel):
             raise ValueError('Defender and attacker can not have the same user id.')
         return values
 
-    def user_in_team(self, user_id: int) -> bool:
+    def __contains__(self, user_id: int):
+        if not isinstance(user_id, int):
+            raise ValueError("Can only check if user is in a team for an integer user id.")
         return user_id in [self.defender_user_id, self.attacker_user_id]
 
 

@@ -11,6 +11,7 @@ class UserRating(SQLModel, table=True):
     user_id: int = Field(default=None, foreign_key="user.id")
     rating_defence: float
     rating_offence: float
+    overall_rating: float
     latest_result_at_update_id: Optional[int] = Field(default=None, foreign_key="resultsubmission.id")
     created_dt: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
@@ -20,7 +21,11 @@ class UserRating(SQLModel, table=True):
         return UserRatingCreate(
             user_id=self.user_id,
             rating_defence=self.rating_defence + rating_delta_defence,
-            rating_offence=self.rating_offence + rating_delta_offence
+            rating_offence=self.rating_offence + rating_delta_offence,
+            overall_rating=(
+               self.rating_defence + rating_delta_defence
+               + self.rating_offence + rating_delta_offence
+           ) / 2
         )
 
 
@@ -28,6 +33,7 @@ class UserRatingCreate(SQLModel):
     user_id: int
     rating_defence: float
     rating_offence: float
+    overall_rating: float
     latest_result_at_update_id: Optional[int]
 
 
@@ -36,5 +42,6 @@ class UserRatingRead(SQLModel):
     user: UserRead
     rating_defence: float
     rating_offence: float
+    overall_rating: float
     latest_result_at_update_id: Optional[int]
     created_dt: datetime

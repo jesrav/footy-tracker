@@ -4,6 +4,8 @@ from typing import Optional, List
 from pydantic import BaseModel, EmailStr
 from sqlmodel import SQLModel, Field, Relationship
 
+from models.ranking import UserRanking, UserRankingRead
+
 
 class UserBase(SQLModel):
     nickname: str
@@ -16,6 +18,7 @@ class User(UserBase, table=True):
     created_dt: datetime = Field(default_factory=datetime.utcnow)
 
     ratings: List["UserRating"] = Relationship(back_populates="user")
+    ranking: UserRanking = Relationship()
 
     @property
     def latest_rating(self):
@@ -34,3 +37,4 @@ class UserLogin(BaseModel):
 class UserRead(UserBase):
     id: int
     created_dt: datetime
+

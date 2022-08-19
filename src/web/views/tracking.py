@@ -9,7 +9,7 @@ from services import tracking_service
 from viewmodels.tracking.approve_results_viewmodel import ApproveResultsViewModel
 from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
 from viewmodels.tracking.leaderboard_viewmodel import LeaderboardViewModel
-from viewmodels.tracking.user import UserViewModel
+from viewmodels.tracking.user_viewmodel import UserViewModel
 
 router = fastapi.APIRouter()
 

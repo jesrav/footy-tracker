@@ -25,12 +25,13 @@ class ResultSubmission(SQLModel, table=True):
     team1: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team1_id]"))
     team2: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team2_id]"))
 
-    def user_in_match(self, user_id: int):
-        return user_id in [
+    @property
+    def match_participants(self):
+        return [
             self.team1.defender_user_id,
             self.team1.attacker_user_id,
             self.team2.defender_user_id,
-            self.team2.attacker_user_id,
+            self.team2.attacker_user_id
         ]
 
 

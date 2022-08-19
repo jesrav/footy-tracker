@@ -27,8 +27,8 @@
                                 <tr tal:repeat="r results_to_approve">
                                     <td class="is-image-cell">
                                         <div class="image">
-                                            <img tal:condition="r.win" src="/static/img/win.png">
-                                            <img tal:condition="not r.win" src="/static/img/loss.png">
+                                            <img tal:condition="r.win" src="/static/img/trophy.svg">
+                                            <img tal:condition="not r.win" src="/static/img/skull.svg">
                                         </div>
                                     </td>
                                     <td data-label="Submitter">${r.submitter.nickname}</td>
@@ -89,8 +89,8 @@
                                 <tr tal:repeat="r results_for_opposition_to_approve">
                                     <td class="is-image-cell">
                                         <div class="image">
-                                            <img tal:condition="r.win" src="/static/img/win.png">
-                                            <img tal:condition="not r.win" src="/static/img/loss.png">
+                                            <img tal:condition="r.win" src="/static/img/trophy.svg">
+                                            <img tal:condition="not r.win" src="/static/img/skull.svg">
                                         </div>
                                     </td>
                                     <td data-label="Submitter">${r.submitter.nickname}</td>
