@@ -48,12 +48,30 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Rating</th>
-                                                    <th>${ '{:.0f}'.format(latest_user_rating.overall_rating) }</th>
+                                                    <th>
+                                                        ${ '{:.0f}'.format(latest_user_rating.overall_rating) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_up" class="icon has-text-success is-right">
+                                                            <ion-icon name="trending-up-outline"></ion-icon>
+                                                        </span>
+                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_down" class="icon icon has-text-danger is-right">
+                                                            <ion-icon name="trending-down-outline"></ion-icon>
+                                                        </span>
+                                                    </th>
                                                 </tr>
                                                 <tr>
                                                     <th>Win rate</th>
-                                                    <th>${ '{:.0f}'.format(user_stats.win_rate ) }%</th>
+                                                    <th>${ user_stats.win_rate }</th>
                                                 </tr>
+                                                <tr>
+                                                    <th>🥚's given</th>
+                                                    <th>${ user_stats.eggs_given  }</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>🥚's received</th>
+                                                    <th>${ user_stats.eggs_received  }</th>
+                                                </tr>
+
+
                                             </table>
 
                                         </div>
@@ -85,11 +103,19 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Rating</th>
-                                                    <th>${ '{:.0f}'.format(latest_user_rating.rating_defence) }</th>
+                                                    <th>
+                                                        ${ '{:.0f}'.format(latest_user_rating.rating_defence) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_up" class="icon has-text-success is-right">
+                                                            <ion-icon name="trending-up-outline"></ion-icon>
+                                                        </span>
+                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_down" class="icon icon has-text-danger is-right">
+                                                            <ion-icon name="trending-down-outline"></ion-icon>
+                                                        </span>
+                                                    </th>
                                                 </tr>
                                                 <tr>
                                                     <th>Win rate</th>
-                                                    <th>${ '{:.0f}'.format(user_stats.win_rate_defence) }%</th>
+                                                    <th>${ user_stats.win_rate_defence }</th>
                                                 </tr>
                                             </table>
 
@@ -122,11 +148,21 @@
                                                 </tr>
                                                 <tr>
                                                     <th>Rating</th>
-                                                    <th>${ '{:.0f}'.format(latest_user_rating.rating_offence) }</th>
+                                                    <th>
+                                                        ${ '{:.0f}'.format(latest_user_rating.rating_offence) }
+                                                            <span tal:condition="historical_user_ratings.user_ranking_offence_trending_up"
+                                                                    class="icon has-text-success is-right">
+                                                                <ion-icon name="trending-up-outline"></ion-icon>
+                                                            </span>
+                                                            <span tal:condition="historical_user_ratings.user_ranking_offence_trending_down"
+                                                                    class="icon icon has-text-danger is-right">
+                                                                <ion-icon name="trending-down-outline"></ion-icon>
+                                                            </span>
+                                                    </th>
                                                 </tr>
                                                 <tr>
                                                     <th>Win rate</th>
-                                                    <th>${ '{:.0f}'.format(user_stats.win_rate_offence) }%</th>
+                                                    <th>${ user_stats.win_rate_offence }</th>
                                                 </tr>
                                             </table>
 
@@ -256,23 +292,23 @@
         evt.currentTarget.parentElement.classList.add('is-active');
     }
 
-    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in historical_user_ratings]};
+    const rating_dates = ${ [r.created_dt.strftime("%Y-%m-%d %H:%M:%S") for r in historical_user_ratings.ratings]};
 
     let overall_ratings = []
-    const overall_rating_values = ${ [r.overall_rating for r in historical_user_ratings]};
+    const overall_rating_values = ${ [r.overall_rating for r in historical_user_ratings.ratings]};
     rating_dates.forEach((date, date_index) => {
         overall_ratings.push({x: date, y: overall_rating_values[date_index]})
     });
 
 
     let defensive_ratings = []
-    const defensive_rating_values = ${ [r.rating_defence for r in historical_user_ratings]};
+    const defensive_rating_values = ${ [r.rating_defence for r in historical_user_ratings.ratings]};
     rating_dates.forEach((date, date_index) => {
         defensive_ratings.push({x: date, y: defensive_rating_values[date_index]})
     });
 
     let offensive_ratings = []
-    const offensive_rating_values = ${ [r.rating_offence for r in historical_user_ratings]};
+    const offensive_rating_values = ${ [r.rating_offence for r in historical_user_ratings.ratings]};
     rating_dates.forEach((date, date_index) => {
         offensive_ratings.push({x: date, y: offensive_rating_values[date_index]})
     });
@@ -287,14 +323,14 @@
             },
             {
                 label: 'Defensive rating',
-                backgroundColor: 'rgb(255, 221, 87)',
-                borderColor: 'rgb(255, 221, 87)',
+                backgroundColor: 'rgb(32, 156, 238)',
+                borderColor: 'rgb(32, 156, 238)',
                 data: defensive_ratings,
             },
             {
                 label: 'Offensive rating',
-                backgroundColor: 'rgb(32, 156, 238)',
-                borderColor: 'rgb(32, 156, 238)',
+                backgroundColor: 'rgb(255, 221, 87)',
+                borderColor: 'rgb(255, 221, 87)',
                 data: offensive_ratings,
             },
         ]

@@ -15,22 +15,25 @@ class UserStats(BaseModel):
     created_dt: datetime
 
     @property
-    def win_rate(self):
+    def win_rate(self) -> str:
         if (self.games_played_defence + self.games_played_offence) == 0:
             return "NaN"
-        return 100 * (
+        win_rate = 100 * (
             (self.games_won_defence + self.games_won_offence)
             / (self.games_played_defence + self.games_played_offence)
         )
+        return '{:.0f}'.format(win_rate) + '%'
 
     @property
-    def win_rate_defence(self):
+    def win_rate_defence(self) -> str:
         if self.games_played_defence == 0:
             return "NaN"
-        return 100 * (self.games_won_defence / self.games_played_defence)
+        win_rate = 100 * (self.games_won_defence / self.games_played_defence)
+        return '{:.0f}'.format(win_rate) + '%'
 
     @property
-    def win_rate_offence(self):
+    def win_rate_offence(self) -> str:
         if self.games_played_offence == 0:
             return "NaN"
-        return 100 * (self.games_won_offence / self.games_played_offence)
+        win_rate = 100 * (self.games_won_offence / self.games_played_offence)
+        return '{:.0f}'.format(win_rate) + '%'
