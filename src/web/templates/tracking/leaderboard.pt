@@ -18,36 +18,35 @@
                             </div>
                         </div>
                     </header>
-                    <div class="card-content">
-
-                        <div class="tabs">
-                            <ul>
-                                <li class="is-active">
-                                    <a class="tablinks" onclick="TabclickHandle(event, 'overall')">
+                    <div class="tabs">
+                        <ul>
+                            <li class="is-active">
+                                <a class="tablinks" onclick="TabclickHandle(event, 'overall')">
                                         <span class="icon">
                                             <img src="/static/img/sword-and-shield.jpeg" alt="user-icon">
                                         </span>
-                                        <span>Overall</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="tablinks" onclick="TabclickHandle(event, 'defence')">
+                                    <span>Overall</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="tablinks" onclick="TabclickHandle(event, 'defence')">
                                         <span class="icon">
                                             <img src="/static/img/shield.jpeg" alt="user-icon">
                                         </span>
-                                        <span>Defence</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="tablinks" onclick="TabclickHandle(event, 'offence')">
+                                    <span>Defence</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="tablinks" onclick="TabclickHandle(event, 'offence')">
                                         <span class="icon">
                                             <img src="/static/img/sword.png" alt="user-icon">
                                         </span>
-                                        <span>Offence</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                                    <span>Offence</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-content">
 
 
                         <div id="tabs-with-content">
