@@ -43,12 +43,12 @@
 
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <tr>
-                                                    <th>Ranking</th>
-                                                    <th>${ user_ranking.overall_ranking }</th>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left">${ user_ranking.overall_ranking }</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Rating</th>
-                                                    <th>
+                                                    <th class="has-text-left">Rating</th>
+                                                    <td class="has-text-left">
                                                     ${ '{:.0f}'.format(latest_user_rating.overall_rating) }
                                                         <span tal:condition="historical_user_ratings.user_ranking_overall_trending_up"
                                                                 class="icon has-text-success is-right">
@@ -58,19 +58,19 @@
                                                                 class="icon icon has-text-danger is-right">
                                                             <ion-icon name="trending-down-outline"></ion-icon>
                                                         </span>
-                                                    </th>
+                                                    </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Win rate</th>
-                                                    <th>${ user_stats.win_rate }</th>
+                                                    <th class="has-text-left">Win rate</th>
+                                                    <td class="has-text-left">${ user_stats.win_rate }</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>🥚's given</th>
-                                                    <th>${ user_stats.eggs_given  }</th>
+                                                    <th class="has-text-left">🥚's given</th>
+                                                    <td class="has-text-left">${ user_stats.eggs_given  }</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>🥚's received</th>
-                                                    <th>${ user_stats.eggs_received  }</th>
+                                                    <th class="has-text-left">🥚's received</th>
+                                                    <td class="has-text-left">${ user_stats.eggs_received  }</td>
                                                 </tr>
 
 
@@ -100,12 +100,12 @@
 
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <tr>
-                                                    <th>Ranking</th>
-                                                    <th>${ user_ranking.defensive_ranking }</th>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left">${ user_ranking.defensive_ranking }</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Rating</th>
-                                                    <th>
+                                                    <th class="has-text-left">Rating</th>
+                                                    <td class="has-text-left">
                                                     ${ '{:.0f}'.format(latest_user_rating.rating_defence) }
                                                         <span tal:condition="historical_user_ratings.user_ranking_defence_trending_up"
                                                                 class="icon has-text-success is-right">
@@ -115,11 +115,11 @@
                                                                 class="icon icon has-text-danger is-right">
                                                             <ion-icon name="trending-down-outline"></ion-icon>
                                                         </span>
-                                                    </th>
+                                                    </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Win rate</th>
-                                                    <th>${ user_stats.win_rate_defence }</th>
+                                                    <th class="has-text-left">Win rate</th>
+                                                    <td class="has-text-left">${ user_stats.win_rate_defence }</td>
                                                 </tr>
                                             </table>
 
@@ -148,11 +148,11 @@
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <tr>
                                                     <th>Ranking</th>
-                                                    <th>${ user_ranking.offensive_ranking }</th>
+                                                    <td>${ user_ranking.offensive_ranking }</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Rating</th>
-                                                    <th>
+                                                    <td>
                                                     ${ '{:.0f}'.format(latest_user_rating.rating_offence) }
                                                         <span tal:condition="historical_user_ratings.user_ranking_offence_trending_up"
                                                                 class="icon has-text-success is-right">
@@ -162,11 +162,11 @@
                                                                 class="icon icon has-text-danger is-right">
                                                                 <ion-icon name="trending-down-outline"></ion-icon>
                                                             </span>
-                                                    </th>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <th>Win rate</th>
-                                                    <th>${ user_stats.win_rate_offence }</th>
+                                                    <td>${ user_stats.win_rate_offence }</td>
                                                 </tr>
                                             </table>
 
