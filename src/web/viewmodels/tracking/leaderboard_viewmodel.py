@@ -26,7 +26,9 @@ class LeaderboardViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
         self.user: Optional[UserRead] = None
-        self.user_infos: List[UserLeaderboardOverview] = []
+        self.user_infos_overall: List[UserLeaderboardOverview] = []
+        self.user_infos_defence: List[UserLeaderboardOverview] = []
+        self.user_infos_offence: List[UserLeaderboardOverview] = []
 
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)
@@ -35,7 +37,7 @@ class LeaderboardViewModel(ViewModelBase):
         user_rankings = await tracking_service.get_user_rankings()
         user_rankings_dict = {r.user_id: r for r in user_rankings}
         for user_id, user_rating in latest_user_ratings_dict.items():
-            self.user_infos.append(UserLeaderboardOverview(
+            self.user_infos_overall.append(UserLeaderboardOverview(
                 user_id=user_id,
                 user=user_rating.user,
                 rating_defence=user_rating.rating_defence,
@@ -45,4 +47,6 @@ class LeaderboardViewModel(ViewModelBase):
                 offensive_ranking=user_rankings_dict[user_id].offensive_ranking,
                 overall_ranking=user_rankings_dict[user_id].overall_ranking,
             ))
-        self.user_infos = sorted(self.user_infos, key=lambda x: x.overall_ranking)
+        self.user_infos_overall = sorted(self.user_infos_overall, key=lambda x: x.overall_ranking)
+        self.user_infos_defence = sorted(self.user_infos_overall, key=lambda x: x.defensive_ranking)
+        self.user_infos_offence = sorted(self.user_infos_overall, key=lambda x: x.offensive_ranking)

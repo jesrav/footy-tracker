@@ -4,51 +4,157 @@
 
         <div class="content">
 
-        <div class="container">
-        <div class="section">
-        <h1 class="title">Learderboard</h1>
-        <div class="b-table">
-          <div class="table-wrapper has-mobile-cards">
-            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
-              <thead>
-              <tr>
-                <th></th>
-                <th>Nickname</th>
-                <th>Overall ranking</th>
-                <th>Ranking as defender</th>
-                <th>Ranking as attacker</th>
-                <th>Overall rating</th>
-                <th>Rating as defender</th>
-                <th>Rating as attacker</th>
-                <th></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr tal:repeat="r user_infos" class="table-row" id="${r.user.id}">
-                <td class="is-image-cell">
+            <div class="container">
+                <div class="section">
 
-                  <div class="image">
-                    <a href="/user/${r.user_id}">
-                    <img src="https://avatars.dicebear.com/v2/initials/${r.user.nickname}.svg" class="is-rounded">
-                    </a>
-                  </div>
+                    <h1 class="title">👑 Learderboard</h1>
 
-                </td>
-                <td data-label="Nickname">${r.user.nickname}</td>
-                <td data-label="Overall ranking">${r.overall_ranking}</td>
-                <td data-label="Ranking as defender">${r.defensive_ranking}</td>
-                <td data-label="Ranking as attacker">${r.offensive_ranking}</td>
-                <td data-label="Overall rating">${ '{:.0f}'.format(r.overall_rating) }</td>
-                <td data-label="Rating as defender">${ '{:.0f}'.format(r.rating_defence) }</td>
-                <td data-label="Rating as attacker">${ '{:.0f}'.format(r.rating_offence) }</td>
-              </tr>
+                    <div class="tabs">
+                        <ul>
+                            <li class="is-active">
+                                <a class="tablinks" onclick="TabclickHandle(event, 'overall')">Overall</a>
+                            </li>
+                            <li><a class="tablinks" onclick="TabclickHandle(event, 'defence')"> Defence </a></li>
+                            <li><a class="tablinks" onclick="TabclickHandle(event, 'offence')"> Offence </a></li>
+                        </ul>
+                    </div>
 
-              </tbody>
-            </table>
+
+                    <div id="tabs-with-content">
+
+                    <div id="overall" class="tabcontent">
+                    <div class="b-table">
+                        <div class="table-wrapper has-mobile-cards">
+                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Overall ranking</th>
+                                    <th>Overall rating</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr tal:repeat="r user_infos_overall" class="table-row" id="${r.user.id}"
+                                                              onclick="location.href='/user/${r.user_id}';"
+                                                              style="cursor:pointer;">
+                                    <td class="is-image-cell">
+                                        <div class="image">
+                                            <img src="/static/img/user.svg" class="is-rounded" alt="user-icon">
+                                        </div>
+
+                                    </td>
+                                    <td data-label="Nickname">${r.user.nickname}</td>
+                                    <td data-label="Overall ranking">${r.overall_ranking}</td>
+                                    <td data-label="Overall rating">${ '{:.0f}'.format(r.overall_rating) }</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+
+
+
+                    <div id="defence" class="tabcontent is-hidden">
+                    <div class="b-table">
+                        <div class="table-wrapper has-mobile-cards">
+                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th>Ranking as defender</th>
+                                    <th>Rating as defender</th>
+
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr tal:repeat="r user_infos_defence" class="table-row" id="${r.user.id}"
+                                                              onclick="location.href='/user/${r.user_id}';"
+                                                              style="cursor:pointer;">
+                                    <td class="is-image-cell">
+                                        <div class="image">
+                                            <img src="/static/img/user.svg" class="is-rounded" alt="user-icon">
+                                        </div>
+
+                                    </td>
+                                    <td data-label="Nickname">${r.user.nickname}</td>
+                                    <td data-label="Ranking as defender">${r.defensive_ranking}</td>
+                                    <td data-label="Rating as defender">${ '{:.0f}'.format(r.rating_defence) }</td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div id="offence" class="tabcontent is-hidden">
+                        <div class="b-table">
+                            <div class="table-wrapper has-mobile-cards">
+                                <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th>Ranking as attacker</th>
+                                        <th>Rating as attacker</th>
+
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr tal:repeat="r user_infos_offence" class="table-row" id="${r.user.id}"
+                                                                  onclick="location.href='/user/${r.user_id}';"
+                                                                  style="cursor:pointer;">
+                                        <td class="is-image-cell">
+                                            <div class="image">
+                                                <img src="/static/img/user.svg" class="is-rounded" alt="user-icon">
+                                            </div>
+
+                                        </td>
+                                        <td data-label="Nickname">${r.user.nickname}</td>
+                                        <td data-label="Ranking as attacker">${r.offensive_ranking}</td>
+                                        <td data-label="Rating as attacker">${ '{:.0f}'.format(r.rating_offence) }</td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                </div>
+            </div>
         </div>
     </div>
 </div>
-</div>
-</div>
-</div>
-</div>
+
+<script>
+    function TabclickHandle(evt, tabId) {
+        let i, tabcontent, tablinks;
+
+        // This is to clear the previous clicked content.
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.add('is-hidden');
+        }
+
+        // Set the tab to be "active".
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].parentElement.classList.remove('is-active');
+        }
+
+        // Display the clicked tab and set it to active.
+        document.getElementById(tabId).classList.remove('is-hidden');
+        evt.currentTarget.parentElement.classList.add('is-active');
+    }
+</script>

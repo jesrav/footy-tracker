@@ -13,7 +13,12 @@ def calculate_rankings(latest_user_ratings: List[UserRating], rating_type: str =
     if rating_type not in ["overall", "defence", "offence"]:
         raise ValueError("`rating_type` must be overall, defence or offence.")
     user_rankings = {}
-    latest_user_ratings_sorted = sorted(latest_user_ratings, key=lambda x: x.overall_rating, reverse=True)
+    if rating_type == "overall":
+        latest_user_ratings_sorted = sorted(latest_user_ratings, key=lambda x: x.overall_rating, reverse=True)
+    elif rating_type == "defence":
+        latest_user_ratings_sorted = sorted(latest_user_ratings, key=lambda x: x.rating_defence, reverse=True)
+    else:
+        latest_user_ratings_sorted = sorted(latest_user_ratings, key=lambda x: x.rating_offence, reverse=True)
     for i, user_rating in enumerate(latest_user_ratings_sorted, start=1):
         user_rankings[user_rating.user_id] = i
     return user_rankings

@@ -49,11 +49,13 @@
                                                 <tr>
                                                     <th>Rating</th>
                                                     <th>
-                                                        ${ '{:.0f}'.format(latest_user_rating.overall_rating) }
-                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_up" class="icon has-text-success is-right">
+                                                    ${ '{:.0f}'.format(latest_user_rating.overall_rating) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_up"
+                                                                class="icon has-text-success is-right">
                                                             <ion-icon name="trending-up-outline"></ion-icon>
                                                         </span>
-                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_down" class="icon icon has-text-danger is-right">
+                                                        <span tal:condition="historical_user_ratings.user_ranking_overall_trending_down"
+                                                                class="icon icon has-text-danger is-right">
                                                             <ion-icon name="trending-down-outline"></ion-icon>
                                                         </span>
                                                     </th>
@@ -104,11 +106,13 @@
                                                 <tr>
                                                     <th>Rating</th>
                                                     <th>
-                                                        ${ '{:.0f}'.format(latest_user_rating.rating_defence) }
-                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_up" class="icon has-text-success is-right">
+                                                    ${ '{:.0f}'.format(latest_user_rating.rating_defence) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_up"
+                                                                class="icon has-text-success is-right">
                                                             <ion-icon name="trending-up-outline"></ion-icon>
                                                         </span>
-                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_down" class="icon icon has-text-danger is-right">
+                                                        <span tal:condition="historical_user_ratings.user_ranking_defence_trending_down"
+                                                                class="icon icon has-text-danger is-right">
                                                             <ion-icon name="trending-down-outline"></ion-icon>
                                                         </span>
                                                     </th>
@@ -149,13 +153,13 @@
                                                 <tr>
                                                     <th>Rating</th>
                                                     <th>
-                                                        ${ '{:.0f}'.format(latest_user_rating.rating_offence) }
-                                                            <span tal:condition="historical_user_ratings.user_ranking_offence_trending_up"
-                                                                    class="icon has-text-success is-right">
+                                                    ${ '{:.0f}'.format(latest_user_rating.rating_offence) }
+                                                        <span tal:condition="historical_user_ratings.user_ranking_offence_trending_up"
+                                                                class="icon has-text-success is-right">
                                                                 <ion-icon name="trending-up-outline"></ion-icon>
                                                             </span>
-                                                            <span tal:condition="historical_user_ratings.user_ranking_offence_trending_down"
-                                                                    class="icon icon has-text-danger is-right">
+                                                        <span tal:condition="historical_user_ratings.user_ranking_offence_trending_down"
+                                                                class="icon icon has-text-danger is-right">
                                                                 <ion-icon name="trending-down-outline"></ion-icon>
                                                             </span>
                                                     </th>
@@ -179,11 +183,9 @@
                 <div class="column is-two-third">
 
 
-
-
                     <div id="tabs-with-content">
 
-                            <h1 class="title is-3 ml-5 mt-3">Historical performance</h1>
+                        <h1 class="title is-3 ml-5 mt-3">Historical performance</h1>
 
                         <div class="columns is-mobile">
                             <div class="column is-11">
@@ -212,7 +214,7 @@
                             <br>
 
                         </div>
-                        <div id="results" class="tabcontent  is-hidden">
+                        <div id="results" class="tabcontent is-hidden">
                             <div class="section">
                                 <div tal:condition="latest_results" class="container">
                                     <h2 class="subtitle">Recent results</h2>
