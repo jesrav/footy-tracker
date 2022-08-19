@@ -23,10 +23,29 @@
                         <div class="tabs">
                             <ul>
                                 <li class="is-active">
-                                    <a class="tablinks" onclick="TabclickHandle(event, 'overall')">Overall</a>
+                                    <a class="tablinks" onclick="TabclickHandle(event, 'overall')">
+                                        <span class="icon">
+                                            <img src="/static/img/sword-and-shield.jpeg" alt="user-icon">
+                                        </span>
+                                        <span>Overall</span>
+                                    </a>
                                 </li>
-                                <li><a class="tablinks" onclick="TabclickHandle(event, 'defence')"> Defence </a></li>
-                                <li><a class="tablinks" onclick="TabclickHandle(event, 'offence')"> Offence </a></li>
+                                <li>
+                                    <a class="tablinks" onclick="TabclickHandle(event, 'defence')">
+                                        <span class="icon">
+                                            <img src="/static/img/shield.jpeg" alt="user-icon">
+                                        </span>
+                                        <span>Defence</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="tablinks" onclick="TabclickHandle(event, 'offence')">
+                                        <span class="icon">
+                                            <img src="/static/img/sword.png" alt="user-icon">
+                                        </span>
+                                        <span>Offence</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
 
