@@ -5,8 +5,11 @@ from sqlalchemy.orm import Session
 
 from crud import user as user_crud
 from crud import ranking as ranking_crud
+from crud import rating as rating_crud
+from crud import user_stats as user_stats_crud
 from models import user as user_models
 from database import get_session
+from services.rating import INITIAL_USER_RATING
 
 router = APIRouter()
 
@@ -17,7 +20,14 @@ def create_user(user: user_models.UserCreate, session: Session = Depends(get_ses
     if preexisting_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     user = user_crud.create_user(session=session, user=user)
-    ranking_crud.update_user_rankings(session=session)
+    _ = user_stats_crud.create_first_empty_user_stats(session=session, user_id=user.id)
+    _ = rating_crud.add_rating(
+        session=session,
+        user_id=user.id,
+        rating_defence=INITIAL_USER_RATING,
+        rating_offence=INITIAL_USER_RATING,
+    )
+    _ = ranking_crud.update_user_rankings(session=session)
     return user
 
 

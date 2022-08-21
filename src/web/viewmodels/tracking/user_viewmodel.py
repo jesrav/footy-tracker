@@ -73,4 +73,8 @@ class UserViewModel(ViewModelBase):
         user_rankings = await tracking_service.get_user_rankings()
         self.user_ranking = [user_ranking for user_ranking in user_rankings if user_ranking.user_id == self.user_in_view_id][0]
         user_stats_list = await tracking_service.get_user_stats()
-        self.user_stats = [user_stats for user_stats in user_stats_list if user_stats.user_id == self.user_in_view_id][0]
+        self.user_stats = [user_stats for user_stats in user_stats_list if user_stats.user_id == self.user_in_view_id]
+        if not self.user_stats:
+            self.user_stats = None
+        else:
+            self.user_stats = self.user_stats[0]

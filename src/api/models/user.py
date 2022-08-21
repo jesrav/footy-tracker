@@ -1,22 +1,27 @@
+import os
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, AnyUrl
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.ranking import UserRanking, UserRankingRead
 
 
+BLOB_STORAGE_BASE_URL = os.environ["BLOB_STORAGE_BASE_URL"]
+
+
 class UserBase(SQLModel):
     nickname: str
     email: EmailStr
+    motto: Optional[str] = None
+    profile_pic_path: str = BLOB_STORAGE_BASE_URL + "userdefault.svg"
 
 
 class User(UserBase, table=True):
     id: Optional[int] = Field(index=True, primary_key=True)
     hash_password: str
     created_dt: datetime = Field(default_factory=datetime.utcnow)
-
     ratings: List["UserRating"] = Relationship(back_populates="user")
     ranking: UserRanking = Relationship()
 

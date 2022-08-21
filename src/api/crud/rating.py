@@ -16,7 +16,7 @@ from models import rating as rating_models, result as result_models
 
 
 def add_rating(
-        session: Session, user_id: int, rating_defence: float, rating_offence: float, result_id: Optional[int] = None
+    session: Session, user_id: int, rating_defence: float, rating_offence: float, result_id: Optional[int] = None
 ):
     user_rating = rating_models.UserRating(
         user_id=user_id,

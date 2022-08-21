@@ -7,7 +7,7 @@ from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import user as user_crud
 from crud import ranking as ranking_crud
-from crud.user_stats import update_user_stats_based_on_result
+from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from database import get_session
 
@@ -62,7 +62,7 @@ def validate_result(user_id: int, result_id: int, approved: bool, session: Sessi
     if approved:
         _ = ratings_crud.update_ratings(session, result=validated_result)
         _ = ranking_crud.update_user_rankings(session)
-        _ = update_user_stats_based_on_result(session, result=validated_result)
+        _ = update_user_participant_stats_based_on_result(session, result=validated_result)
 
     session.refresh(validated_result)
     return validated_result

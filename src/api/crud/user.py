@@ -28,22 +28,14 @@ def get_users(session: Session, skip: int = 0, limit: int = 100) -> List[user_mo
 
 
 def create_user(session: Session, user: user_models.UserCreate) -> user_models.User:
-    # Create user
     user = user_models.User(
-        nickname=user.nickname, email=user.email, hash_password=crypto.hash(user.password, rounds=172_434)
+        nickname=user.nickname,
+        email=user.email,
+        motto=user.motto,
+        hash_password=crypto.hash(user.password, rounds=172_434),
+        profile_pic_path=user.profile_pic_path,
     )
     session.add(user)
-    session.commit()
-    session.refresh(user)
-    # Create initial rating
-    user_rating = rating_models.UserRating(
-        user_id=user.id,
-        overall_rating=INITIAL_USER_RATING,
-        rating_defence=INITIAL_USER_RATING,
-        rating_offence=INITIAL_USER_RATING,
-    )
-
-    session.add(user_rating)
     session.commit()
     session.refresh(user)
     return user
