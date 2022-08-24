@@ -3,13 +3,27 @@ from typing import Optional, List
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 from sqlmodel import Session, select
 
-from services.rating import INITIAL_USER_RATING
-from models import user as user_models, rating as rating_models
+from models import user as user_models
 
 
 def get_user(session: Session, user_id: int) -> Optional[user_models.User]:
     statement = select(user_models.User).filter(user_models.User.id == user_id)
     return session.exec(statement).first()
+
+
+def update_user(session: Session, user_id: int, user_updates: user_models.UserUpdate) -> user_models.User:
+    user = get_user(session, user_id=user_id)
+    if not user:
+        return user
+    if user_updates.email:
+        user.email = user_updates.email
+    if user_updates.nickname:
+        user.nickname = user_updates.nickname
+    if user_updates.motto:
+        user.motto = user_updates.motto
+    session.commit()
+    session.refresh(user)
+    return user
 
 
 def get_user_by_email(session: Session, email: str) -> Optional[user_models.User]:

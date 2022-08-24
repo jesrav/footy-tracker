@@ -1,6 +1,5 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
-        <div class="content">
 
             <div class="columns">
                 <div class="column is-one-third">
@@ -267,8 +266,6 @@
 
 
                 </div>
-
-            </div>
 
         </div>
     </div>

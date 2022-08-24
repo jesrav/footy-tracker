@@ -4,7 +4,7 @@ from typing import Optional, List
 import httpx
 from httpx import Response
 
-from models.user import UserRead
+from models.user import UserRead, UserUpdate
 from models.validation_error import ValidationError
 
 BASE_WEB_API_URL = os.environ.get("API_URL")
@@ -72,3 +72,18 @@ async def get_all_users() -> List[UserRead]:
             raise ValidationError(resp.text, status_code=resp.status_code)
         else:
             return [UserRead(**user_dict) for user_dict in resp.json()]
+
+
+async def update_user(user_id: int, user_updates: UserUpdate) -> Optional[UserRead]:
+    json_data = {
+        "nickname": user_updates.nickname,
+        "password": user_updates.password,
+        "email": user_updates.email,
+        "motto": user_updates.motto,
+        "profile_pic_path": user_updates.profile_pic_path,
+    }
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.post(url=BASE_WEB_API_URL + f"/users/{user_id}/update/", json=json_data)
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return UserRead(**resp.json())

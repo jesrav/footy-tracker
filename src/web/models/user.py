@@ -11,3 +11,11 @@ class UserRead(BaseModel):
     motto: Optional[str]
     profile_pic_path: str
     created_dt: datetime
+
+
+class UserUpdate(BaseModel):
+    nickname: Optional[str] = None
+    email: Optional[str] = None
+    motto: Optional[str] = None
+    profile_pic_path: Optional[str] = None
+    password: Optional[str] = None

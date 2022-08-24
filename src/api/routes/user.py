@@ -1,7 +1,10 @@
+import os
 from typing import List
+from pathlib import Path
 
-from fastapi import Depends, HTTPException, APIRouter
+from fastapi import Depends, HTTPException, APIRouter, UploadFile, File
 from sqlalchemy.orm import Session
+from azure.storage.blob.aio import BlobServiceClient
 
 from crud import user as user_crud
 from crud import ranking as ranking_crud
@@ -51,6 +54,14 @@ def read_user(user_id: int, session: Session = Depends(get_session)):
     if users is None:
         raise HTTPException(status_code=404, detail="User not found")
     return users
+
+
+@router.post("/users/{user_id}/update/", response_model=user_models.UserRead)
+def update_user(user_id: int, user_updates: user_models.UserUpdate, session: Session = Depends(get_session)):
+    user = user_crud.update_user(session, user_id=user_id, user_updates=user_updates)
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User with email {user_updates.email} does not exist.")
+    return user
 
 
 @router.get("/users/by_email/{email}", response_model=user_models.UserRead)

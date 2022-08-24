@@ -1,41 +1,16 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
-        <div class="section">
-            <div class="content">
-                Hello ${user.nickname}
-                <br>
-                <br>
+        <div class="content">
 
-                <form method="post" enctype="multipart/form-data" runat="server">
-                <div class="file has-name is-fullwidth is-primary">
-                    <label class="file-label">
-                        <input class="file-input" type="file" accept=".jpg,.jpeg,.png" name="user-image" onchange="loadFile(event)">
-                        <span class="file-cta">
-                  <span class="file-icon">
-                    <ion-icon name="cloud-upload-outline"></ion-icon>
-                  </span>
-                  <span class="file-label">
-                    Choose a file…
-                  </span>
-                </span>
-                    </label>
-                </div>
-                <input class="button" type="submit" value="Upload image">
-                </form>
+            <div class="section">
 
-                <img class="image" id="output"/>
+                    <h1>Your pofile</h1>
+
+                    <img class="image is-96x96 mt-3 is-rounded" src="${user.profile_pic_path}" alt="user-icon">
+
             </div>
-
         </div>
+
+
     </div>
 </div>
-
-<script>
-    var loadFile = function (event) {
-        var output = document.getElementById('output');
-        output.src = URL.createObjectURL(event.target.files[0]);
-        output.onload = function () {
-            URL.revokeObjectURL(output.src) // free memory
-        }
-    };
-</script>
