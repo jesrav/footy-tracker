@@ -6,7 +6,9 @@
                 <form action="" method="POST" class="form" onsubmit="return validateRegistrationForm()">
                     <h1>Edit you pofile</h1>
 
-                    <img class="image is-96x96 mt-3 is-rounded" src="${user.profile_pic_path}" alt="user-icon">
+                    <figure class="image is-96x96 mt-3">
+                        <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
+                    </figure>
 
 
                     <div class="field">

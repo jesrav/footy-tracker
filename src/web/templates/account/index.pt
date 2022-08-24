@@ -1,16 +1,43 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
         <div class="content">
+            <div class="container">
+            <div class="card">
+                        <header class="card-header p-3">
+                            <div class="media">
+                                <div class="media-left">
+                                    <figure class="image is-96x96 mt-3">
+                                        <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
+                                    </figure>
+                                </div>
+                                <div class="media-content">
+                                    <br tal:condition="not user.motto">
+                                    <p class="title is-2">${user.nickname}</p>
+                                    <p class="subtitle is-6">${user.motto}
+                                        <a href="/account/edit/">
+                                       <span class="icon is-small is-left">
+                                           <ion-icon name="pencil-outline"></ion-icon>
+                                       </span>
 
-            <div class="section">
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </header>
+                        <div class="card-content">
 
-                    <h1>Your pofile</h1>
+                            <div class="content">
 
-                    <img class="image is-96x96 mt-3 is-rounded" src="${user.profile_pic_path}" alt="user-icon">
 
-            </div>
+                                <br>
+
+                            </div>
+
+                        </div>
+                    </div>
+
         </div>
 
-
+        </div>
     </div>
 </div>

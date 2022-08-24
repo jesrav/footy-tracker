@@ -29,15 +29,15 @@ async def index(request: Request):
 
 @router.get('/account/edit/')
 @template()
-async def index(request: Request):
-    vm = AccountViewModel(request)
+async def edit(request: Request):
+    vm = AccountEditViewModel(request)
     await vm.load()
     return vm.to_dict()
 
 
 @router.post('/account/edit/')
 @template()
-async def index(request: Request):
+async def edit(request: Request):
     vm = AccountEditViewModel(request)
     await vm.load_form()
 
