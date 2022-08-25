@@ -2,12 +2,24 @@
     <div metal:fill-slot="content" tal:omit-tag="True">
 
     <div class="content">
+    <div class="container">
+        <div class="card">
 
-        <div class="section">
-        <div class="form-container">
+            <header class="card-header p-3">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-64x64 mt-3">
+                            <img src="/static/img/football.svg" alt="football-icon">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-2 mt-4">Submit result</p>
+                    </div>
+                </div>
+            </header>
+
+        <div class="card-content">
         <form action="" method="POST" class="form">
-            <h1 class="title">Register a match result</h1>
-            <br><br>
             <div class="columns">
                 <div class="column">
                     <h1 class="title">Team 1</h1>
@@ -118,6 +130,7 @@
             </form>
             </div>
         </div>
+</div>
     </div>
 </div>
 

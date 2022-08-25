@@ -3,10 +3,13 @@
         <div class="content">
             <div class="container">
                 <div class="card">
+
+                <header class="card-header p-5">
+                    <h1>Update your profile image</h1>
+                </header>
+
                 <div class="card-content">
 
-                 <h1>Update your profile image</h1>
-                <br>
                 <img class="image" src="${user.profile_pic_path}" id="user-icon"/>
 
 

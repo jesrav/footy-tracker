@@ -3,6 +3,7 @@ import uuid
 from pathlib import Path
 
 import fastapi
+from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from fastapi import UploadFile, File, Form
 from fastapi_chameleon import template
@@ -36,7 +37,10 @@ async def delete_from_azure(file_name: str):
     container_name = os.environ["BLOB_PROFILE_IMAGE_CONTAINER"]
     container_service_client = ContainerClient.from_connection_string(conn_str=connect_str, container_name=container_name)
     async with container_service_client:
-        await container_service_client.delete_blob(blob=file_name)
+        try:
+            await container_service_client.delete_blob(blob=file_name)
+        except ResourceNotFoundError:
+            pass
 
 
 @router.get('/account')
