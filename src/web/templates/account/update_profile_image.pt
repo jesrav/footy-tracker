@@ -1,35 +1,53 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
-        <div class="section">
-            <div class="content">
-                <form method="post" enctype="multipart/form-data" runat="server">
-                <input type="hidden" id="user_id" name="user_id" value=${user.id}>
-                <div class="file has-name is-fullwidth is-primary">
-                    <label class="file-label">
-                        <input class="file-input" type="file" accept=".jpg,.jpeg,.png" name="file" onchange="loadFile(event)">
-                        <span class="file-cta">
-                  <span class="file-icon">
-                    <ion-icon name="cloud-upload-outline"></ion-icon>
-                  </span>
-                  <span class="file-label">
-                    Choose a file…
-                  </span>
-                </span>
-                    </label>
-                </div>
-                <input class="button" type="submit" value="Upload image">
-                </form>
+        <div class="content">
+            <div class="container">
+                <div class="card">
+                <div class="card-content">
 
-                <img class="image" id="output"/>
+                 <h1>Update your profile image</h1>
+                <br>
+                <img class="image" src="${user.profile_pic_path}" id="user-icon"/>
+
+
+<form method="post" enctype="multipart/form-data" runat="server">
+
+    <input type="hidden" id="user_id" name="user_id" value=${user.id}>
+
+<br>
+<br>
+
+      <div class="file has-name is-fullwidth">
+          <label class="file-label">
+              <div class="">
+                  <input class="file-input" type="file" accept=".jpg,.jpeg,.png" name="file" onchange="loadFile(event)">
+                  <span class="file-cta">
+                      <span class="file-icon">
+                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                      </span>
+                      <span class="file-label">
+                        Choose a file…
+                      </span>
+                    </span>
+          </label>
+      </div>
+
+
+    <input class="button ml-3 is-primary" type="submit" value="Upload image">
+
+</form>
+
+
             </div>
-
+        </div>
+        </div>
         </div>
     </div>
 </div>
 
 <script>
     var loadFile = function (event) {
-        var output = document.getElementById('output');
+        var output = document.getElementById('user-icon');
         output.src = URL.createObjectURL(event.target.files[0]);
         output.onload = function () {
             URL.revokeObjectURL(output.src) // free memory

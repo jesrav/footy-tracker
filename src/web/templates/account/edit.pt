@@ -2,80 +2,89 @@
     <div metal:fill-slot="content" tal:omit-tag="True">
         <div class="content">
 
-            <div class="section">
-                <form action="" method="POST" class="form" onsubmit="return validateRegistrationForm()">
-                    <h1>Edit you pofile</h1>
+            <div class="container">
+                <div class="card">
 
-                    <figure class="image is-96x96 mt-3">
-                        <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
-                    </figure>
+                    <header class="card-header p-3">
+                        <div class="media">
+                            <div class="media-left">
+                                <div class="image-container">
+                                    <figure class="image is-96x96 mt-3">
+                                        <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
+                                    </figure>
+                                    <span>
+                                       <a href="/account/update_profile_image">
+                                            <div class="image-label">
+                                                <span class="icon is-small">
+                                                    <ion-icon name="camera-outline"></ion-icon>
+                                                </span>
+                                            </div>
+                                       </a>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="media-content">
+                                <br tal:condition="not user.motto">
+                                <p class="title is-2">${user.nickname}</p>
+                                <p class="subtitle is-6"><b>E-mail</b>: ${user.email}</p>
 
+                                <p class="subtitle is-6"><b>Motto</b>: <q tal:condition="user.motto"
+                                        class="subtitle is-6">${user.motto}</q></p>
+                                <q tal:condition="not user.motto" class="subtitle is-6">Edit to add a motto...</q>
+                            </div>
+                        </div>
+                    </header>
 
-                    <div class="field">
-                        <label class="label">Nickname</label>
-                        <div class="control has-icons-left has-icons-right">
-                            <input class="input" type="text" name="nickname" type="text" placeholder=" Your nickname"
-                                   value="${ user.nickname }">
-                            <span class="icon is-small is-left">
+                    <div class="card-content">
+                        <form action="" method="POST" class="form" onsubmit="return validateRegistrationForm()">
+                            <h1>Edit your user details</h1>
+                            <div class="field">
+                                <label class="label">Nickname</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input class="input" type="text" name="nickname" type="text"
+                                           placeholder=" Your nickname"
+                                           value="${ user.nickname }">
+                                    <span class="icon is-small is-left">
                       <ion-icon name="person"></ion-icon>
                     </span>
-                        </div>
-                    </div>
+                                </div>
+                            </div>
 
-                    <div class="field">
-                        <label class="label">Motto</label>
-                        <div class="control has-icons-left has-icons-right">
-                            <input class="input" type="text" name="motto" type="text" placeholder=" Your moto"
-                                   value="${ user.motto }">
-                            <span class="icon is-small is-left">
+                            <div class="field">
+                                <label class="label">Motto</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input class="input" type="text" name="motto" type="text" placeholder=" Your moto"
+                                           value="${ user.motto }">
+                                    <span class="icon is-small is-left">
                         <ion-icon name="person"></ion-icon>
                     </span>
-                        </div>
-                    </div>
+                                </div>
+                            </div>
 
 
-                    <div class="field">
-                        <label class="label">E-mail</label>
-                        <div class="control has-icons-left has-icons-right">
-                            <input class="input" type="text" name="email" placeholder=" Your email address"
-                                   value="${ user.email }" id="email-input">
-                            <span class="icon is-small is-left">
+                            <div class="field">
+                                <label class="label">E-mail</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input class="input" type="text" name="email" placeholder=" Your email address"
+                                           value="${ user.email }" id="email-input">
+                                    <span class="icon is-small is-left">
                       <ion-icon name="mail"></ion-icon>
                     </span>
-                            <span class="icon is-small is-right is-hidden">
+                                    <span class="icon is-small is-right is-hidden">
                       <ion-icon name="checkmark" id="email-input-status-icon"></ion-icon>
                     </span>
-                            <p class="help is-danger is-hidden" id="email-input-status-warning-text">Email must be
-                                valid</p>
-                        </div>
+                                    <p class="help is-danger is-hidden" id="email-input-status-warning-text">Email must
+                                        be
+                                        valid</p>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="button is-primary">Save changes</button>
+                            <h5 class="help is-danger" tal:condition="error">${ error }</h5>
+                        </form>
+
                     </div>
-
-                    <button type="submit" class="button is-primary">Submit changes</button>
-                    <h5 class="help is-danger" tal:condition="error">${ error }</h5>
-                </form>
-
-                <br>
-                <br>
-                <form method="post" enctype="multipart/form-data" runat="server">
-                    <div class="file has-name is-fullwidth is-primary">
-                        <label class="file-label">
-                            <input class="file-input" type="file" accept=".jpg,.jpeg,.png" name="user-image"
-                                   onchange="loadFile(event)">
-                            <span class="file-cta">
-  <span class="file-icon">
-    <ion-icon name="cloud-upload-outline"></ion-icon>
-  </span>
-  <span class="file-label">
-    Choose a file…
-  </span>
-</span>
-                        </label>
-                    </div>
-                    <input class="button" type="submit" value="Upload image">
-                </form>
-
-                <img class="image" id="output"/>
-
+                </div>
             </div>
         </div>
 

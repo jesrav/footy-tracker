@@ -2,7 +2,6 @@
     <div metal:fill-slot="content" tal:omit-tag="True">
         <div class="content">
             <div class="container">
-
             <div class="card">
                         <header class="card-header p-3">
                             <div class="media">
@@ -11,11 +10,15 @@
                                         <figure class="image is-96x96 mt-3">
                                             <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
                                         </figure>
+                                        <span>
+                                            <a href="/account/update_profile_image">
                                         <div class="image-label">
-                                            <span class="icon">
-                                            <ion-icon name="pencil-outline"></ion-icon>
+                                            <span class="icon is-small">
+                                            <ion-icon name="camera-outline"></ion-icon>
                                             </span>
                                           </div>
+                                            </a>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="media-content">
