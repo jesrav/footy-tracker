@@ -3,6 +3,7 @@ from http.client import HTTPException
 from pathlib import Path
 
 import fastapi
+from azure.storage.blob.aio import BlobServiceClient
 from fastapi import UploadFile, File
 from fastapi_chameleon import template
 from starlette import status
@@ -50,28 +51,29 @@ async def edit(request: Request):
     return response
 
 
-# @router.post("/account/upload_profile_image/")
-# async def upload_profile_image(user_id, file: UploadFile = File(...)):
-#     file_suffix = Path(file.filename).suffix
-#     name = f"profile_pic_{user_id}{file_suffix}"
-#     return await upload_to_azure(file, name)
-#
-#
-# async def upload_to_azure(file: UploadFile, file_name: str):
-#     connect_str = os.environ["BLOB_STORAGE_CON_STR"]
-#     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-#     container_name = os.environ["BLOB_PROFILE_IMAGE_CONTAINER"]
-#     async with blob_service_client:
-#         container_client = blob_service_client.get_container_client(container_name)
-#         try:
-#             blob_client = container_client.get_blob_client(file_name)
-#             f = await file.read()
-#             await blob_client.upload_blob(f)
-#
-#         except Exception as e:
-#             print(e)
-#             return HTTPException(401, "Error uploading profile image")
-#     return
+@router.post("/account/upload_profile_image/")
+async def upload_profile_image(user_id, file: UploadFile = File(...)):
+    file_suffix = Path(file.filename).suffix
+    name = f"profile_pic_{user_id}{file_suffix}"
+    return await upload_to_azure(file, name)
+
+
+async def upload_to_azure(file: UploadFile, file_name: str):
+    connect_str = os.environ["BLOB_STORAGE_CON_STR"]
+    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
+    container_name = os.environ["BLOB_PROFILE_IMAGE_CONTAINER"]
+    async with blob_service_client:
+        container_client = blob_service_client.get_container_client(container_name)
+        try:
+            blob_client = container_client.get_blob_client(file_name)
+            f = await file.read()
+            await blob_client.upload_blob(f)
+
+        except Exception as e:
+            print(e)
+            return HTTPException(401, "Error uploading profile image")
+
+    return fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
 
 
 @router.get('/account/register')
