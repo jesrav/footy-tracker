@@ -25,7 +25,7 @@
                     <span class="icon is-small is-right is-hidden">
                       <ion-icon name="checkmark" id="email-input-status-icon"></ion-icon>
                     </span>
-                    <p class="help is-danger is-hidden" id="email-input-status-warning-text">Email must be valid</p>
+                    <p class="help is-danger is-hidden" id="email-input-status-warning-text">E-mail must be valid</p>
                 </div>
             </div>
             <div class="field">

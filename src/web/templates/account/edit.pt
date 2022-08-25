@@ -28,9 +28,9 @@
                                 <p class="title is-2">${user.nickname}</p>
                                 <p class="subtitle is-6"><b>E-mail</b>: ${user.email}</p>
 
-                                <p class="subtitle is-6"><b>Motto</b>: <q tal:condition="user.motto"
-                                        class="subtitle is-6">${user.motto}</q></p>
-                                <q tal:condition="not user.motto" class="subtitle is-6">Edit to add a motto...</q>
+                                <p tal:condition="user.motto" class="subtitle is-6"><b>Motto</b>: "${user.motto}"</p>
+                                <p tal:condition="not user.motto" class="subtitle is-6"><b>Motto</b>: "Edit to add a motto.."</p>
+
                             </div>
                         </div>
                     </header>
@@ -73,7 +73,7 @@
                                     <span class="icon is-small is-right is-hidden">
                       <ion-icon name="checkmark" id="email-input-status-icon"></ion-icon>
                     </span>
-                                    <p class="help is-danger is-hidden" id="email-input-status-warning-text">Email must
+                                    <p class="help is-danger is-hidden" id="email-input-status-warning-text">E-mail must
                                         be
                                         valid</p>
                                 </div>
@@ -100,4 +100,44 @@
             URL.revokeObjectURL(output.src) // free memory
         }
     };
+
+
+    const emailInput = document.querySelector('#email-input')
+    const emailInputStatusIcon = document.querySelector('#email-input-status-icon')
+    const emailInputWarningText = document.querySelector('#email-input-status-warning-text')
+
+
+    // Event listeners to update the status and warning text for the email and password input
+    emailInput.addEventListener('input', (e) => {
+        updateEmailInputStatus(e.target.value)
+    });
+    window.onload = function () {
+        updateEmailInputStatus(emailInput.value)
+    };
+
+    function updateEmailInputStatus(email) {
+        if (email.length === 0) {
+            emailInput.classList.remove('is-danger')
+            emailInput.classList.remove('is-success')
+            emailInputWarningText.classList.add('is-hidden')
+            emailInputStatusIcon.parentElement.classList.add('is-hidden')
+        } else if (validateEmail(email)) {
+            emailInput.classList.remove('is-danger')
+            emailInput.classList.add('is-success')
+            emailInputWarningText.classList.add('is-hidden')
+            emailInputStatusIcon.parentElement.classList.remove('is-hidden')
+            emailInputStatusIcon.name = "checkmark"
+        } else {
+            emailInput.classList.remove('is-success')
+            emailInput.classList.add('is-danger')
+            emailInputWarningText.classList.remove('is-hidden')
+            emailInputStatusIcon.parentElement.classList.remove('is-hidden')
+            emailInputStatusIcon.name = "alert"
+        }
+    }
+
+    function validateEmail(email) {
+        var re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
 </script>
