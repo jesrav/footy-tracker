@@ -14,7 +14,7 @@
                                 <div class="media-content">
                                     <br tal:condition="not user.motto">
                                     <p class="title is-2">${user.nickname}</p>
-                                    <p class="subtitle is-6">${user.motto}</p>
+                                    <p tal:condition="user.motto" class="subtitle is-6">"${user.motto}"</p>
                                 </div>
                             </div>
                         </header>

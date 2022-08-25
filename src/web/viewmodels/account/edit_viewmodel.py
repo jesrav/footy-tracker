@@ -20,5 +20,9 @@ class AccountEditViewModel(ViewModelBase):
         self.form = await self.request.form()
         self.user: UserRead = await user_service.update_user(
             user_id=self.user_id,
-            user_updates=UserUpdate(motto=self.form.get('motto'))
+            user_updates=UserUpdate(
+                motto=self.form.get('motto'),
+                email=self.form.get('email'),
+                nickname=self.form.get('nickname'),
+            )
         )

@@ -2,42 +2,44 @@
     <div metal:fill-slot="content" tal:omit-tag="True">
         <div class="content">
             <div class="container">
+
             <div class="card">
                         <header class="card-header p-3">
                             <div class="media">
                                 <div class="media-left">
-                                    <figure class="image is-96x96 mt-3">
-                                        <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
-                                    </figure>
+                                    <div class="image-container">
+                                        <figure class="image is-96x96 mt-3">
+                                            <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
+                                        </figure>
+                                        <div class="image-label">
+                                            <span class="icon">
+                                            <ion-icon name="pencil-outline"></ion-icon>
+                                            </span>
+                                          </div>
+                                    </div>
                                 </div>
                                 <div class="media-content">
                                     <br tal:condition="not user.motto">
                                     <p class="title is-2">${user.nickname}</p>
-                                    <p class="subtitle is-6">${user.motto}
-                                        <a href="/account/edit/">
-                                       <span class="icon is-small is-left">
-                                           <ion-icon name="pencil-outline"></ion-icon>
-                                       </span>
+                                    <p class="subtitle is-6">${user.email}</p>
 
-                                        </a>
-                                    </p>
+                                    <q tal:condition="user.motto" class="subtitle is-6">"${user.motto}"</q>
+                                    <q tal:condition="not user.motto" class="subtitle is-6">Edit to add a motto...</q>
                                 </div>
                             </div>
                         </header>
                         <div class="card-content">
-
-                            <div class="content">
-
-
-                                <br>
-
-                            </div>
-
+                            <button class="button is-primary" onclick="location.href = '/account/edit/'">
+                                <span class="icon is-small is-left">
+                                   <ion-icon name="pencil-outline"></ion-icon>
+                                </span>
+                                <span>Edit your info</span>
+                            </button>
                         </div>
-                    </div>
 
         </div>
 
         </div>
     </div>
+</div>
 </div>

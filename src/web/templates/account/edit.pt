@@ -25,7 +25,7 @@
                     <div class="field">
                         <label class="label">Motto</label>
                         <div class="control has-icons-left has-icons-right">
-                            <input class="input" type="text" name="motto" type="text" placeholder=" Your motoo"
+                            <input class="input" type="text" name="motto" type="text" placeholder=" Your moto"
                                    value="${ user.motto }">
                             <span class="icon is-small is-left">
                         <ion-icon name="person"></ion-icon>
