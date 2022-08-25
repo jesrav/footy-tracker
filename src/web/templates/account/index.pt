@@ -21,9 +21,9 @@
                                 <div class="media-content">
                                     <br tal:condition="not user.motto">
                                     <p class="title is-2">${user.nickname}</p>
-                                    <p class="subtitle is-6">${user.email}</p>
+                                    <p class="subtitle is-6"><b>E-mail</b>: ${user.email}</p>
 
-                                    <q tal:condition="user.motto" class="subtitle is-6">"${user.motto}"</q>
+                                    <p class="subtitle is-6"><b>Motto</b>: <q tal:condition="user.motto" class="subtitle is-6">${user.motto}</q></p>
                                     <q tal:condition="not user.motto" class="subtitle is-6">Edit to add a motto...</q>
                                 </div>
                             </div>

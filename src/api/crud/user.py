@@ -21,6 +21,8 @@ def update_user(session: Session, user_id: int, user_updates: user_models.UserUp
         user.nickname = user_updates.nickname
     if user_updates.motto:
         user.motto = user_updates.motto
+    if user_updates.profile_pic_path:
+        user.profile_pic_path = user_updates.profile_pic_path
     session.commit()
     session.refresh(user)
     return user
