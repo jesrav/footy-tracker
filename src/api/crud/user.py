@@ -3,13 +3,29 @@ from typing import Optional, List
 from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 from sqlmodel import Session, select
 
-from services.rating import INITIAL_USER_RATING
-from models import user as user_models, rating as rating_models
+from models import user as user_models
 
 
 def get_user(session: Session, user_id: int) -> Optional[user_models.User]:
     statement = select(user_models.User).filter(user_models.User.id == user_id)
     return session.exec(statement).first()
+
+
+def update_user(session: Session, user_id: int, user_updates: user_models.UserUpdate) -> user_models.User:
+    user = get_user(session, user_id=user_id)
+    if not user:
+        return user
+    if user_updates.email:
+        user.email = user_updates.email
+    if user_updates.nickname:
+        user.nickname = user_updates.nickname
+    if user_updates.motto:
+        user.motto = user_updates.motto
+    if user_updates.profile_pic_path:
+        user.profile_pic_path = user_updates.profile_pic_path
+    session.commit()
+    session.refresh(user)
+    return user
 
 
 def get_user_by_email(session: Session, email: str) -> Optional[user_models.User]:
@@ -28,22 +44,14 @@ def get_users(session: Session, skip: int = 0, limit: int = 100) -> List[user_mo
 
 
 def create_user(session: Session, user: user_models.UserCreate) -> user_models.User:
-    # Create user
     user = user_models.User(
-        nickname=user.nickname, email=user.email, hash_password=crypto.hash(user.password, rounds=172_434)
+        nickname=user.nickname,
+        email=user.email,
+        motto=user.motto,
+        hash_password=crypto.hash(user.password, rounds=172_434),
+        profile_pic_path=user.profile_pic_path,
     )
     session.add(user)
-    session.commit()
-    session.refresh(user)
-    # Create initial rating
-    user_rating = rating_models.UserRating(
-        user_id=user.id,
-        overall_rating=INITIAL_USER_RATING,
-        rating_defence=INITIAL_USER_RATING,
-        rating_offence=INITIAL_USER_RATING,
-    )
-
-    session.add(user_rating)
     session.commit()
     session.refresh(user)
     return user

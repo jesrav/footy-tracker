@@ -1,0 +1,143 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+        <div class="content">
+
+            <div class="container">
+                <div class="card">
+
+                    <header class="card-header p-3">
+                        <div class="media">
+                            <div class="media-left">
+                                <div class="image-container">
+                                    <figure class="image is-96x96 mt-3">
+                                        <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
+                                    </figure>
+                                    <span>
+                                       <a href="/account/update_profile_image">
+                                            <div class="image-label">
+                                                <span class="icon is-small">
+                                                    <ion-icon name="camera-outline"></ion-icon>
+                                                </span>
+                                            </div>
+                                       </a>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="media-content">
+                                <br tal:condition="not user.motto">
+                                <p class="title is-2">${user.nickname}</p>
+                                <p class="subtitle is-6"><b>E-mail</b>: ${user.email}</p>
+
+                                <p tal:condition="user.motto" class="subtitle is-6"><b>Motto</b>: "${user.motto}"</p>
+                                <p tal:condition="not user.motto" class="subtitle is-6"><b>Motto</b>: "Edit to add a motto.."</p>
+
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="card-content">
+                        <form action="" method="POST" class="form" onsubmit="return validateRegistrationForm()">
+                            <h1>Edit your user details</h1>
+                            <div class="field">
+                                <label class="label">Nickname</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input class="input" type="text" name="nickname" type="text"
+                                           placeholder=" Your nickname"
+                                           value="${ user.nickname }">
+                                    <span class="icon is-small is-left">
+                      <ion-icon name="person"></ion-icon>
+                    </span>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Motto</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input class="input" type="text" name="motto" type="text" placeholder=" Your moto"
+                                           value="${ user.motto }">
+                                    <span class="icon is-small is-left">
+                        <ion-icon name="person"></ion-icon>
+                    </span>
+                                </div>
+                            </div>
+
+
+                            <div class="field">
+                                <label class="label">E-mail</label>
+                                <div class="control has-icons-left has-icons-right">
+                                    <input class="input" type="text" name="email" placeholder=" Your email address"
+                                           value="${ user.email }" id="email-input">
+                                    <span class="icon is-small is-left">
+                      <ion-icon name="mail"></ion-icon>
+                    </span>
+                                    <span class="icon is-small is-right is-hidden">
+                      <ion-icon name="checkmark" id="email-input-status-icon"></ion-icon>
+                    </span>
+                                    <p class="help is-danger is-hidden" id="email-input-status-warning-text">E-mail must
+                                        be
+                                        valid</p>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="button is-primary">Save changes</button>
+                            <h5 class="help is-danger" tal:condition="error">${ error }</h5>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    var loadFile = function (event) {
+        var output = document.getElementById('output');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function () {
+            URL.revokeObjectURL(output.src) // free memory
+        }
+    };
+
+
+    const emailInput = document.querySelector('#email-input')
+    const emailInputStatusIcon = document.querySelector('#email-input-status-icon')
+    const emailInputWarningText = document.querySelector('#email-input-status-warning-text')
+
+
+    // Event listeners to update the status and warning text for the email and password input
+    emailInput.addEventListener('input', (e) => {
+        updateEmailInputStatus(e.target.value)
+    });
+    window.onload = function () {
+        updateEmailInputStatus(emailInput.value)
+    };
+
+    function updateEmailInputStatus(email) {
+        if (email.length === 0) {
+            emailInput.classList.remove('is-danger')
+            emailInput.classList.remove('is-success')
+            emailInputWarningText.classList.add('is-hidden')
+            emailInputStatusIcon.parentElement.classList.add('is-hidden')
+        } else if (validateEmail(email)) {
+            emailInput.classList.remove('is-danger')
+            emailInput.classList.add('is-success')
+            emailInputWarningText.classList.add('is-hidden')
+            emailInputStatusIcon.parentElement.classList.remove('is-hidden')
+            emailInputStatusIcon.name = "checkmark"
+        } else {
+            emailInput.classList.remove('is-success')
+            emailInput.classList.add('is-danger')
+            emailInputWarningText.classList.remove('is-hidden')
+            emailInputStatusIcon.parentElement.classList.remove('is-hidden')
+            emailInputStatusIcon.name = "alert"
+        }
+    }
+
+    function validateEmail(email) {
+        var re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
+</script>

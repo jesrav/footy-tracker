@@ -1,6 +1,5 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
-        <div class="content">
 
             <div class="columns">
                 <div class="column is-one-third">
@@ -8,13 +7,14 @@
                         <header class="card-header p-3">
                             <div class="media">
                                 <div class="media-left">
-                                    <figure class="image is-64x64 mt-3">
-                                        <img src="/static/img/user.svg" class="is-rounded" alt="user-icon">
+                                    <figure class="image is-96x96 mt-3">
+                                        <img src="${user.profile_pic_path}" class="is-rounded" alt="user-icon">
                                     </figure>
                                 </div>
                                 <div class="media-content">
+                                    <br tal:condition="not user.motto">
                                     <p class="title is-2">${user.nickname}</p>
-                                    <p class="subtitle is-6">I shoot the ball hard!</p>
+                                    <p tal:condition="user.motto" class="subtitle is-6">"${user.motto}"</p>
                                 </div>
                             </div>
                         </header>
@@ -266,8 +266,6 @@
 
 
                 </div>
-
-            </div>
 
         </div>
     </div>

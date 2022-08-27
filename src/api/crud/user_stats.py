@@ -12,11 +12,21 @@ def get_user_stats(session: Session) -> List[UserStats]:
     return session.exec(statement).all()
 
 
-def update_or_create_single_user_stats(session: Session, result: ResultSubmission, user_id: int) -> UserStats:
+def create_first_empty_user_stats(session: Session, user_id: int):
     statement = select(UserStats).filter(UserStats.user_id == user_id)
     user_stats = session.exec(statement).first()
-    if not user_stats:
-        user_stats = UserStats(user_id=user_id)
+    if user_stats:
+        raise ValueError("Can't create first empty users stats, as a stats entry is already present.")
+    user_stats = UserStats(user_id=user_id)
+    session.add(user_stats)
+    session.commit()
+    session.refresh(user_stats)
+    return user_stats
+
+
+def update_user_stats(session: Session, user_id: int, result: Optional[ResultSubmission]) -> UserStats:
+    statement = select(UserStats).filter(UserStats.user_id == user_id)
+    user_stats = session.exec(statement).first()
 
     if user_id in result.team1:
         user_stats.eggs_given += 1 * (result.goals_team2 == 0)
@@ -42,10 +52,10 @@ def update_or_create_single_user_stats(session: Session, result: ResultSubmissio
     return user_stats
 
 
-def update_user_stats_based_on_result(session: Session, result: ResultSubmission) -> List[UserStats]:
+def update_user_participant_stats_based_on_result(session: Session, result: ResultSubmission) -> List[UserStats]:
     updated_user_stats = []
     for user_id in result.match_participants:
         updated_user_stats.append(
-            update_or_create_single_user_stats(session=session, result=result, user_id=user_id)
+            update_user_stats(session=session, result=result, user_id=user_id)
         )
     return updated_user_stats

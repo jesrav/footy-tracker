@@ -3,7 +3,6 @@
 
         <div class="content">
             <div class="container">
-
                 <div class="card">
                     <header class="card-header p-3">
                         <div class="media">
@@ -13,22 +12,39 @@
                                 </figure>
                             </div>
                             <div class="media-content">
-                                <p class="title is-2">Learderboard</p>
-                                <p class="subtitle is-4">Where are you ranked?</p>
+                                <p class="title is-2 mt-4">Learderboard</p>
                             </div>
                         </div>
                     </header>
+                    <div class="tabs">
+                        <ul>
+                            <li class="is-active">
+                                <a class="tablinks" onclick="TabclickHandle(event, 'overall')">
+                                        <span class="icon">
+                                            <img src="/static/img/sword-and-shield.jpeg" alt="user-icon">
+                                        </span>
+                                    <span>Overall</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="tablinks" onclick="TabclickHandle(event, 'defence')">
+                                        <span class="icon">
+                                            <img src="/static/img/shield.jpeg" alt="user-icon">
+                                        </span>
+                                    <span>Defence</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="tablinks" onclick="TabclickHandle(event, 'offence')">
+                                        <span class="icon">
+                                            <img src="/static/img/sword.png" alt="user-icon">
+                                        </span>
+                                    <span>Offence</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                     <div class="card-content">
-
-                        <div class="tabs">
-                            <ul>
-                                <li class="is-active">
-                                    <a class="tablinks" onclick="TabclickHandle(event, 'overall')">Overall</a>
-                                </li>
-                                <li><a class="tablinks" onclick="TabclickHandle(event, 'defence')"> Defence </a></li>
-                                <li><a class="tablinks" onclick="TabclickHandle(event, 'offence')"> Offence </a></li>
-                            </ul>
-                        </div>
 
 
                         <div id="tabs-with-content">
@@ -52,7 +68,7 @@
                                                                                   style="cursor:pointer;">
                                                 <td class="is-image-cell">
                                                     <div class="image">
-                                                        <img src="/static/img/user.svg" class="is-rounded"
+                                                        <img src="${r.user.profile_pic_path}" class="is-rounded"
                                                              alt="user-icon">
                                                     </div>
 
@@ -89,7 +105,7 @@
                                                                                   style="cursor:pointer;">
                                                 <td class="is-image-cell">
                                                     <div class="image">
-                                                        <img src="/static/img/user.svg" class="is-rounded"
+                                                        <img src="${r.user.profile_pic_path}" class="is-rounded"
                                                              alt="user-icon">
                                                     </div>
 
@@ -125,7 +141,7 @@
                                                                                   style="cursor:pointer;">
                                                 <td class="is-image-cell">
                                                     <div class="image">
-                                                        <img src="/static/img/user.svg" class="is-rounded"
+                                                        <img src="${r.user.profile_pic_path}" class="is-rounded"
                                                              alt="user-icon">
                                                     </div>
 
