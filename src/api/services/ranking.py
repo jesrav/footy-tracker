@@ -5,7 +5,7 @@ from models.ranking import UserRanking
 from models.rating import UserRating
 
 
-def calculate_rankings(latest_user_ratings: List[UserRating], rating_type: str = 'overall') -> Dict[int, int]:
+async def calculate_rankings(latest_user_ratings: List[UserRating], rating_type: str = 'overall') -> Dict[int, int]:
     """Get user rankings
 
     Either using `rating_type` "overall", "defence" or "offence".
@@ -24,10 +24,10 @@ def calculate_rankings(latest_user_ratings: List[UserRating], rating_type: str =
     return user_rankings
 
 
-def get_updated_user_rankings(latest_user_ratings: List[UserRating]) -> List[UserRanking]:
-    overall_rankings = calculate_rankings(latest_user_ratings, rating_type='overall')
-    defensive_rankings = calculate_rankings(latest_user_ratings, rating_type='defence')
-    offensive_rankings = calculate_rankings(latest_user_ratings, rating_type='offence')
+async def get_updated_user_rankings(latest_user_ratings: List[UserRating]) -> List[UserRanking]:
+    overall_rankings = await calculate_rankings(latest_user_ratings, rating_type='overall')
+    defensive_rankings = await calculate_rankings(latest_user_ratings, rating_type='defence')
+    offensive_rankings = await calculate_rankings(latest_user_ratings, rating_type='offence')
     user_rankings = []
     for user_id, overall_ranking in overall_rankings.items():
         user_rankings.append(UserRanking(

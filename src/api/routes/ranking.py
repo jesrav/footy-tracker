@@ -12,5 +12,5 @@ router = APIRouter()
 
 
 @router.get("/rankings/", response_model=List[UserRankingRead])
-def read_user_rankings(session: Session = Depends(get_session)):
+async def read_user_rankings(session: Session = Depends(get_session)):
     return get_user_rankings(session)

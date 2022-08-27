@@ -11,13 +11,13 @@ K_FACTOR = 30
 EGG_FACTOR = 1
 
 
-def elo_expected_result(elo_a, elo_b):
+async def elo_expected_result(elo_a, elo_b):
     """Classical elo expectation for result"""
     expect_a = 1.0/(1+10**((elo_b - elo_a)/ELO_WIDTH))
     return expect_a
 
 
-def update_ratings(winner_old_rating: float, looser_old_rating: float, winner_goals: int, looser_goals: int):
+async def update_ratings(winner_old_rating: float, looser_old_rating: float, winner_goals: int, looser_goals: int):
     """Update two ratings after a match result
 
     The update happens by an adjusted version of the ELO algorithm, that includes a bonus for giving the opponent
@@ -37,7 +37,7 @@ def update_ratings(winner_old_rating: float, looser_old_rating: float, winner_go
     return winner_old_rating, looser_old_rating
 
 
-def get_updated_player_ratings(
+async def get_updated_player_ratings(
         team1: team_models.Team, team2: team_models.Team, team1_goals: int, team2_goals: int
 ) -> List[rating_models.UserRatingCreate]:
 

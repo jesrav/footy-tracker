@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("/ratings/{user_id}/", response_model=List[rating_models.UserRatingRead])
-def read_user_rating(user_id: int, skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
+async def read_user_rating(user_id: int, skip: int = 0, limit: int = 100, session: Session = Depends(get_session)):
     user = crud_user.get_user(session, user_id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -21,7 +21,7 @@ def read_user_rating(user_id: int, skip: int = 0, limit: int = 100, session: Ses
 
 
 @router.get("/ratings/{user_id}/latest", response_model=rating_models.UserRatingRead)
-def read_latest_user_rating(user_id: int, session: Session = Depends(get_session)):
+async def read_latest_user_rating(user_id: int, session: Session = Depends(get_session)):
     user = crud_user.get_user(session, user_id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -29,5 +29,5 @@ def read_latest_user_rating(user_id: int, session: Session = Depends(get_session
 
 
 @router.get("/ratings/", response_model=List[rating_models.UserRatingRead])
-def read_latest_ratings(session: Session = Depends(get_session)):
+async def read_latest_ratings(session: Session = Depends(get_session)):
     return crud_rating.get_latest_ratings(session)

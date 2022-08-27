@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi import Depends, APIRouter
-from sqlalchemy.orm import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud.user_stats import get_user_stats
 from models.user_stats import UserStatsRead
@@ -12,5 +12,5 @@ router = APIRouter()
 
 
 @router.get("/user_stats/", response_model=List[UserStatsRead])
-def read_user_stats(session: Session = Depends(get_session)):
-    return get_user_stats(session)
+async def read_user_stats(session: AsyncSession = Depends(get_session)):
+    return await get_user_stats(session)

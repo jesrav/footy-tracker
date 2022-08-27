@@ -18,4 +18,5 @@ pydantic[email]
 asyncpg==0.24.0
 psycopg2
 
+
 azure-storage-blob
