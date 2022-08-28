@@ -10,12 +10,12 @@ from models import result as result_models
 
 
 async def create_result(session: AsyncSession, result: result_models.ResultSubmissionCreate) -> result_models.ResultSubmission:
-    team1_db = get_team(session, team=result.team1)
+    team1_db = await get_team(session, team=result.team1)
     if not team1_db:
-        team1_db = create_team(session, team=result.team1)
-    team2_db = get_team(session, team=result.team2)
+        team1_db = await create_team(session, team=result.team1)
+    team2_db = await get_team(session, team=result.team2)
     if not team2_db:
-        team2_db = create_team(session, team=result.team2)
+        team2_db = await create_team(session, team=result.team2)
 
     result = result_models.ResultSubmission(
         submitter_id=result.submitter_id,
@@ -26,8 +26,8 @@ async def create_result(session: AsyncSession, result: result_models.ResultSubmi
     )
     session.add(result)
     await session.commit()
-    await session.refresh(result)
-    return result
+    refreshed_result = await get_result(session=session, result_id=result.id)
+    return refreshed_result
 
 
 async def get_results(
@@ -159,7 +159,16 @@ async def approve_result(
         session: AsyncSession, validator_id: int, result_id: int, approved: bool
 ) -> result_models.ResultSubmission:
     statement = select(result_models.ResultSubmission).filter(result_models.ResultSubmission.id == result_id)
-    db_result = await session.execute(statement)
+    db_result = await session.execute(statement.options(
+        joinedload('validator'),
+        joinedload('submitter'),
+        joinedload('team1'),
+        joinedload('team2'),
+        joinedload('team1.defender'),
+        joinedload('team1.attacker'),
+        joinedload('team2.defender'),
+        joinedload('team2.attacker'),
+    ))
     result = db_result.scalars().one()
     result.validator_id = validator_id
     result.approved = approved

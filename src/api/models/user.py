@@ -25,10 +25,6 @@ class User(UserBase, table=True):
     ratings: List["UserRating"] = Relationship(back_populates="user")
     ranking: UserRanking = Relationship()
 
-    @property
-    def latest_rating(self):
-        return sorted(self.ratings, key=lambda x: x.created_dt, reverse=True)[0]
-
 
 class UserCreate(UserBase):
     password: str

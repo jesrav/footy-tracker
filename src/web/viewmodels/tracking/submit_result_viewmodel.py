@@ -53,3 +53,6 @@ class SubmitResultViewModel(ViewModelBase):
 
         elif self.goals_team1 == self.goals_team2:
             self.error = "A table soccer match must have a winner. Please finish tha match!"
+
+        elif self.user_id not in [int(self.team1_defender), int(self.team1_attacker), int(self.team2_defender), int(self.team2_attacker)]:
+            self.error = "Submitter must be part of the match!"

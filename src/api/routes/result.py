@@ -40,7 +40,8 @@ async def validate_result(user_id: int, result_id: int, approved: bool, session:
     result = await result_crud.get_result(session, result_id=result_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Result submission not found")
-
+    if result.approved is not None:
+        raise HTTPException(status_code=404, detail="Result submission already approved or rejected.")
     if result.submitter_id == user_id:
         raise HTTPException(status_code=400, detail="User can not validate result that they submitted themselves")
 
@@ -61,11 +62,9 @@ async def validate_result(user_id: int, result_id: int, approved: bool, session:
     validated_result = await result_crud.approve_result(session, validator_id=user.id, result_id=result_id, approved=approved)
 
     if approved:
-        _ = ratings_crud.update_ratings(session, result=validated_result)
-        _ = ranking_crud.update_user_rankings(session)
-        _ = update_user_participant_stats_based_on_result(session, result=validated_result)
-
-    await session.refresh(validated_result)
+        _ = await ratings_crud.update_ratings_from_result(session, result=validated_result)
+        _ = await ranking_crud.update_user_rankings(session)
+        _ = await update_user_participant_stats_based_on_result(session, result=validated_result)
     return validated_result
 
 

@@ -15,7 +15,6 @@ async def get_user_rankings(session: AsyncSession) -> List[UserRanking]:
     return result.scalars().all()
 
 
-
 async def update_user_rankings(session: AsyncSession) -> List[UserRanking]:
     statement = select(UserRanking)
     result = await session.execute(statement)
