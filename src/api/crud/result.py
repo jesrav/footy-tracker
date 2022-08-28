@@ -190,4 +190,4 @@ async def get_result(session: AsyncSession, result_id: int) -> Optional[result_m
         joinedload('team2.defender'),
         joinedload('team2.attacker'),
     ))
-    return db_result.scalars().one()
+    return db_result.scalars().first()

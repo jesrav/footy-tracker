@@ -13,7 +13,7 @@ async def get_user_stats(session: AsyncSession) -> List[UserStats]:
     return result.scalars().all()
 
 
-async def create_first_empty_user_stats(session: AsyncSession, user_id: int):
+async def create_first_empty_user_stats(session: AsyncSession, user_id: int, commit_changes: bool = True):
     statement = select(UserStats).filter(UserStats.user_id == user_id)
     result = await session.execute(statement)
     user_stats = result.scalars().first()
@@ -21,8 +21,9 @@ async def create_first_empty_user_stats(session: AsyncSession, user_id: int):
         raise ValueError("Can't create first empty users stats, as a stats entry is already present.")
     user_stats = UserStats(user_id=user_id)
     session.add(user_stats)
-    await session.commit()
-    await session.refresh(user_stats)
+    if commit_changes:
+        await session.commit()
+        await session.refresh(user_stats)
     return user_stats
 
 

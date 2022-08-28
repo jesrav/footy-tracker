@@ -94,5 +94,5 @@ async def read_results(
 async def read_result(result_id: int, session: AsyncSession = Depends(get_session)):
     result = await  result_crud.get_result(session, result_id=result_id)
     if result is None:
-        raise HTTPException(status_code=404, detail="User result found")
+        raise HTTPException(status_code=404, detail="Result not found")
     return result
