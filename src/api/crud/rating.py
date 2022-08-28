@@ -59,7 +59,7 @@ async def get_latest_user_rating(session: AsyncSession, user_id: int) -> rating_
         .filter(rating_models.UserRating.user_id == user_id)
         .order_by(rating_models.UserRating.created_dt.desc())
     )
-    result = await session.execute(statement)
+    result = await session.execute(statement.options(selectinload(rating_models.UserRating.user)))
     return result.scalars().first()
 
 
@@ -88,5 +88,5 @@ async def get_latest_ratings(session: AsyncSession) -> List[rating_models.UserRa
             rating_models.UserRating.created_dt == subquery.c.maxdate)
         )
     )
-    result = await session.execute(statement)
+    result = await session.execute(statement.options(selectinload(rating_models.UserRating.user)))
     return result.scalars().all()

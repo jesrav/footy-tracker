@@ -20,7 +20,7 @@ async def read_user_rating(user_id: int, skip: int = 0, limit: int = 100, sessio
     return await crud_rating.get_user_ratings(session, user_id=user_id, skip=skip, limit=limit)
 
 
-@router.get("/ratings/{user_id}/latest", response_model=rating_models.UserRatingRead)
+@router.get("/ratings/latest/{user_id}", response_model=rating_models.UserRatingRead)
 async def read_latest_user_rating(user_id: int, session: AsyncSession = Depends(get_session)):
     user = await crud_user.get_user(session, user_id=user_id)
     if user is None:
@@ -28,6 +28,6 @@ async def read_latest_user_rating(user_id: int, session: AsyncSession = Depends(
     return await crud_rating.get_latest_user_rating(session, user_id=user_id)
 
 
-@router.get("/ratings/", response_model=List[rating_models.UserRatingRead])
+@router.get("/ratings/latest", response_model=List[rating_models.UserRatingRead])
 async def read_latest_ratings(session: AsyncSession = Depends(get_session)):
     return await crud_rating.get_latest_ratings(session)

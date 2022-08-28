@@ -19,7 +19,8 @@ async def read_results_for_approval(user_id: int, session: AsyncSession = Depend
     user = await user_crud.get_user(session, user_id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return await result_crud.get_results_for_approval_by_user(session, user_id=user.id)
+    result = await result_crud.get_results_for_approval_by_user(session, user_id=user.id)
+    return result
 
 
 @router.get("/users/{user_id}/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead])

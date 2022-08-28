@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload, joinedload
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud.team import get_team, create_team
@@ -39,7 +40,16 @@ async def get_results(
     else:
         statement = statement.filter(result_models.ResultSubmission.approved != None)
 
-    db_result = await session.execute(statement)
+    db_result = await session.execute(statement.options(
+        joinedload('validator'),
+        joinedload('submitter'),
+        joinedload('team1'),
+        joinedload('team2'),
+        joinedload('team1.defender'),
+        joinedload('team1.attacker'),
+        joinedload('team2.defender'),
+        joinedload('team2.attacker'),
+    ))
     if not user_id:
         return db_result.scalars().all()
     else:
@@ -59,7 +69,7 @@ async def _get_results_with_user_participation(
             r.team2.defender_user_id,
             r.team2.attacker_user_id
         ]:
-            results_with_user_participation.append()
+            results_with_user_participation.append(r)
     return results_with_user_participation
 
 
@@ -77,7 +87,17 @@ async def get_results_for_approval_by_user(session: AsyncSession, user_id: int) 
         result_models.ResultSubmission.approved == None,
         result_models.ResultSubmission.submitter_id != user_id
     )
-    db_result = await session.execute(statement)
+    db_result = await session.execute(statement.options(
+        joinedload('validator'),
+        joinedload('submitter'),
+        joinedload('team1'),
+        joinedload('team2'),
+        joinedload('team1.defender'),
+        joinedload('team1.attacker'),
+        joinedload('team2.defender'),
+        joinedload('team2.attacker'),
+    ))
+
     results = db_result.scalars().all()
 
     results_with_user_participation = await _get_results_with_user_participation(results, user_id)
@@ -107,7 +127,16 @@ async def get_results_for_approval_submitted_by_users_team(session: AsyncSession
     statement = select(result_models.ResultSubmission).filter(
         result_models.ResultSubmission.approved == None,
     )
-    db_result = await session.execute(statement)
+    db_result = await session.execute(statement.options(
+        joinedload('validator'),
+        joinedload('submitter'),
+        joinedload('team1'),
+        joinedload('team2'),
+        joinedload('team1.defender'),
+        joinedload('team1.attacker'),
+        joinedload('team2.defender'),
+        joinedload('team2.attacker'),
+    ))
     results = db_result.scalars().all()
 
     results_with_user_participation = await _get_results_with_user_participation(results, user_id)
@@ -141,5 +170,14 @@ async def approve_result(
 
 async def get_result(session: AsyncSession, result_id: int) -> Optional[result_models.ResultSubmission]:
     statement = select(result_models.ResultSubmission).filter(result_models.ResultSubmission.id == result_id)
-    db_result = await session.execute(statement)
+    db_result = await session.execute(statement.options(
+        joinedload('validator'),
+        joinedload('submitter'),
+        joinedload('team1'),
+        joinedload('team2'),
+        joinedload('team1.defender'),
+        joinedload('team1.attacker'),
+        joinedload('team2.defender'),
+        joinedload('team2.attacker'),
+    ))
     return db_result.scalars().one()
