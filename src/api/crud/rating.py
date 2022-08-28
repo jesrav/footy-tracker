@@ -1,5 +1,6 @@
 from typing import List
 
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from services.rating import get_updated_player_ratings
@@ -70,7 +71,7 @@ async def get_user_ratings(
         .filter(rating_models.UserRating.user_id == user_id)
         .offset(skip).limit(limit)
     )
-    result = await session.execute(statement)
+    result = await session.execute(statement.options(selectinload(rating_models.UserRating.user)))
     return result.scalars().all()
 
 
