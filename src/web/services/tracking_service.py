@@ -71,7 +71,7 @@ async def get_user_ratings(user_id: int, skip: int = 0, limit: int = 100) -> Lis
 
 async def get_latest_user_rating(user_id: int) -> UserRating:
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/ratings/{user_id}/latest")
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/ratings/latest/{user_id}")
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return UserRating(**resp.json())
@@ -79,7 +79,7 @@ async def get_latest_user_rating(user_id: int) -> UserRating:
 
 async def get_latest_user_ratings() -> List[UserRating]:
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/ratings/")
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/ratings/latest")
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [UserRating(**r) for r in resp.json()]

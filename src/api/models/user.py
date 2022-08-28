@@ -15,7 +15,7 @@ class UserBase(SQLModel):
     nickname: str
     email: EmailStr
     motto: Optional[str] = None
-    profile_pic_path: str = BLOB_STORAGE_BASE_URL + "userdefault.svg"
+    profile_pic_path: str = BLOB_STORAGE_BASE_URL + "defaultuser.png"
 
 
 class User(UserBase, table=True):

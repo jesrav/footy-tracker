@@ -26,7 +26,7 @@ class ResultSubmission(SQLModel, table=True):
     team2: Team = Relationship(sa_relationship_kwargs=dict(foreign_keys="[ResultSubmission.team2_id]"))
 
     @property
-    async def match_participants(self):
+    def match_participants(self):
         return [
             self.team1.defender_user_id,
             self.team1.attacker_user_id,
