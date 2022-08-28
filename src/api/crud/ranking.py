@@ -15,7 +15,7 @@ async def get_user_rankings(session: AsyncSession) -> List[UserRanking]:
     return result.scalars().all()
 
 
-async def update_user_rankings(session: AsyncSession) -> List[UserRanking]:
+async def update_user_rankings(session: AsyncSession, commit_changes: bool = True) -> List[UserRanking]:
     statement = select(UserRanking)
     result = await session.execute(statement)
     current_rankings = result.scalars().all()
@@ -36,7 +36,6 @@ async def update_user_rankings(session: AsyncSession) -> List[UserRanking]:
 
     for user_ranking in updated_or_new_user_rankings:
         session.add(user_ranking)
-    await session.commit()
-    for user_ranking in updated_or_new_user_rankings:
-        await session.refresh(user_ranking)
+    if commit_changes:
+        await session.commit()
     return updated_or_new_user_rankings

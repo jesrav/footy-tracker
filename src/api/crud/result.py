@@ -156,7 +156,7 @@ async def get_results_for_approval_submitted_by_users_team(session: AsyncSession
 
 
 async def approve_result(
-        session: AsyncSession, validator_id: int, result_id: int, approved: bool
+        session: AsyncSession, validator_id: int, result_id: int, approved: bool, commit_changes: bool = True
 ) -> result_models.ResultSubmission:
     statement = select(result_models.ResultSubmission).filter(result_models.ResultSubmission.id == result_id)
     db_result = await session.execute(statement.options(
@@ -173,7 +173,8 @@ async def approve_result(
     result.validator_id = validator_id
     result.approved = approved
     result.validation_dt = datetime.utcnow()
-    await session.commit()
+    if commit_changes:
+        await session.commit()
     return result
 
 

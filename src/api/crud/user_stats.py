@@ -26,7 +26,9 @@ async def create_first_empty_user_stats(session: AsyncSession, user_id: int):
     return user_stats
 
 
-async def update_user_stats(session: AsyncSession, user_id: int, result: Optional[ResultSubmission]) -> UserStats:
+async def update_user_stats(
+        session: AsyncSession, user_id: int, result: Optional[ResultSubmission], commit_changes: bool = True
+) -> UserStats:
     statement = select(UserStats).filter(UserStats.user_id == user_id)
     db_result = await session.execute(statement)
     user_stats = db_result.scalars().first()
@@ -50,15 +52,17 @@ async def update_user_stats(session: AsyncSession, user_id: int, result: Optiona
         user_stats.games_won_offence += user_won * 1
 
     session.add(user_stats)
-    await session.commit()
-    await session.refresh(user_stats)
+    if commit_changes:
+        await session.commit()
     return user_stats
 
 
-async def update_user_participant_stats_based_on_result(session: AsyncSession, result: ResultSubmission) -> List[UserStats]:
+async def update_user_participant_stats_based_on_result(
+        session: AsyncSession, result: ResultSubmission, commit_changes: bool = True
+) -> List[UserStats]:
     updated_user_stats = []
     for user_id in result.match_participants:
         updated_user_stats.append(
-            await update_user_stats(session=session, result=result, user_id=user_id)
+            await update_user_stats(session=session, result=result, user_id=user_id, commit_changes=commit_changes)
         )
     return updated_user_stats
