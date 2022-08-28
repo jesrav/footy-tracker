@@ -17,7 +17,12 @@ from services.rating import update_ratings
 
 
 async def add_rating(
-    session: AsyncSession, user_id: int, rating_defence: float, rating_offence: float, result_id: Optional[int] = None
+    session: AsyncSession,
+    user_id: int,
+    rating_defence: float,
+    rating_offence: float,
+    result_id: Optional[int] = None,
+    commit_changes: bool = True
 ):
     user_rating = rating_models.UserRating(
         user_id=user_id,
@@ -27,12 +32,14 @@ async def add_rating(
         latest_result_at_update_id=result_id,
     )
     session.add(user_rating)
-    await session.commit()
-    refreshed_user_rating = await get_latest_user_rating(session=session, user_id=user_rating.user.id)
-    return refreshed_user_rating
+    if commit_changes:
+        await session.commit()
+    return user_rating
 
 
-async def update_ratings_from_result(session: AsyncSession, result: result_models.ResultSubmission) -> List[rating_models.UserRating]:
+async def update_ratings_from_result(
+        session: AsyncSession, result: result_models.ResultSubmission, commit_changes: bool = True
+) -> List[rating_models.UserRating]:
     new_user_ratings = await get_updated_player_ratings(
         session=session,
         team1_goals=result.goals_team1,
@@ -51,6 +58,7 @@ async def update_ratings_from_result(session: AsyncSession, result: result_model
             rating_defence=user_rating.rating_defence,
             rating_offence=user_rating.rating_offence,
             result_id=result.id,
+            commit_changes=commit_changes,
         ))
     return user_ratings
 

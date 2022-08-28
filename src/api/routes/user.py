@@ -20,15 +20,18 @@ async def create_user(user: user_models.UserCreate, session: AsyncSession = Depe
     preexisting_user = await user_crud.get_user_by_email(session, email=user.email)
     if preexisting_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    user = await user_crud.create_user(session=session, user=user)
-    _ = await user_stats_crud.create_first_empty_user_stats(session=session, user_id=user.id)
+    user = await user_crud.create_user(session=session, user=user, commit_changes=False)
+    _ = await user_stats_crud.create_first_empty_user_stats(session=session, user_id=user.id, commit_changes=False)
     _ = await rating_crud.add_rating(
         session=session,
         user_id=user.id,
         rating_defence=INITIAL_USER_RATING,
         rating_offence=INITIAL_USER_RATING,
+        commit_changes=False,
     )
-    _ = await ranking_crud.update_user_rankings(session=session)
+    _ = await ranking_crud.update_user_rankings(session=session, commit_changes=False)
+    await session.commit()
+    await session.refresh(user)
     return user
 
 

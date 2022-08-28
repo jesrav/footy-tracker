@@ -48,7 +48,7 @@ async def get_users(session: AsyncSession, skip: int = 0, limit: int = 100) -> L
     return result.scalars().all()
 
 
-async def create_user(session: AsyncSession, user: user_models.UserCreate) -> user_models.User:
+async def create_user(session: AsyncSession, user: user_models.UserCreate, commit_changes: bool = True) -> user_models.User:
     user = user_models.User(
         nickname=user.nickname,
         email=user.email,
@@ -57,8 +57,13 @@ async def create_user(session: AsyncSession, user: user_models.UserCreate) -> us
         profile_pic_path=user.profile_pic_path,
     )
     session.add(user)
-    await session.commit()
-    await session.refresh(user)
+    if commit_changes:
+        await session.commit()
+        await session.refresh(user)
+    else:
+        # Update the user object with autoincrement id from db without committing
+        await session.flush()
+        await session.refresh(user)
     return user
 
 

@@ -59,13 +59,18 @@ async def validate_result(user_id: int, result_id: int, approved: bool, session:
             status_code=400, detail="Validating user can not be on the same team as the user that submitted the result"
         )
 
-    validated_result = await result_crud.approve_result(session, validator_id=user.id, result_id=result_id, approved=approved)
-
+    validated_result = await result_crud.approve_result(
+        session, validator_id=user.id, result_id=result_id, approved=approved, commit_changes=False
+    )
     if approved:
-        _ = await ratings_crud.update_ratings_from_result(session, result=validated_result)
-        _ = await ranking_crud.update_user_rankings(session)
-        _ = await update_user_participant_stats_based_on_result(session, result=validated_result)
-    return validated_result
+        _ = await ratings_crud.update_ratings_from_result(session, result=validated_result, commit_changes=False)
+        _ = await ranking_crud.update_user_rankings(session, commit_changes=False)
+        _ = await update_user_participant_stats_based_on_result(session, result=validated_result, commit_changes=False)
+
+    await session.commit()
+    await session.refresh(validated_result)
+    refreshed_validated_result = await result_crud.get_result(session, result_id=validated_result.id)
+    return refreshed_validated_result
 
 
 @router.post("/results/", response_model=result_models.ResultSubmissionRead)
@@ -89,5 +94,5 @@ async def read_results(
 async def read_result(result_id: int, session: AsyncSession = Depends(get_session)):
     result = await  result_crud.get_result(session, result_id=result_id)
     if result is None:
-        raise HTTPException(status_code=404, detail="User result found")
+        raise HTTPException(status_code=404, detail="Result not found")
     return result
