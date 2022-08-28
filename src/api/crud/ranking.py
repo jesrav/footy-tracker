@@ -1,24 +1,27 @@
 from typing import List
 from datetime import datetime
 
-from sqlmodel import Session, select
+from sqlalchemy import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from models.ranking import UserRanking
 from services.ranking import get_updated_user_rankings
 from crud.rating import get_latest_ratings
 
 
-def get_user_rankings(session: Session) -> List[UserRanking]:
+async def get_user_rankings(session: AsyncSession) -> List[UserRanking]:
     statement = select(UserRanking)
-    return session.exec(statement).all()
+    result = await session.execute(statement)
+    return result.scalars().all()
 
 
-def update_user_rankings(session: Session) -> List[UserRanking]:
+async def update_user_rankings(session: AsyncSession) -> List[UserRanking]:
     statement = select(UserRanking)
-    current_rankings = session.exec(statement).all()
-    latest_user_ratings = get_latest_ratings(session=session)
+    result = await session.execute(statement)
+    current_rankings = result.scalars().all()
+    latest_user_ratings = await get_latest_ratings(session=session)
 
-    updated_user_rankings = get_updated_user_rankings(latest_user_ratings)
+    updated_user_rankings = await get_updated_user_rankings(latest_user_ratings)
 
     updated_or_new_user_rankings_dict = {r.user_id: r for r in current_rankings}
     for ranking in updated_user_rankings:
@@ -33,7 +36,7 @@ def update_user_rankings(session: Session) -> List[UserRanking]:
 
     for user_ranking in updated_or_new_user_rankings:
         session.add(user_ranking)
-    session.commit()
+    await session.commit()
     for user_ranking in updated_or_new_user_rankings:
-        session.refresh(user_ranking)
+        await session.refresh(user_ranking)
     return updated_or_new_user_rankings

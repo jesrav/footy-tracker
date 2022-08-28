@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from fastapi import Depends, HTTPException, APIRouter
-from sqlalchemy.orm import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud import rating as ratings_crud
 from crud import result as result_crud
@@ -15,31 +15,33 @@ router = APIRouter()
 
 
 @router.get("/users/{user_id}/results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead])
-def read_results_for_approval(user_id: int, session: Session = Depends(get_session)):
-    user = user_crud.get_user(session, user_id=user_id)
+async def read_results_for_approval(user_id: int, session: AsyncSession = Depends(get_session)):
+    user = await user_crud.get_user(session, user_id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return result_crud.get_results_for_approval_by_user(session, user_id=user.id)
+    result = await result_crud.get_results_for_approval_by_user(session, user_id=user.id)
+    return result
 
 
 @router.get("/users/{user_id}/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead])
-def read_results_for_approval(user_id: int, session: Session = Depends(get_session)):
-    user = user_crud.get_user(session, user_id=user_id)
+async def read_results_for_approval(user_id: int, session: AsyncSession = Depends(get_session)):
+    user = await user_crud.get_user(session, user_id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return result_crud.get_results_for_approval_submitted_by_users_team(session, user_id=user.id)
+    return await result_crud.get_results_for_approval_submitted_by_users_team(session, user_id=user.id)
 
 
 @router.post("/users/{user_id}/validate_result/{result_id}/", response_model=result_models.ResultSubmissionRead)
-def validate_result(user_id: int, result_id: int, approved: bool, session: Session = Depends(get_session)):
-    user = user_crud.get_user(session, user_id=user_id)
+async def validate_result(user_id: int, result_id: int, approved: bool, session: AsyncSession = Depends(get_session)):
+    user = await user_crud.get_user(session, user_id=user_id)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    result = result_crud.get_result(session, result_id=result_id)
+    result = await result_crud.get_result(session, result_id=result_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Result submission not found")
-
+    if result.approved is not None:
+        raise HTTPException(status_code=404, detail="Result submission already approved or rejected.")
     if result.submitter_id == user_id:
         raise HTTPException(status_code=400, detail="User can not validate result that they submitted themselves")
 
@@ -57,37 +59,35 @@ def validate_result(user_id: int, result_id: int, approved: bool, session: Sessi
             status_code=400, detail="Validating user can not be on the same team as the user that submitted the result"
         )
 
-    validated_result = result_crud.approve_result(session, validator_id=user.id, result_id=result_id, approved=approved)
+    validated_result = await result_crud.approve_result(session, validator_id=user.id, result_id=result_id, approved=approved)
 
     if approved:
-        _ = ratings_crud.update_ratings(session, result=validated_result)
-        _ = ranking_crud.update_user_rankings(session)
-        _ = update_user_participant_stats_based_on_result(session, result=validated_result)
-
-    session.refresh(validated_result)
+        _ = await ratings_crud.update_ratings_from_result(session, result=validated_result)
+        _ = await ranking_crud.update_user_rankings(session)
+        _ = await update_user_participant_stats_based_on_result(session, result=validated_result)
     return validated_result
 
 
 @router.post("/results/", response_model=result_models.ResultSubmissionRead)
-def create_result(result: result_models.ResultSubmissionCreate, session: Session = Depends(get_session)):
-    return result_crud.create_result(session=session, result=result)
+async def create_result(result: result_models.ResultSubmissionCreate, session: AsyncSession = Depends(get_session)):
+    return await result_crud.create_result(session=session, result=result)
 
 
 @router.get("/results/", response_model=List[result_models.ResultSubmissionRead])
-def read_results(
+async def read_results(
         for_approval: bool = False,
         skip: int = 0,
         limit: int = 100,
         user_id: Optional[int] = None,
-        session: Session = Depends(get_session)
+        session: AsyncSession = Depends(get_session)
 ):
-    results = result_crud.get_results(session, skip=skip, limit=limit, for_approval=for_approval, user_id=user_id)
+    results = await result_crud.get_results(session, skip=skip, limit=limit, for_approval=for_approval, user_id=user_id)
     return results
 
 
 @router.get("/results/{result_id}", response_model=result_models.ResultSubmissionRead)
-def read_result(result_id: int, session: Session = Depends(get_session)):
-    result = result_crud.get_result(session, result_id=result_id)
+async def read_result(result_id: int, session: AsyncSession = Depends(get_session)):
+    result = await  result_crud.get_result(session, result_id=result_id)
     if result is None:
         raise HTTPException(status_code=404, detail="User result found")
     return result

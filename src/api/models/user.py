@@ -15,7 +15,7 @@ class UserBase(SQLModel):
     nickname: str
     email: EmailStr
     motto: Optional[str] = None
-    profile_pic_path: str = BLOB_STORAGE_BASE_URL + "userdefault.svg"
+    profile_pic_path: str = BLOB_STORAGE_BASE_URL + "defaultuser.png"
 
 
 class User(UserBase, table=True):
@@ -24,10 +24,6 @@ class User(UserBase, table=True):
     created_dt: datetime = Field(default_factory=datetime.utcnow)
     ratings: List["UserRating"] = Relationship(back_populates="user")
     ranking: UserRanking = Relationship()
-
-    @property
-    def latest_rating(self):
-        return sorted(self.ratings, key=lambda x: x.created_dt, reverse=True)[0]
 
 
 class UserCreate(UserBase):

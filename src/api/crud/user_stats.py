@@ -1,32 +1,35 @@
 from typing import List, Optional
-from datetime import datetime
 
-from sqlmodel import Session, select
+from sqlalchemy import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from models.result import ResultSubmission
 from models.user_stats import UserStats
 
 
-def get_user_stats(session: Session) -> List[UserStats]:
+async def get_user_stats(session: AsyncSession) -> List[UserStats]:
     statement = select(UserStats)
-    return session.exec(statement).all()
+    result = await session.execute(statement)
+    return result.scalars().all()
 
 
-def create_first_empty_user_stats(session: Session, user_id: int):
+async def create_first_empty_user_stats(session: AsyncSession, user_id: int):
     statement = select(UserStats).filter(UserStats.user_id == user_id)
-    user_stats = session.exec(statement).first()
+    result = await session.execute(statement)
+    user_stats = result.scalars().first()
     if user_stats:
         raise ValueError("Can't create first empty users stats, as a stats entry is already present.")
     user_stats = UserStats(user_id=user_id)
     session.add(user_stats)
-    session.commit()
-    session.refresh(user_stats)
+    await session.commit()
+    await session.refresh(user_stats)
     return user_stats
 
 
-def update_user_stats(session: Session, user_id: int, result: Optional[ResultSubmission]) -> UserStats:
+async def update_user_stats(session: AsyncSession, user_id: int, result: Optional[ResultSubmission]) -> UserStats:
     statement = select(UserStats).filter(UserStats.user_id == user_id)
-    user_stats = session.exec(statement).first()
+    db_result = await session.execute(statement)
+    user_stats = db_result.scalars().first()
 
     if user_id in result.team1:
         user_stats.eggs_given += 1 * (result.goals_team2 == 0)
@@ -47,15 +50,15 @@ def update_user_stats(session: Session, user_id: int, result: Optional[ResultSub
         user_stats.games_won_offence += user_won * 1
 
     session.add(user_stats)
-    session.commit()
-    session.refresh(user_stats)
+    await session.commit()
+    await session.refresh(user_stats)
     return user_stats
 
 
-def update_user_participant_stats_based_on_result(session: Session, result: ResultSubmission) -> List[UserStats]:
+async def update_user_participant_stats_based_on_result(session: AsyncSession, result: ResultSubmission) -> List[UserStats]:
     updated_user_stats = []
     for user_id in result.match_participants:
         updated_user_stats.append(
-            update_user_stats(session=session, result=result, user_id=user_id)
+            await update_user_stats(session=session, result=result, user_id=user_id)
         )
     return updated_user_stats
