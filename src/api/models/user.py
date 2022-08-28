@@ -1,21 +1,17 @@
-import os
 from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, EmailStr, AnyUrl, root_validator
+from pydantic import BaseModel, EmailStr, root_validator
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.ranking import UserRanking, UserRankingRead
-
-
-BLOB_STORAGE_BASE_URL = os.environ["BLOB_STORAGE_BASE_URL"]
+from models.ranking import UserRanking
 
 
 class UserBase(SQLModel):
     nickname: str
     email: EmailStr
     motto: Optional[str] = None
-    profile_pic_path: str = BLOB_STORAGE_BASE_URL + "defaultuser.png"
+    profile_pic_path: Optional[str] = None
 
 
 class User(UserBase, table=True):
