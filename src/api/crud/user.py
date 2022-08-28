@@ -10,7 +10,7 @@ from models import user as user_models
 async def get_user(session: AsyncSession, user_id: int) -> Optional[user_models.User]:
     statement = select(user_models.User).filter(user_models.User.id == user_id)
     result = await session.execute(statement)
-    return result.scalars().all()
+    return result.scalars().first()
 
 
 async def update_user(session: AsyncSession, user_id: int, user_updates: user_models.UserUpdate) -> user_models.User:

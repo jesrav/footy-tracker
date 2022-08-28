@@ -17,7 +17,10 @@ class UserRating(SQLModel, table=True):
 
     user: "User" = Relationship(back_populates="ratings")
 
-    def get_new_rating(self, rating_delta_defence: float = 0, rating_delta_offence: float = 0) -> "UserRatingBase":
+    # add this so that it can be accessed
+    __mapper_args__ = {"eager_defaults": True}
+
+    async def get_new_rating(self, rating_delta_defence: float = 0, rating_delta_offence: float = 0) -> "UserRatingBase":
         return UserRatingCreate(
             user_id=self.user_id,
             rating_defence=self.rating_defence + rating_delta_defence,
