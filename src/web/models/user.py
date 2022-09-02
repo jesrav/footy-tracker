@@ -22,16 +22,9 @@ class UserRead(BaseModel):
     profile_pic_path: Optional[str] = None
     created_dt: datetime
 
-    # @validator('profile_pic_path')
-    # def set_profile_pic_path(cls, profile_pic_path):
-    #     return profile_pic_path or get_profile_pic_url_from_email(self.email)
-
     @validator('profile_pic_path')
     def set_profile_pic_path(cls, v, values):
-        if "profile_pic_path" in values:
-            return values['profile_pic_path']
-        else:
-            return get_profile_pic_url_from_email(values['email'])
+        return v or get_profile_pic_url_from_email(values['email'])
 
 
 class UserUpdate(BaseModel):
