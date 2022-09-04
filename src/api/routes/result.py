@@ -9,7 +9,7 @@ from crud import user as user_crud
 from crud import ranking as ranking_crud
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
-from database import get_session
+from core.deps import get_session
 
 router = APIRouter()
 

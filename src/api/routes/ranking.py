@@ -5,8 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud.ranking import get_user_rankings
 from models.ranking import UserRankingRead
-from database import get_session
-
+from core.deps import get_session
 
 router = APIRouter()
 

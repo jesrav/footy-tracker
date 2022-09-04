@@ -22,7 +22,7 @@ services:
    # ports:
    #   - 8004:8000
     environment:
-    - DATABASE_URL=postgresql://postgres:postgres@db:5432/footy
+    - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/footy
     depends_on:
       - db
 

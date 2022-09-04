@@ -4,7 +4,6 @@ aiofiles
 python-multipart
 aiohttp
 
-# This is now available on PyPI.org so we'll be using that one going forward.
 fastapi-chameleon==0.1.12
 
 starlette==0.16.0
@@ -17,6 +16,8 @@ pydantic[email]
 
 asyncpg==0.24.0
 psycopg2
+
+python-jose
 
 
 azure-storage-blob

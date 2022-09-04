@@ -5,8 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud.user_stats import get_user_stats
 from models.user_stats import UserStatsRead
-from database import get_session
-
+from core.deps import get_session
 
 router = APIRouter()
 

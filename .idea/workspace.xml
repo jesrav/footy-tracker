@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="acb7aaf9-7e94-4e14-b2fb-ab4e312860b6" name="Changes" comment="WIP">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/web/templates/account/register.pt" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/templates/account/register.pt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/web/viewmodels/tracking/submit_result_viewmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/viewmodels/tracking/submit_result_viewmodel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/web/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/web/models/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,17 +47,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/jesravnbol/code/personal/footy-tracker/src/web",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/jesravnbol/code/personal/footy-tracker/src/web&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/web" />
@@ -89,6 +88,7 @@
       <workItem from="1657884171357" duration="26588000" />
       <workItem from="1658131124592" duration="323000" />
       <workItem from="1659450072010" duration="6124000" />
+      <workItem from="1661850283845" duration="1000" />
     </task>
     <task id="LOCAL-00001" summary="Playing around">
       <created>1657400976590</created>

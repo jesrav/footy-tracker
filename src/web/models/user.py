@@ -8,6 +8,7 @@ from pydantic import BaseModel, validator
 
 BLOB_STORAGE_BASE_URL = os.environ['BLOB_STORAGE_BASE_URL']
 
+
 def get_profile_pic_url_from_email(email: str) -> str:
     random.seed(email)
     image_number = random.choices(list(range(1, 906)))[0]

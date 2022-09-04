@@ -6,8 +6,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from crud import rating as crud_rating
 from crud import user as crud_user
 from models import rating as rating_models
-from database import get_session
-
+from core.deps import get_session
 
 router = APIRouter()
 
