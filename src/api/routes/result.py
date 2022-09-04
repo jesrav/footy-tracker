@@ -16,7 +16,7 @@ from core.deps import get_session
 router = APIRouter()
 
 
-@router.get("/results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead])
+@router.get("/results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
 async def read_results_for_approval(
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
@@ -25,7 +25,7 @@ async def read_results_for_approval(
     return result
 
 
-@router.get("/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead])
+@router.get("/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
 async def read_results_for_approval(
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
@@ -33,7 +33,7 @@ async def read_results_for_approval(
     return await result_crud.get_results_for_approval_submitted_by_users_team(session, user_id=current_user.id)
 
 
-@router.post("/validate_result/{result_id}/", response_model=result_models.ResultSubmissionRead)
+@router.post("/validate_result/{result_id}/", response_model=result_models.ResultSubmissionRead, tags=["results"])
 async def validate_result(
     result_id: int,
     approved: bool,
@@ -49,9 +49,9 @@ async def validate_result(
         raise HTTPException(status_code=400, detail="User can not validate result that they submitted themselves")
 
     # Validator must not be on one of the teams and must not be the same team as the submitter
-    if current_user in [result.team1.defender_user_id, result.team1.attacker_user_id]:
+    if current_user.id in [result.team1.defender_user_id, result.team1.attacker_user_id]:
         validator_team = result.team1
-    elif current_user in [result.team2.defender_user_id, result.team2.attacker_user_id]:
+    elif current_user.id in [result.team2.defender_user_id, result.team2.attacker_user_id]:
         validator_team = result.team2
     else:
         validator_team = None
@@ -76,20 +76,27 @@ async def validate_result(
     return refreshed_validated_result
 
 
-@router.post("/results/", response_model=result_models.ResultSubmissionRead)
+@router.post("/results/", response_model=result_models.ResultSubmissionRead, tags=["results"])
 async def create_result(
     result: result_models.ResultSubmissionCreate,
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
 ):
-    if not result.submitter_id == current_user.id:
+
+
+    if current_user.id not in [
+        result.team1.defender_user_id,
+        result.team1.attacker_user_id,
+        result.team2.defender_user_id,
+        result.team2.attacker_user_id,
+    ]:
         raise HTTPException(
-            status_code=400, detail="User has to have the same id as as the submitter_id."
+            status_code=400, detail="Submitter must be on one of the teams."
         )
-    return await result_crud.create_result(session=session, result=result)
+    return await result_crud.create_result(session=session, submitter=current_user, result=result)
 
 
-@router.get("/results/", response_model=List[result_models.ResultSubmissionRead])
+@router.get("/results/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
 async def read_results(
         for_approval: bool = False,
         skip: int = 0,
@@ -101,7 +108,7 @@ async def read_results(
     return results
 
 
-@router.get("/results/{result_id}", response_model=result_models.ResultSubmissionRead)
+@router.get("/results/{result_id}", response_model=result_models.ResultSubmissionRead, tags=["results"])
 async def read_result(result_id: int, session: AsyncSession = Depends(get_session)):
     result = await  result_crud.get_result(session, result_id=result_id)
     if result is None:

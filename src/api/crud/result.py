@@ -7,9 +7,14 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud.team import get_team, create_team
 from models import result as result_models
+from models import user as user_models
 
 
-async def create_result(session: AsyncSession, result: result_models.ResultSubmissionCreate) -> result_models.ResultSubmission:
+async def create_result(
+    session: AsyncSession,
+    submitter: user_models.User,
+    result: result_models.ResultSubmissionCreate
+) -> result_models.ResultSubmission:
     team1_db = await get_team(session, team=result.team1)
     if not team1_db:
         team1_db = await create_team(session, team=result.team1)
@@ -18,7 +23,7 @@ async def create_result(session: AsyncSession, result: result_models.ResultSubmi
         team2_db = await create_team(session, team=result.team2)
 
     result = result_models.ResultSubmission(
-        submitter_id=result.submitter_id,
+        submitter_id=submitter.id,
         team1_id=team1_db.id,
         team2_id=team2_db.id,
         goals_team1=result.goals_team1,

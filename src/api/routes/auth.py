@@ -15,7 +15,7 @@ from models import user as user_models
 router = APIRouter()
 
 
-@router.post("/auth/signup/", response_model=user_models.UserRead, status_code=201)
+@router.post("/auth/signup/", response_model=user_models.UserRead, status_code=201, tags=["auth"])
 async def signup(user: user_models.UserCreate, session: AsyncSession = Depends(get_session)) -> Any:
     preexisting_user = await user_crud.get_user_by_email(session, email=user.email)
     """Sign up user and create first user rating and empty stats."""
@@ -36,16 +36,7 @@ async def signup(user: user_models.UserCreate, session: AsyncSession = Depends(g
     return user
 
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    username: Union[str, None] = None
-
-
-@router.post("/auth/login")
+@router.post("/auth/login", tags=["auth"])
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: AsyncSession = Depends(get_session)

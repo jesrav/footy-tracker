@@ -59,7 +59,7 @@ class UserRead(UserBase):
     created_dt: datetime
 
 
-class UserReadUnauthorized(UserBase):
+class UserReadUnauthorized(BaseModel):
     id: int
     nickname: str
     motto: Optional[str] = None

@@ -12,7 +12,7 @@ from core.deps import get_session
 router = APIRouter()
 
 
-@router.get("/me", response_model=user_models.UserRead)
+@router.get("/me", response_model=user_models.UserRead, tags=["users"])
 def read_users_me(current_user: user_models.User = Depends(deps.get_current_user)):
     """
     Fetch the current logged in user.
@@ -22,22 +22,20 @@ def read_users_me(current_user: user_models.User = Depends(deps.get_current_user
     return user
 
 
-@router.get("/users/", response_model=List[user_models.UserReadUnauthorized])
+@router.get("/users/", response_model=List[user_models.UserReadUnauthorized], tags=["users"])
 async def read_users(
     skip: int = 0,
     limit: int = 100,
     session: AsyncSession = Depends(get_session),
-    current_user: user_models.User = Depends(deps.get_current_user),
 ):
     users = await user_crud.get_users(session, skip=skip, limit=limit)
     return users
 
 
-@router.get("/users/{user_id}", response_model=user_models.UserReadUnauthorized)
+@router.get("/users/{user_id}", response_model=user_models.UserReadUnauthorized, tags=["users"])
 async def read_user(
     user_id: int,
     session: AsyncSession = Depends(get_session),
-    current_user: user_models.User = Depends(deps.get_current_user),
 ):
     users = await user_crud.get_user(session, user_id=user_id)
     if users is None:
@@ -45,7 +43,7 @@ async def read_user(
     return users
 
 
-@router.post("/users/update/", response_model=user_models.UserRead)
+@router.post("/users/update/", response_model=user_models.UserRead, tags=["users"])
 async def update_user(
     user_updates: user_models.UserUpdate,
     session: AsyncSession = Depends(get_session),

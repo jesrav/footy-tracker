@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from database import create_db_and_tables
 from routes import user, result, rating, ranking, user_stats, auth
 
-app = FastAPI()
+app = FastAPI(title="FootyTracker API")
 
 
 @app.on_event("startup")

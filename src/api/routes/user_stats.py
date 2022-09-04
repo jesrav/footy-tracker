@@ -12,7 +12,7 @@ from core.deps import get_session
 router = APIRouter()
 
 
-@router.get("/user_stats/", response_model=List[UserStatsRead])
+@router.get("/user_stats/", response_model=List[UserStatsRead], tags=["stats"])
 async def read_user_stats(
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(deps.get_current_user),
