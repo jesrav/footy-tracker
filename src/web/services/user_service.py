@@ -13,7 +13,7 @@ BASE_WEB_API_URL = os.environ.get("API_URL")
 async def create_account(nickname: str, email: str, password: str) -> Optional[UserRead]:
     json_data = {"nickname": nickname, "password": password, "email": email}
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.post(url=BASE_WEB_API_URL + "/users/", json=json_data)
+        resp: Response = await client.post(url=BASE_WEB_API_URL + "/auth/signin", json=json_data)
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return UserRead(**resp.json())
@@ -22,7 +22,18 @@ async def create_account(nickname: str, email: str, password: str) -> Optional[U
 async def login_user(email: str, password: str) -> Optional[UserRead]:
     json_data = {"password": password, "email": email}
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.post(url=BASE_WEB_API_URL + "/users/login/", json=json_data)
+        resp: Response = await client.post(url=BASE_WEB_API_URL + "/auth/login/", json=json_data)
+        if resp.status_code == 404:
+            return None
+        elif resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+        else:
+            return UserRead(**resp.json())
+
+
+async def get_user_by_id(user_id: int) -> UserRead:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}")
         if resp.status_code == 404:
             return None
         elif resp.status_code != 200:

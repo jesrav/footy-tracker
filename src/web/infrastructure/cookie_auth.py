@@ -1,17 +1,14 @@
 import hashlib
-from typing import Optional
 
 from fastapi import Request
 from fastapi import Response
 
-from infrastructure.num_convert import try_int
-
-auth_cookie_name = 'footy_tracker_account'
+auth_cookie_name = 'footy_tracker_bearer_token'
 
 
-def set_auth(response: Response, user_id: int):
-    hash_val = __hash_text(str(user_id))
-    val = "{}:{}".format(user_id, hash_val)
+def set_bearer_token_cookie(response: Response, bearer_token: str):
+    hash_val = __hash_text(bearer_token)
+    val = "{}:{}".format(bearer_token, hash_val)
     response.set_cookie(auth_cookie_name, val, secure=False, httponly=True, samesite='Lax')
 
 
@@ -20,7 +17,7 @@ def __hash_text(text: str) -> str:
     return hashlib.sha512(text.encode('utf-8')).hexdigest()
 
 
-def get_user_id_via_auth_cookie(request: Request) -> Optional[int]:
+def get_bearer_token_from_cookie(request: Request):
     if auth_cookie_name not in request.cookies:
         return None
 
@@ -29,14 +26,13 @@ def get_user_id_via_auth_cookie(request: Request) -> Optional[int]:
     if len(parts) != 2:
         return None
 
-    user_id = parts[0]
+    bearer_token = parts[0]
     hash_val = parts[1]
-    hash_val_check = __hash_text(user_id)
+    hash_val_check = __hash_text(bearer_token)
     if hash_val != hash_val_check:
         print("Warning: Hash mismatch, invalid cookie value")
         return None
-
-    return try_int(user_id)
+    return bearer_token
 
 
 def logout(response: Response):
