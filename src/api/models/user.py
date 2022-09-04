@@ -58,3 +58,9 @@ class UserRead(UserBase):
     id: int
     created_dt: datetime
 
+
+class UserReadUnauthorized(UserBase):
+    id: int
+    nickname: str
+    motto: Optional[str] = None
+    created_dt: datetime

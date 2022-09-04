@@ -16,7 +16,7 @@ from core.deps import get_session
 router = APIRouter()
 
 
-@router.get("/users//results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead])
+@router.get("/results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead])
 async def read_results_for_approval(
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
@@ -25,7 +25,7 @@ async def read_results_for_approval(
     return result
 
 
-@router.get("/users/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead])
+@router.get("/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead])
 async def read_results_for_approval(
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
@@ -33,7 +33,7 @@ async def read_results_for_approval(
     return await result_crud.get_results_for_approval_submitted_by_users_team(session, user_id=current_user.id)
 
 
-@router.post("/users/validate_result/{result_id}/", response_model=result_models.ResultSubmissionRead)
+@router.post("/validate_result/{result_id}/", response_model=result_models.ResultSubmissionRead)
 async def validate_result(
     result_id: int,
     approved: bool,
@@ -77,7 +77,15 @@ async def validate_result(
 
 
 @router.post("/results/", response_model=result_models.ResultSubmissionRead)
-async def create_result(result: result_models.ResultSubmissionCreate, session: AsyncSession = Depends(get_session)):
+async def create_result(
+    result: result_models.ResultSubmissionCreate,
+    session: AsyncSession = Depends(get_session),
+    current_user: user_models.User = Depends(deps.get_current_user),
+):
+    if not result.submitter_id == current_user.id:
+        raise HTTPException(
+            status_code=400, detail="User has to have the same id as as the submitter_id."
+        )
     return await result_crud.create_result(session=session, result=result)
 
 
