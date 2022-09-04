@@ -12,7 +12,7 @@ from core.deps import get_session
 router = APIRouter()
 
 
-@router.get("/me", response_model=user_models.UserRead, tags=["users"])
+@router.get("/users/me", response_model=user_models.UserRead, tags=["users"])
 def read_users_me(current_user: user_models.User = Depends(deps.get_current_user)):
     """
     Fetch the current logged in user.
