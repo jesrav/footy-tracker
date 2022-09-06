@@ -9,13 +9,13 @@ from pydantic import BaseModel, validator
 BLOB_STORAGE_BASE_URL = os.environ['BLOB_STORAGE_BASE_URL']
 
 
-def get_profile_pic_url_from_email(email: str) -> str:
-    random.seed(email)
+def get_profile_pic_url_from_nickname(nickname: str) -> str:
+    random.seed(nickname)
     image_number = random.choices(list(range(1, 906)))[0]
     return f"{BLOB_STORAGE_BASE_URL}pokemons/{image_number}.png"
 
 
-class UserRead(BaseModel):
+class UserReadUnauthorized(BaseModel):
     id: int
     nickname: str
     motto: Optional[str]
@@ -24,7 +24,11 @@ class UserRead(BaseModel):
 
     @validator('profile_pic_path')
     def set_profile_pic_path(cls, v, values):
-        return v or get_profile_pic_url_from_email(values['email'])
+        return v or get_profile_pic_url_from_nickname(values['nickname'])
+
+
+class UserRead(UserReadUnauthorized):
+    email: str
 
 
 class UserUpdate(BaseModel):

@@ -9,13 +9,13 @@ from models.ranking import UserRanking
 
 class UserBase(SQLModel):
     nickname: str
-    email: EmailStr
     motto: Optional[str] = None
     profile_pic_path: Optional[str] = None
 
 
 class User(UserBase, table=True):
     id: Optional[int] = Field(index=True, primary_key=True)
+    email: EmailStr
     hash_password: str
     created_dt: datetime = Field(default_factory=datetime.utcnow)
     ratings: List["UserRating"] = Relationship(back_populates="user")
@@ -23,6 +23,12 @@ class User(UserBase, table=True):
 
 
 class UserCreate(UserBase):
+    email: EmailStr
+    password: str
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
     password: str
 
 
@@ -49,18 +55,10 @@ class UserUpdate(SQLModel):
         return values
 
 
-class UserLogin(BaseModel):
+class UserReadUnauthorized(UserBase):
+    id: int
+    created_dt: datetime
+
+
+class UserRead(UserReadUnauthorized):
     email: EmailStr
-    password: str
-
-
-class UserRead(UserBase):
-    id: int
-    created_dt: datetime
-
-
-class UserReadUnauthorized(BaseModel):
-    id: int
-    nickname: str
-    motto: Optional[str] = None
-    created_dt: datetime
