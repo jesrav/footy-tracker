@@ -1,7 +1,9 @@
 from typing import Optional
+import ast
 
 from starlette.requests import Request
 
+from models.validation_error import ValidationError
 from services import user_service
 from viewmodels.shared.viewmodel import ViewModelBase
 
@@ -28,7 +30,13 @@ class RegisterViewModel(ViewModelBase):
             self.error = "Your password is required."
         elif len(self.password) < 8:
             self.error = "Your password must be at 8 characters."
-        elif await user_service.get_user_by_nickname(self.nickname):
-            self.error = "That nickname is already taken."
-        elif await user_service.get_user_by_email(self.email):
-            self.error = "That email is already taken. Log in instead?"
+        else:
+            # Try to create the account and catch any errors, such as nickname already used
+            try:
+                _ = await user_service.create_account(self.nickname, self.email, self.password)
+            except ValidationError as e:
+                self.error = ast.literal_eval(e.error_msg)["detail"]
+
+            # If a user is logged in without any errors, we log in
+            if not self.error:
+                self.bearer_token = await user_service.login_user(self.email, self.password)

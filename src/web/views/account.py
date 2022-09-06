@@ -102,7 +102,7 @@ async def update_profile_image(request: Request, file: UploadFile = File(...)):
         bearer_token=vm.bearer_token
     )
 
-    #delete old user image
+    # delete old user image
     _ = await delete_from_azure(old_user_details.profile_pic_path[len(storage_base_url):])
 
     return fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
@@ -124,12 +124,10 @@ async def register(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    # Create the account
-    account = await user_service.create_account(vm.nickname, vm.email, vm.password)
-
-    # Login user
+    me = await user_service.get_me(bearer_token=vm.bearer_token)
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
-    cookie_auth.set_bearer_token_cookie(response, account.id)
+    cookie_auth.set_user_id_cookie(response, me.id)
+    cookie_auth.set_bearer_token_cookie(response, vm.bearer_token)
     return response
 
 

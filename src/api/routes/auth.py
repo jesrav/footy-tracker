@@ -17,10 +17,14 @@ router = APIRouter()
 
 @router.post("/auth/signup/", response_model=user_models.UserRead, status_code=201, tags=["auth"])
 async def signup(user: user_models.UserCreate, session: AsyncSession = Depends(get_session)) -> Any:
-    preexisting_user = await user_crud.get_user_by_email(session, email=user.email)
     """Sign up user and create first user rating and empty stats."""
-    if preexisting_user:
+    preexisting_email = await user_crud.get_user_by_email(session, email=user.email)
+    if preexisting_email:
         raise HTTPException(status_code=400, detail="Email already registered")
+    preexisting_nickname = await user_crud.get_user_by_nickname(session, nickname=user.nickname)
+    if preexisting_nickname:
+        raise HTTPException(status_code=400, detail="Nickname already registered")
+
     user = await user_crud.create_user(session=session, user=user, commit_changes=False)
     _ = await user_stats_crud.create_first_empty_user_stats(session=session, user_id=user.id, commit_changes=False)
     _ = await rating_crud.add_rating(
