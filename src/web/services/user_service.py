@@ -1,5 +1,5 @@
 import os
-from typing import Optional, List
+from typing import Optional, List, Any, Union
 
 import httpx
 from httpx import Response
@@ -19,10 +19,21 @@ async def create_account(nickname: str, email: str, password: str) -> Optional[U
     return UserRead(**resp.json())
 
 
-async def login_user(email: str, password: str) -> Optional[UserRead]:
-    json_data = {"password": password, "email": email}
+async def login_user(email: str, password: str) -> Any:
+    data = {"password": password, "username": email}
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.post(url=BASE_WEB_API_URL + "/auth/login/", json=json_data)
+        resp: Response = await client.post(url=BASE_WEB_API_URL + "/auth/login", data=data)
+        if resp.status_code == 404:
+            return None
+        elif resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+        else:
+            return resp.json()
+
+
+async def get_me(headers: dict) -> Union[UserRead, None]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/me", headers=headers)
         if resp.status_code == 404:
             return None
         elif resp.status_code != 200:
@@ -42,37 +53,26 @@ async def get_user_by_id(user_id: int) -> UserRead:
             return UserRead(**resp.json())
 
 
-async def get_user_by_id(user_id: int) -> UserRead:
-    async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}")
-        if resp.status_code == 404:
-            return None
-        elif resp.status_code != 200:
-            raise ValidationError(resp.text, status_code=resp.status_code)
-        else:
-            return UserRead(**resp.json())
-
-
-async def get_user_by_email(email: str) -> UserRead:
-    async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_email/{email}")
-        if resp.status_code == 404:
-            return None
-        elif resp.status_code != 200:
-            raise ValidationError(resp.text, status_code=resp.status_code)
-        else:
-            return UserRead(**resp.json())
-
-
-async def get_user_by_nickname(nickname: str) -> UserRead:
-    async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_nickname/{nickname}")
-        if resp.status_code == 404:
-            return None
-        elif resp.status_code != 200:
-            raise ValidationError(resp.text, status_code=resp.status_code)
-        else:
-            return UserRead(**resp.json())
+# async def get_user_by_email(email: str) -> UserRead:
+#     async with httpx.AsyncClient() as client:
+#         resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_email/{email}")
+#         if resp.status_code == 404:
+#             return None
+#         elif resp.status_code != 200:
+#             raise ValidationError(resp.text, status_code=resp.status_code)
+#         else:
+#             return UserRead(**resp.json())
+#
+#
+# async def get_user_by_nickname(nickname: str) -> UserRead:
+#     async with httpx.AsyncClient() as client:
+#         resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_nickname/{nickname}")
+#         if resp.status_code == 404:
+#             return None
+#         elif resp.status_code != 200:
+#             raise ValidationError(resp.text, status_code=resp.status_code)
+#         else:
+#             return UserRead(**resp.json())
 
 
 async def get_all_users() -> List[UserRead]:

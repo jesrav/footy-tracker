@@ -13,11 +13,10 @@ router = APIRouter()
 
 
 @router.get("/users/me", response_model=user_models.UserRead, tags=["users"])
-def read_users_me(current_user: user_models.User = Depends(deps.get_current_user)):
+async def read_users_me(current_user: user_models.User = Depends(deps.get_current_user)):
     """
     Fetch the current logged in user.
     """
-
     user = current_user
     return user
 

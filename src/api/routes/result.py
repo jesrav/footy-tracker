@@ -6,7 +6,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from core import deps
 from crud import rating as ratings_crud
 from crud import result as result_crud
-from crud import user as user_crud
 from crud import ranking as ranking_crud
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models

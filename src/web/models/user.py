@@ -18,7 +18,6 @@ def get_profile_pic_url_from_email(email: str) -> str:
 class UserRead(BaseModel):
     id: int
     nickname: str
-    email: str
     motto: Optional[str]
     profile_pic_path: Optional[str] = None
     created_dt: datetime

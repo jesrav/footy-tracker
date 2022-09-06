@@ -149,13 +149,12 @@ async def login_post(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    user = await user_service.login_user(vm.email, vm.password)
-    if not user:
-        vm.error = "The account does not exist or the password is wrong."
-        return vm.to_dict()
+    bearer_dict = await user_service.login_user(vm.email, vm.password)
+    headers = {"Authorization": f"Bearer {bearer_dict['access_token']}"}
 
-    resp = fastapi.responses.RedirectResponse(f'/user/{user.id}', status_code=status.HTTP_302_FOUND)
-    cookie_auth.set_bearer_token_cookie(resp, user.id)
+    me = await user_service.get_me(headers=headers)
+    resp = fastapi.responses.RedirectResponse(f'/user/{me.id}', status_code=status.HTTP_302_FOUND)
+    cookie_auth.set_bearer_token_cookie(resp, bearer_dict["access_token"])
 
     return resp
 
