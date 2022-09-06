@@ -70,7 +70,6 @@ async def edit(request: Request):
 
     # Login user
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
-    cookie_auth.set_bearer_token_cookie(response, vm.user_id)
     return response
 
 
@@ -154,6 +153,7 @@ async def login_post(request: Request):
 
     me = await user_service.get_me(headers=headers)
     resp = fastapi.responses.RedirectResponse(f'/user/{me.id}', status_code=status.HTTP_302_FOUND)
+    cookie_auth.set_user_id_cookie(resp, me.id)
     cookie_auth.set_bearer_token_cookie(resp, bearer_dict["access_token"])
 
     return resp
@@ -163,5 +163,4 @@ async def login_post(request: Request):
 def logout():
     response = fastapi.responses.RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     cookie_auth.logout(response)
-
     return response

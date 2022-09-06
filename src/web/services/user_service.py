@@ -4,7 +4,7 @@ from typing import Optional, List, Any, Union
 import httpx
 from httpx import Response
 
-from models.user import UserRead, UserUpdate
+from models.user import UserRead, UserReadUnauthorized, UserUpdate
 from models.validation_error import ValidationError
 
 BASE_WEB_API_URL = os.environ.get("API_URL")
@@ -31,9 +31,12 @@ async def login_user(email: str, password: str) -> Any:
             return resp.json()
 
 
-async def get_me(headers: dict) -> Union[UserRead, None]:
+async def get_me(bearer_token: str) -> Union[UserRead, None]:
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/me", headers=headers)
+        resp: Response = await client.get(
+            url=BASE_WEB_API_URL + f"/users/me",
+            headers={"Authorization": f"Bearer {bearer_token}"}
+        )
         if resp.status_code == 404:
             return None
         elif resp.status_code != 200:
@@ -42,7 +45,26 @@ async def get_me(headers: dict) -> Union[UserRead, None]:
             return UserRead(**resp.json())
 
 
-async def get_user_by_id(user_id: int) -> UserRead:
+async def update_user(user_updates: UserUpdate, bearer_token: str) -> Optional[UserRead]:
+    json_data = {
+        "nickname": user_updates.nickname,
+        "password": user_updates.password,
+        "email": user_updates.email,
+        "motto": user_updates.motto,
+        "profile_pic_path": user_updates.profile_pic_path,
+    }
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.post(
+            url=BASE_WEB_API_URL + f"/users/me/update/",
+            json=json_data,
+            headers={"Authorization": f"Bearer {bearer_token}"}
+        )
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return UserRead(**resp.json())
+
+
+async def get_user_by_id(user_id: int) -> Union[UserReadUnauthorized, None]:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}")
         if resp.status_code == 404:
@@ -50,29 +72,7 @@ async def get_user_by_id(user_id: int) -> UserRead:
         elif resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
         else:
-            return UserRead(**resp.json())
-
-
-# async def get_user_by_email(email: str) -> UserRead:
-#     async with httpx.AsyncClient() as client:
-#         resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_email/{email}")
-#         if resp.status_code == 404:
-#             return None
-#         elif resp.status_code != 200:
-#             raise ValidationError(resp.text, status_code=resp.status_code)
-#         else:
-#             return UserRead(**resp.json())
-#
-#
-# async def get_user_by_nickname(nickname: str) -> UserRead:
-#     async with httpx.AsyncClient() as client:
-#         resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/by_nickname/{nickname}")
-#         if resp.status_code == 404:
-#             return None
-#         elif resp.status_code != 200:
-#             raise ValidationError(resp.text, status_code=resp.status_code)
-#         else:
-#             return UserRead(**resp.json())
+            return UserReadUnauthorized(**resp.json())
 
 
 async def get_all_users() -> List[UserRead]:
@@ -83,18 +83,3 @@ async def get_all_users() -> List[UserRead]:
             raise ValidationError(resp.text, status_code=resp.status_code)
         else:
             return [UserRead(**user_dict) for user_dict in resp.json()]
-
-
-async def update_user(user_id: int, user_updates: UserUpdate) -> Optional[UserRead]:
-    json_data = {
-        "nickname": user_updates.nickname,
-        "password": user_updates.password,
-        "email": user_updates.email,
-        "motto": user_updates.motto,
-        "profile_pic_path": user_updates.profile_pic_path,
-    }
-    async with httpx.AsyncClient() as client:
-        resp: Response = await client.post(url=BASE_WEB_API_URL + f"/users/{user_id}/update/", json=json_data)
-        if resp.status_code != 200:
-            raise ValidationError(resp.text, status_code=resp.status_code)
-    return UserRead(**resp.json())

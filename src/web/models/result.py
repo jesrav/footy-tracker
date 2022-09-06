@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from models.team import TeamRead, TeamCreate
-from models.user import UserRead
+from models.user import UserReadUnauthorized
 
 
 class ResultSubmissionCreate(BaseModel):
@@ -17,25 +17,25 @@ class ResultSubmissionCreate(BaseModel):
 
 class ResultSubmissionRead(BaseModel):
     id: int
-    submitter: UserRead
+    submitter: UserReadUnauthorized
     team1: TeamRead
     team2: TeamRead
     goals_team1: int
     goals_team2: int
     approved: Optional[bool]
-    validator: Optional[UserRead]
+    validator: Optional[UserReadUnauthorized]
     validation_dt: Optional[datetime]
     created_dt: datetime
 
 
 class ResultForUserDisplay(BaseModel):
     id: int
-    submitter: UserRead
+    submitter: UserReadUnauthorized
     win: bool
     user_position: str
-    teammate: UserRead
-    opposing_defender: UserRead
-    opposing_attacker: UserRead
+    teammate: UserReadUnauthorized
+    opposing_defender: UserReadUnauthorized
+    opposing_attacker: UserReadUnauthorized
     goals_user_team: int
     goals_opposing_team: int
     created_dt: datetime

@@ -1,15 +1,13 @@
 import hashlib
+from typing import Optional, Union
 
 from fastapi import Request
 from fastapi import Response
 
-auth_cookie_name = 'footy_tracker_bearer_token'
+from infrastructure.num_convert import try_int
 
-
-def set_bearer_token_cookie(response: Response, bearer_token: str):
-    hash_val = __hash_text(bearer_token)
-    val = "{}:{}".format(bearer_token, hash_val)
-    response.set_cookie(auth_cookie_name, val, secure=False, httponly=True, samesite='Lax')
+bearer_cookie_name = 'footy_tracker_bearer_token'
+user_id_cookie_name = 'footy_tracker_account'
 
 
 def __hash_text(text: str) -> str:
@@ -17,11 +15,42 @@ def __hash_text(text: str) -> str:
     return hashlib.sha512(text.encode('utf-8')).hexdigest()
 
 
-def get_bearer_token_from_cookie(request: Request):
-    if auth_cookie_name not in request.cookies:
+def set_user_id_cookie(response: Response, user_id: int):
+    hash_val = __hash_text(str(user_id))
+    val = "{}:{}".format(user_id, hash_val)
+    response.set_cookie(user_id_cookie_name, val, secure=False, httponly=True, samesite='Lax')
+
+
+def set_bearer_token_cookie(response: Response, bearer_token: str):
+    hash_val = __hash_text(bearer_token)
+    val = "{}:{}".format(bearer_token, hash_val)
+    response.set_cookie(bearer_cookie_name, val, secure=False, httponly=True, samesite='Lax')
+
+
+def get_user_id_via_auth_cookie(request: Request) -> Optional[int]:
+    if user_id_cookie_name not in request.cookies:
         return None
 
-    val = request.cookies[auth_cookie_name]
+    val = request.cookies[user_id_cookie_name]
+    parts = val.split(':')
+    if len(parts) != 2:
+        return None
+
+    user_id = parts[0]
+    hash_val = parts[1]
+    hash_val_check = __hash_text(user_id)
+    if hash_val != hash_val_check:
+        print("Warning: Hash mismatch, invalid cookie value")
+        return None
+
+    return try_int(user_id)
+
+
+def get_bearer_token_from_cookie(request: Request) -> Union[str, None]:
+    if bearer_cookie_name not in request.cookies:
+        return None
+
+    val = request.cookies[bearer_cookie_name]
     parts = val.split(':')
     if len(parts) != 2:
         return None
@@ -36,4 +65,5 @@ def get_bearer_token_from_cookie(request: Request):
 
 
 def logout(response: Response):
-    response.delete_cookie(auth_cookie_name)
+    response.delete_cookie(bearer_cookie_name)
+    response.delete_cookie(user_id_cookie_name)
