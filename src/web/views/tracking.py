@@ -48,7 +48,7 @@ async def submit_result(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    match = ResultSubmissionCreate(
+    result = ResultSubmissionCreate(
         submitter_id=vm.user_id,
         team1=TeamCreate(
             defender_user_id=vm.team1_defender,
@@ -62,8 +62,8 @@ async def submit_result(request: Request):
         goals_team2=vm.goals_team2,
     )
 
-    # Create match registration
-    _ = await tracking_service.register_result(match)
+    # Create result registration
+    _ = await tracking_service.register_result(result, bearer_token=vm.bearer_token)
 
     return fastapi.responses.RedirectResponse(url='/results_for_approval', status_code=status.HTTP_302_FOUND)
 

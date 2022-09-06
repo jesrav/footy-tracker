@@ -34,7 +34,7 @@ async def login_user(email: str, password: str) -> Any:
 async def get_me(bearer_token: str) -> Union[UserRead, None]:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(
-            url=BASE_WEB_API_URL + f"/users/me",
+            url=BASE_WEB_API_URL + f"/me",
             headers={"Authorization": f"Bearer {bearer_token}"}
         )
         if resp.status_code == 404:
@@ -55,9 +55,9 @@ async def update_user(user_updates: UserUpdate, bearer_token: str) -> Optional[U
     }
     async with httpx.AsyncClient() as client:
         resp: Response = await client.post(
-            url=BASE_WEB_API_URL + f"/users/me/update/",
+            url=BASE_WEB_API_URL + f"/me/update/",
             json=json_data,
-            headers={"Authorization": f"Bearer {bearer_token}"}
+            headers={"Authorization": f"Bearer {bearer_token}"},
         )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
@@ -75,11 +75,11 @@ async def get_user_by_id(user_id: int) -> Union[UserReadUnauthorized, None]:
             return UserReadUnauthorized(**resp.json())
 
 
-async def get_all_users() -> List[UserRead]:
+async def get_all_users() -> List[UserReadUnauthorized]:
     user_limit = 1000
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/?limit{user_limit}")
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
         else:
-            return [UserRead(**user_dict) for user_dict in resp.json()]
+            return [UserReadUnauthorized(**user_dict) for user_dict in resp.json()]

@@ -83,21 +83,23 @@ async def update_profile_image(request: Request):
 
 @router.post("/account/update_profile_image")
 @template()
-async def update_profile_image(user_id: int = Form(...), file: UploadFile = File(...)):
+async def update_profile_image(request: Request, file: UploadFile = File(...)):
+    vm = AccountViewModel(request)
+    await vm.load()
     file_suffix = Path(file.filename).suffix
     guid = uuid.uuid4()
     storage_base_url = os.environ["BLOB_STORAGE_BASE_URL"]
-    name = f"profile_pic_{user_id}_{guid}{file_suffix}"
+    name = f"profile_pic_{vm.user_id}_{guid}{file_suffix}"
 
-    old_user_details = await user_service.get_user_by_id(user_id=user_id)
+    old_user_details = await user_service.get_me(bearer_token=vm.bearer_token)
 
     # Upload new profile image
     await upload_to_azure(file, name)
 
     # Update user info
     _ = await user_service.update_user(
-        user_id=user_id,
-        user_updates=UserUpdate(profile_pic_path=storage_base_url + name)
+        user_updates=UserUpdate(profile_pic_path=storage_base_url + name),
+        bearer_token=vm.bearer_token
     )
 
     #delete old user image
@@ -149,9 +151,8 @@ async def login_post(request: Request):
         return vm.to_dict()
 
     bearer_dict = await user_service.login_user(vm.email, vm.password)
-    headers = {"Authorization": f"Bearer {bearer_dict['access_token']}"}
 
-    me = await user_service.get_me(headers=headers)
+    me = await user_service.get_me(bearer_token=bearer_dict['access_token'])
     resp = fastapi.responses.RedirectResponse(f'/user/{me.id}', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_user_id_cookie(resp, me.id)
     cookie_auth.set_bearer_token_cookie(resp, bearer_dict["access_token"])
