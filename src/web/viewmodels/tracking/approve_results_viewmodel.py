@@ -21,8 +21,8 @@ class ApproveResultsViewModel(ViewModelBase):
 
     async def load(self):
         self.user = await user_service.get_user_by_id(self.user_id)
-        results_to_approve = await tracking_service.get_results_for_approval_by_user(self.user_id)
-        results_for_opposition_to_approve = await tracking_service.get_results_for_approval_submitted_by_users_team(self.user_id)
+        results_to_approve = await tracking_service.get_results_for_approval_by_user(self.bearer_token)
+        results_for_opposition_to_approve = await tracking_service.get_results_for_approval_submitted_by_users_team(self.bearer_token)
         self.results_to_approve = [
             ResultForUserDisplay.from_result_submission(
                 user_id=self.user_id,

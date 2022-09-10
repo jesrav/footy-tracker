@@ -47,6 +47,8 @@ async def delete_from_azure(file_name: str):
 @template()
 async def index(request: Request):
     vm = AccountViewModel(request)
+    if not vm.is_logged_in:
+        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
     await vm.load()
     return vm.to_dict()
 
@@ -55,6 +57,8 @@ async def index(request: Request):
 @template()
 async def edit(request: Request):
     vm = AccountEditViewModel(request)
+    if not vm.is_logged_in:
+        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
     await vm.load()
     return vm.to_dict()
 
@@ -70,7 +74,6 @@ async def edit(request: Request):
 
     # Login user
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
-    cookie_auth.set_auth(response, vm.user_id)
     return response
 
 
@@ -78,30 +81,34 @@ async def edit(request: Request):
 @template()
 async def update_profile_image(request: Request):
     vm = AccountViewModel(request)
+    if not vm.is_logged_in:
+        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
     await vm.load()
     return vm.to_dict()
 
 
 @router.post("/account/update_profile_image")
 @template()
-async def update_profile_image(user_id: int = Form(...), file: UploadFile = File(...)):
+async def update_profile_image(request: Request, file: UploadFile = File(...)):
+    vm = AccountViewModel(request)
+    await vm.load()
     file_suffix = Path(file.filename).suffix
     guid = uuid.uuid4()
     storage_base_url = os.environ["BLOB_STORAGE_BASE_URL"]
-    name = f"profile_pic_{user_id}_{guid}{file_suffix}"
+    name = f"profile_pic_{vm.user_id}_{guid}{file_suffix}"
 
-    old_user_details = await user_service.get_user_by_id(user_id=user_id)
+    old_user_details = await user_service.get_me(bearer_token=vm.bearer_token)
 
     # Upload new profile image
     await upload_to_azure(file, name)
 
     # Update user info
     _ = await user_service.update_user(
-        user_id=user_id,
-        user_updates=UserUpdate(profile_pic_path=storage_base_url + name)
+        user_updates=UserUpdate(profile_pic_path=storage_base_url + name),
+        bearer_token=vm.bearer_token
     )
 
-    #delete old user image
+    # delete old user image
     _ = await delete_from_azure(old_user_details.profile_pic_path[len(storage_base_url):])
 
     return fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
@@ -122,13 +129,10 @@ async def register(request: Request):
 
     if vm.error:
         return vm.to_dict()
-
-    # Create the account
-    account = await user_service.create_account(vm.nickname, vm.email, vm.password)
-
-    # Login user
+    me = await user_service.get_me(bearer_token=vm.bearer_token)
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
-    cookie_auth.set_auth(response, account.id)
+    cookie_auth.set_user_id_cookie(response, me.id)
+    cookie_auth.set_bearer_token_cookie(response, vm.bearer_token)
     return response
 
 
@@ -149,13 +153,12 @@ async def login_post(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    user = await user_service.login_user(vm.email, vm.password)
-    if not user:
-        vm.error = "The account does not exist or the password is wrong."
-        return vm.to_dict()
+    bearer_token = await user_service.login_user(vm.email, vm.password)
 
-    resp = fastapi.responses.RedirectResponse(f'/user/{user.id}', status_code=status.HTTP_302_FOUND)
-    cookie_auth.set_auth(resp, user.id)
+    me = await user_service.get_me(bearer_token=bearer_token)
+    resp = fastapi.responses.RedirectResponse(f'/user/{me.id}', status_code=status.HTTP_302_FOUND)
+    cookie_auth.set_user_id_cookie(resp, me.id)
+    cookie_auth.set_bearer_token_cookie(resp, bearer_token)
 
     return resp
 
@@ -164,5 +167,4 @@ async def login_post(request: Request):
 def logout():
     response = fastapi.responses.RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
     cookie_auth.logout(response)
-
     return response

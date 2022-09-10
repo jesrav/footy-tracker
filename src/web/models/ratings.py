@@ -3,12 +3,12 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from models.user import UserRead
+from models.user import UserReadUnauthorized
 
 
 class UserRating(BaseModel):
     id: int
-    user: UserRead
+    user: UserReadUnauthorized
     rating_defence: float
     rating_offence: float
     overall_rating: float

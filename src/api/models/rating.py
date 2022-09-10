@@ -3,7 +3,7 @@ from typing import Optional
 
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.user import UserRead
+from models.user import UserReadUnauthorized
 
 
 class UserRating(SQLModel, table=True):
@@ -42,7 +42,7 @@ class UserRatingCreate(SQLModel):
 
 class UserRatingRead(SQLModel):
     id: int
-    user: UserRead
+    user: UserReadUnauthorized
     rating_defence: float
     rating_offence: float
     overall_rating: float

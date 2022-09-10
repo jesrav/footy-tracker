@@ -5,12 +5,13 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud.user_stats import get_user_stats
 from models.user_stats import UserStatsRead
-from database import get_session
-
+from core.deps import get_session
 
 router = APIRouter()
 
 
-@router.get("/user_stats/", response_model=List[UserStatsRead])
-async def read_user_stats(session: AsyncSession = Depends(get_session)):
+@router.get("/user_stats/", response_model=List[UserStatsRead], tags=["stats"])
+async def read_user_stats(
+    session: AsyncSession = Depends(get_session),
+):
     return await get_user_stats(session)

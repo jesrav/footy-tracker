@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from starlette.requests import Request
 
-from models.user import UserRead
+from models.user import UserReadUnauthorized
 from services import user_service
 from viewmodels.shared.viewmodel import ViewModelBase
 
@@ -17,11 +17,11 @@ class SubmitResultViewModel(ViewModelBase):
         self.team2_attacker: Optional[int] = None
         self.goals_team1: Optional[int] = None
         self.goals_team2: Optional[int] = None
-        self.users: Optional[List[UserRead]] = None
+        self.users: Optional[List[UserReadUnauthorized]] = None
         self.error: Optional[str] = None
 
     async def load(self):
-        self.users: List[UserRead] = await user_service.get_all_users()
+        self.users = await user_service.get_all_users()
 
     async def load_form(self):
         form = await self.request.form()
@@ -31,7 +31,7 @@ class SubmitResultViewModel(ViewModelBase):
         self.team2_attacker = form.get('team2_attacker')
         self.goals_team1 = form.get('goals_team1')
         self.goals_team2 = form.get('goals_team2')
-        self.users: List[UserRead] = await user_service.get_all_users()
+        self.users = await user_service.get_all_users()
 
         if not all([
             self.team1_defender != "",

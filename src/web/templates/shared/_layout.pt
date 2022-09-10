@@ -44,7 +44,7 @@
                 Results awaiting approval
             </a>
 
-            <a tal:condition="is_logged_in" class="navbar-item" href="/leaderboard">
+            <a class="navbar-item" href="/leaderboard">
                 Leader board
             </a>
 

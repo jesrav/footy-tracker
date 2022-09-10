@@ -4,7 +4,7 @@ from typing import Optional, List
 from pydantic import validator, root_validator
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.user import User, UserRead
+from models.user import User, UserReadUnauthorized
 
 
 class Team(SQLModel, table=True):
@@ -41,6 +41,6 @@ class TeamCreate(SQLModel):
 
 class TeamRead(SQLModel):
     id: int
-    defender: UserRead
-    attacker: UserRead
+    defender: UserReadUnauthorized
+    attacker: UserReadUnauthorized
     created_dt: datetime

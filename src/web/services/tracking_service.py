@@ -13,9 +13,13 @@ from models.validation_error import ValidationError
 BASE_WEB_API_URL = os.environ.get("API_URL")
 
 
-async def register_result(result: ResultSubmissionCreate) -> ResultSubmissionRead:
+async def register_result(result: ResultSubmissionCreate, bearer_token: str) -> ResultSubmissionRead:
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.post(url=BASE_WEB_API_URL + "/results/", json=result.dict())
+        resp: Response = await client.post(
+            url=BASE_WEB_API_URL + "/results/",
+            json=result.dict(),
+            headers={"Authorization": f"Bearer {bearer_token}"},
+        )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return ResultSubmissionRead(**resp.json())
@@ -33,28 +37,33 @@ async def get_approved_results(skip: int = 0, limit: int = 100, user_id: Optiona
     return [ResultSubmissionRead(**r) for r in resp.json()]
 
 
-async def get_results_for_approval_by_user(user_id: int) -> List[ResultSubmissionRead]:
-    async with httpx.AsyncClient() as client:
-        resp: Response = await client.get(url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval_by_user/")
-        if resp.status_code != 200:
-            raise ValidationError(resp.text, status_code=resp.status_code)
-    return [ResultSubmissionRead(**r) for r in resp.json()]
-
-
-async def get_results_for_approval_submitted_by_users_team(user_id: int) -> List[ResultSubmissionRead]:
+async def get_results_for_approval_by_user(bearer_token: str) -> List[ResultSubmissionRead]:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(
-            url=BASE_WEB_API_URL + f"/users/{user_id}/results_for_approval_submitted_by_users_team/"
+            url=BASE_WEB_API_URL + f"/results_for_approval_by_user/",
+            headers={"Authorization": f"Bearer {bearer_token}"},
         )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [ResultSubmissionRead(**r) for r in resp.json()]
 
 
-async def validate_result(validator_id: int, result_id: int, approved: bool) -> ResultSubmissionRead:
+async def get_results_for_approval_submitted_by_users_team(bearer_token: str) -> List[ResultSubmissionRead]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(
+            url=BASE_WEB_API_URL + f"/results_for_approval_submitted_by_users_team/",
+            headers={"Authorization": f"Bearer {bearer_token}"},
+        )
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [ResultSubmissionRead(**r) for r in resp.json()]
+
+
+async def validate_result(result_id: int, approved: bool, bearer_token: str) -> ResultSubmissionRead:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.post(
-            url=BASE_WEB_API_URL + f"/users/{validator_id}/validate_result/{result_id}/?approved={approved}"
+            url=BASE_WEB_API_URL + f"/validate_result/{result_id}/?approved={approved}",
+            headers={"Authorization": f"Bearer {bearer_token}"},
         )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)

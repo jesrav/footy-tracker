@@ -1,9 +1,9 @@
 from typing import Optional, List
 
-from passlib.handlers.sha2_crypt import sha512_crypt as crypto
 from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
+from services.security import get_password_hash
 from models import user as user_models
 
 
@@ -53,7 +53,7 @@ async def create_user(session: AsyncSession, user: user_models.UserCreate, commi
         nickname=user.nickname,
         email=user.email,
         motto=user.motto,
-        hash_password=crypto.hash(user.password, rounds=172_434),
+        hash_password=get_password_hash(user.password),
         profile_pic_path=user.profile_pic_path,
     )
     session.add(user)
@@ -65,13 +65,3 @@ async def create_user(session: AsyncSession, user: user_models.UserCreate, commi
         await session.flush()
         await session.refresh(user)
     return user
-
-
-async def login_user(session: AsyncSession, email: str, password: str) -> Optional[user_models.User]:
-    user = await get_user_by_email(session, email)
-    if not user:
-        return None
-    if not crypto.verify(password, user.hash_password):
-        return None
-    else:
-        return user
