@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     EGG_FACTOR = 1
 
     # JWT
-    JWT_SECRET: str = "TEST_SECRET_DO_NOT_USE_IN_PROD"
+    JWT_SECRET: str = os.environ["JWT_SECRET"]
     ALGORITHM: str = "HS256"
 
     # OAUTH2
