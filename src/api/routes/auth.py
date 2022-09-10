@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any
 
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm

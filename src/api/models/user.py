@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr, root_validator
 from sqlalchemy import Column, String
-from sqlmodel import SQLModel, Field, Relationship, UniqueConstraint
+from sqlmodel import SQLModel, Field, Relationship
 
 from models.ranking import UserRanking
 
