@@ -3,8 +3,6 @@ from fastapi_chameleon import template
 from starlette import status
 from starlette.requests import Request
 
-from models.result import ResultSubmissionCreate
-from models.team import TeamCreate
 from services import tracking_service
 from viewmodels.tracking.approve_results_viewmodel import ApproveResultsViewModel
 from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
@@ -19,7 +17,7 @@ router = fastapi.APIRouter()
 async def user(user_in_view_id, request: Request):
     vm = UserViewModel(user_in_view_id, request, )
     await vm.load()
-    return vm.to_dict()
+    return await vm.to_dict()
 
 
 @router.get('/leaderboard/')
@@ -27,17 +25,18 @@ async def user(user_in_view_id, request: Request):
 async def leaderboard(request: Request):
     vm = LeaderboardViewModel(request)
     await vm.load()
-    return vm.to_dict()
+    return await vm.to_dict()
 
 
 @router.get('/submit_result')
 @template()
 async def submit_result(request: Request):
     vm = SubmitResultViewModel(request)
-    if not vm.is_logged_in:
-        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
+    await vm.authorize()
+    if vm.redirect_response:
+        return vm.redirect_response
     await vm.load()
-    return vm.to_dict()
+    return await vm.to_dict()
 
 
 @router.post('/submit_result')
@@ -48,7 +47,7 @@ async def submit_result(request: Request):
     await vm.post_form()
 
     if vm.error:
-        return vm.to_dict()
+        return await vm.to_dict()
 
     return fastapi.responses.RedirectResponse(url='/results_for_approval', status_code=status.HTTP_302_FOUND)
 
@@ -57,21 +56,20 @@ async def submit_result(request: Request):
 @template()
 async def get_results_for_approval(request: Request):
     vm = ApproveResultsViewModel(request)
-    if not vm.is_logged_in:
-        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
+    await vm.authorize()
+    if vm.redirect_response:
+        return vm.redirect_response
     await vm.load()
-    return vm.to_dict()
+    return await vm.to_dict()
 
 
 @router.post('/results_for_approval')
 @template()
 async def approve_result(request: Request):
     vm = ApproveResultsViewModel(request)
-
     await vm.load_form()
-
     if vm.error:
-        return vm.to_dict()
+        return await vm.to_dict()
 
     _ = await tracking_service.validate_result(
         result_id=vm.result_id,

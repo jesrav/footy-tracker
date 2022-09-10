@@ -81,33 +81,34 @@ async def delete_from_azure(file_name: str):
 @router.get('/account')
 @template()
 async def index(request: Request):
-    vm = AccountViewModel(request)
-    if not vm.is_logged_in:
-        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
-    await vm.load()
-    return vm.to_dict()
+    vm = AccountEditViewModel(request)
+    await vm.authorize()
+    if vm.redirect_response:
+        return vm.redirect_response
+    else:
+        return await vm.to_dict()
 
 
 @router.get('/account/edit/')
 @template()
 async def edit(request: Request):
     vm = AccountEditViewModel(request)
-    if not vm.is_logged_in:
-        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
-    await vm.load()
-    return vm.to_dict()
+    await vm.authorize()
+    if vm.redirect_response:
+        return vm.redirect_response
+    else:
+        return await vm.to_dict()
 
 
 @router.post('/account/edit/')
 @template()
 async def edit(request: Request):
     vm = AccountEditViewModel(request)
-    await vm.load_form()
+    await vm.post_form()
 
     if vm.error:
         return vm.to_dict()
 
-    # Login user
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
     return response
 
@@ -115,18 +116,19 @@ async def edit(request: Request):
 @router.get("/account/update_profile_image")
 @template()
 async def update_profile_image(request: Request):
-    vm = AccountViewModel(request)
-    if not vm.is_logged_in:
-        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
-    await vm.load()
-    return vm.to_dict()
+    vm = AccountEditViewModel(request)
+    await vm.authorize()
+    if vm.redirect_response:
+        return vm.redirect_response
+    else:
+        return await vm.to_dict()
 
 
 @router.post("/account/update_profile_image")
 @template()
 async def update_profile_image(request: Request, file: UploadFile = File(...)):
     vm = AccountViewModel(request)
-    await vm.load()
+    vm.authorize()
     file_suffix = Path(file.filename).suffix
     guid = uuid.uuid4()
     storage_base_url = os.environ["BLOB_STORAGE_BASE_URL"]
@@ -134,14 +136,13 @@ async def update_profile_image(request: Request, file: UploadFile = File(...)):
 
     old_user_details = await user_service.get_me(bearer_token=vm.bearer_token)
 
-
     image_data = await file.read()
     # Check that we can read the image
     try:
         image = Image.open(io.BytesIO(image_data))
     except UnidentifiedImageError:
         vm.error = "Please select a valid image."
-        return vm.to_dict()
+        return await vm.to_dict()
 
     # Upload new profile image
     await upload_image_to_azure(image, name)
@@ -160,9 +161,9 @@ async def update_profile_image(request: Request, file: UploadFile = File(...)):
 
 @router.get('/account/register')
 @template()
-def register(request: Request):
+async def register(request: Request):
     vm = RegisterViewModel(request)
-    return vm.to_dict()
+    return await vm.to_dict()
 
 
 @router.post('/account/register')
@@ -172,7 +173,7 @@ async def register(request: Request):
     await vm.post_form()
 
     if vm.error:
-        return vm.to_dict()
+        return await vm.to_dict()
     me = await user_service.get_me(bearer_token=vm.bearer_token)
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_user_id_cookie(response, me.id)
@@ -182,9 +183,9 @@ async def register(request: Request):
 
 @router.get('/account/login')
 @template(template_file='account/login.pt')
-def login_get(request: Request):
+async def login_get(request: Request):
     vm = LoginViewModel(request)
-    return vm.to_dict()
+    return await vm.to_dict()
 
 
 @router.post('/account/login')
@@ -195,7 +196,7 @@ async def login_post(request: Request):
     await vm.load()
 
     if vm.error:
-        return vm.to_dict()
+        return await vm.to_dict()
 
     me = await user_service.get_me(bearer_token=vm.bearer_token)
     resp = fastapi.responses.RedirectResponse(f'/user/{me.id}', status_code=status.HTTP_302_FOUND)

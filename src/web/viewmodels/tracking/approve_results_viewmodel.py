@@ -20,7 +20,6 @@ class ApproveResultsViewModel(ViewModelBase):
         self.approved: Optional[bool] = None
 
     async def load(self):
-        self.user = await user_service.get_user_by_id(self.user_id)
         results_to_approve = await tracking_service.get_results_for_approval_by_user(self.bearer_token)
         results_for_opposition_to_approve = await tracking_service.get_results_for_approval_submitted_by_users_team(self.bearer_token)
         self.results_to_approve = [
