@@ -2,10 +2,10 @@ import io
 import os
 import uuid
 from pathlib import Path
-import aiofiles
 
 import fastapi
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
+from PIL.ImageOps import exif_transpose
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 from fastapi import UploadFile, File
@@ -37,7 +37,10 @@ def crop_and_resize_image(image: Image) -> Image:
     right = width - (width - new_width) / 2
     bottom = height - (height - new_height) / 2
 
-    return image.crop((left, top, right, bottom)).resize(new_size)
+    # Remove Exif info from image
+    new_image = Image.new(mode=image.mode, size=image.size)
+    new_image.putdata(list(image.getdata()))
+    return new_image.crop((left, top, right, bottom)).resize(new_size)
 
 
 def get_format_for_pillow(suffix: str) -> str:
@@ -48,15 +51,16 @@ def get_format_for_pillow(suffix: str) -> str:
         return image_format
 
 
-async def upload_to_azure(file: UploadFile, file_name: str):
+async def upload_image_to_azure(image: Image, file_name: str):
     connect_str = os.environ["BLOB_STORAGE_CON_STR"]
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     container_name = os.environ["BLOB_PROFILE_IMAGE_CONTAINER"]
-    image_data = await file.read()
-    image = Image.open(io.BytesIO(image_data))
-    image_resized = crop_and_resize_image(image)
+
+    image_rotated = exif_transpose(image)
+    image_resized = crop_and_resize_image(image_rotated)
     image_data_resized = io.BytesIO()
     image_resized.save(image_data_resized, format=get_format_for_pillow(Path(file_name).suffix))
+
     async with blob_service_client:
         container_client = blob_service_client.get_container_client(container_name)
         blob_client = container_client.get_blob_client(file_name)
@@ -130,8 +134,17 @@ async def update_profile_image(request: Request, file: UploadFile = File(...)):
 
     old_user_details = await user_service.get_me(bearer_token=vm.bearer_token)
 
+
+    image_data = await file.read()
+    # Check that we can read the image
+    try:
+        image = Image.open(io.BytesIO(image_data))
+    except UnidentifiedImageError:
+        vm.error = "Please select a valid image."
+        return vm.to_dict()
+
     # Upload new profile image
-    await upload_to_azure(file, name)
+    await upload_image_to_azure(image, name)
 
     # Update user info
     _ = await user_service.update_user(
