@@ -45,27 +45,10 @@ async def submit_result(request: Request):
 async def submit_result(request: Request):
     vm = SubmitResultViewModel(request)
 
-    await vm.load_form()
+    await vm.post_form()
 
     if vm.error:
         return vm.to_dict()
-
-    result = ResultSubmissionCreate(
-        submitter_id=vm.user_id,
-        team1=TeamCreate(
-            defender_user_id=vm.team1_defender,
-            attacker_user_id=vm.team1_attacker,
-        ),
-        team2=TeamCreate(
-            defender_user_id=vm.team2_defender,
-            attacker_user_id=vm.team2_attacker,
-        ),
-        goals_team1=vm.goals_team1,
-        goals_team2=vm.goals_team2,
-    )
-
-    # Create result registration
-    _ = await tracking_service.register_result(result, bearer_token=vm.bearer_token)
 
     return fastapi.responses.RedirectResponse(url='/results_for_approval', status_code=status.HTTP_302_FOUND)
 

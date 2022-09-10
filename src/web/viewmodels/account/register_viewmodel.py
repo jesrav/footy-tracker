@@ -16,7 +16,7 @@ class RegisterViewModel(ViewModelBase):
         self.password: Optional[str] = None
         self.email: Optional[str] = None
 
-    async def load(self):
+    async def post_form(self):
         form = await self.request.form()
         self.nickname = form.get('nickname')
         self.password = form.get('password')
@@ -35,7 +35,7 @@ class RegisterViewModel(ViewModelBase):
             try:
                 _ = await user_service.create_account(self.nickname, self.email, self.password)
             except ValidationError as e:
-                self.error = ast.literal_eval(e.error_msg)["detail"]
+                self.error = e.error_msg
 
             # If a user is logged in without any errors, we log in
             if not self.error:
