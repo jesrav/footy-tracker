@@ -25,13 +25,11 @@ class UserLeaderboardOverview:
 class LeaderboardViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
-        self.user: Optional[UserRead] = None
         self.user_infos_overall: List[UserLeaderboardOverview] = []
         self.user_infos_defence: List[UserLeaderboardOverview] = []
         self.user_infos_offence: List[UserLeaderboardOverview] = []
 
     async def load(self):
-        self.user = await user_service.get_user_by_id(self.user_id)
         latest_user_ratings = await tracking_service.get_latest_user_ratings()
         latest_user_ratings_dict = {r.user.id: r for r in latest_user_ratings}
         user_rankings = await tracking_service.get_user_rankings()

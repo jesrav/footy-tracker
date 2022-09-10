@@ -47,6 +47,8 @@ async def delete_from_azure(file_name: str):
 @template()
 async def index(request: Request):
     vm = AccountViewModel(request)
+    if not vm.is_logged_in:
+        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
     await vm.load()
     return vm.to_dict()
 
@@ -55,6 +57,8 @@ async def index(request: Request):
 @template()
 async def edit(request: Request):
     vm = AccountEditViewModel(request)
+    if not vm.is_logged_in:
+        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
     await vm.load()
     return vm.to_dict()
 
@@ -77,6 +81,8 @@ async def edit(request: Request):
 @template()
 async def update_profile_image(request: Request):
     vm = AccountViewModel(request)
+    if not vm.is_logged_in:
+        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
     await vm.load()
     return vm.to_dict()
 
@@ -123,7 +129,6 @@ async def register(request: Request):
 
     if vm.error:
         return vm.to_dict()
-
     me = await user_service.get_me(bearer_token=vm.bearer_token)
     response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_user_id_cookie(response, me.id)
@@ -148,12 +153,12 @@ async def login_post(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    bearer_dict = await user_service.login_user(vm.email, vm.password)
+    bearer_token = await user_service.login_user(vm.email, vm.password)
 
-    me = await user_service.get_me(bearer_token=bearer_dict['access_token'])
+    me = await user_service.get_me(bearer_token=bearer_token)
     resp = fastapi.responses.RedirectResponse(f'/user/{me.id}', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_user_id_cookie(resp, me.id)
-    cookie_auth.set_bearer_token_cookie(resp, bearer_dict["access_token"])
+    cookie_auth.set_bearer_token_cookie(resp, bearer_token)
 
     return resp
 

@@ -14,12 +14,12 @@ async def create_account(nickname: str, email: str, password: str) -> UserRead:
     json_data = {"nickname": nickname, "password": password, "email": email}
     async with httpx.AsyncClient() as client:
         resp: Response = await client.post(url=BASE_WEB_API_URL + "/auth/signup/", json=json_data)
-        if resp.status_code != 200:
+        if resp.status_code != 201:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return UserRead(**resp.json())
 
 
-async def login_user(email: str, password: str) -> Any:
+async def login_user(email: str, password: str) -> Union[str, None]:
     data = {"password": password, "username": email}
     async with httpx.AsyncClient() as client:
         resp: Response = await client.post(url=BASE_WEB_API_URL + "/auth/login", data=data)
@@ -28,7 +28,7 @@ async def login_user(email: str, password: str) -> Any:
         elif resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
         else:
-            return resp.json()
+            return resp.json()["access_token"]
 
 
 async def get_me(bearer_token: str) -> Union[UserRead, None]:
