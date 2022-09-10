@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr, root_validator
+from sqlalchemy import Column, String
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.ranking import UserRanking
@@ -13,9 +14,12 @@ class UserBase(SQLModel):
     profile_pic_path: Optional[str] = None
 
 
-class User(UserBase, table=True):
+class User(SQLModel, table=True):
     id: Optional[int] = Field(index=True, primary_key=True)
-    email: EmailStr
+    nickname: str = Field(sa_column=Column("nickname", String, unique=True))
+    email: EmailStr = Field(sa_column=Column("email", String, unique=True))
+    motto: Optional[str] = None
+    profile_pic_path: Optional[str] = None
     hash_password: str
     created_dt: datetime = Field(default_factory=datetime.utcnow)
     ratings: List["UserRating"] = Relationship(back_populates="user")
