@@ -27,7 +27,6 @@ async def update_me(
     return await user_crud.update_user(session, user_id=current_user.id, user_updates=user_updates)
 
 
-
 @router.get("/users/", response_model=List[user_models.UserReadUnauthorized], tags=["users"])
 async def read_users(
     skip: int = 0,
