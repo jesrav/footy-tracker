@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 
-from pydantic import validator, root_validator
+from pydantic import root_validator
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.user import User, UserReadUnauthorized
@@ -30,7 +30,7 @@ class TeamCreate(SQLModel):
     def teammates_not_the_same(cls, values):
         defender_user_id, attacker_user_id = values.get('defender_user_id'), values.get('attacker_user_id')
         if defender_user_id == attacker_user_id:
-            raise ValueError('Defender and attacker can not have the same user id.')
+            raise ValueError('Defender and attacker can not be the same user.')
         return values
 
     def __contains__(self, user_id: int):

@@ -1,9 +1,13 @@
+import ast
 from typing import List, Optional
 
 from starlette.requests import Request
 
+from models.result import ResultSubmissionCreate
+from models.team import TeamCreate
 from models.user import UserReadUnauthorized
-from services import user_service
+from models.validation_error import ValidationError
+from services import user_service, tracking_service
 from viewmodels.shared.viewmodel import ViewModelBase
 
 
@@ -23,7 +27,7 @@ class SubmitResultViewModel(ViewModelBase):
     async def load(self):
         self.users = await user_service.get_all_users()
 
-    async def load_form(self):
+    async def post_form(self):
         form = await self.request.form()
         self.team1_defender = form.get('team1_defender')
         self.team1_attacker = form.get('team1_attacker')
@@ -52,7 +56,32 @@ class SubmitResultViewModel(ViewModelBase):
                 self.error = "Match contestants must be 4 unique users."
 
         elif self.goals_team1 == self.goals_team2:
-            self.error = "A table soccer match must have a winner. Please finish tha match!"
+            self.error = "A table soccer match must have a winner. Please finish the match!"
 
-        elif self.user_id not in [int(self.team1_defender), int(self.team1_attacker), int(self.team2_defender), int(self.team2_attacker)]:
+        elif self.user_id not in [
+            int(self.team1_defender),
+            int(self.team1_attacker),
+            int(self.team2_defender),
+            int(self.team2_attacker)
+        ]:
             self.error = "Submitter must be part of the match!"
+
+        else:
+            # Try to Create result registration
+            try:
+                result = ResultSubmissionCreate(
+                    submitter_id=self.user_id,
+                    team1=TeamCreate(
+                        defender_user_id=self.team1_defender,
+                        attacker_user_id=self.team1_attacker,
+                    ),
+                    team2=TeamCreate(
+                        defender_user_id=self.team2_defender,
+                        attacker_user_id=self.team2_attacker,
+                    ),
+                    goals_team1=self.goals_team1,
+                    goals_team2=self.goals_team2,
+                )
+                _ = await tracking_service.register_result(result, bearer_token=self.bearer_token)
+            except ValidationError as e:
+                self.error = e.error_msg
