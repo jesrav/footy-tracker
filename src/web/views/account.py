@@ -1,11 +1,14 @@
+import io
 import os
 import uuid
 from pathlib import Path
+import aiofiles
 
 import fastapi
+from PIL import Image
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
-from fastapi import UploadFile, File, Form
+from fastapi import UploadFile, File
 from fastapi_chameleon import template
 from starlette import status
 from starlette.requests import Request
@@ -21,15 +24,43 @@ from viewmodels.account.register_viewmodel import RegisterViewModel
 router = fastapi.APIRouter()
 
 
+def crop_and_resize_image(image: Image) -> Image:
+    new_size = (300, 300)
+
+    width, height = image.size
+    new_width = min(width, height)
+    new_height = new_width
+
+    # Setting the points for cropped image
+    left = (width - new_width) / 2
+    top = (height - new_height) / 2
+    right = width - (width - new_width) / 2
+    bottom = height - (height - new_height) / 2
+
+    return image.crop((left, top, right, bottom)).resize(new_size)
+
+
+def get_format_for_pillow(suffix: str) -> str:
+    image_format = suffix[1:]
+    if image_format.lower() == 'jpg':
+        return 'jpeg'
+    else:
+        return image_format
+
+
 async def upload_to_azure(file: UploadFile, file_name: str):
     connect_str = os.environ["BLOB_STORAGE_CON_STR"]
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     container_name = os.environ["BLOB_PROFILE_IMAGE_CONTAINER"]
+    image_data = await file.read()
+    image = Image.open(io.BytesIO(image_data))
+    image_resized = crop_and_resize_image(image)
+    image_data_resized = io.BytesIO()
+    image_resized.save(image_data_resized, format=get_format_for_pillow(Path(file_name).suffix))
     async with blob_service_client:
         container_client = blob_service_client.get_container_client(container_name)
         blob_client = container_client.get_blob_client(file_name)
-        f = await file.read()
-        await blob_client.upload_blob(f, overwrite=True)
+        await blob_client.upload_blob(image_data_resized.getvalue(), overwrite=True)
 
 
 async def delete_from_azure(file_name: str):
