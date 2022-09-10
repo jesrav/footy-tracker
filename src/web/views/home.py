@@ -9,13 +9,13 @@ router = fastapi.APIRouter()
 
 @router.get('/')
 @template()
-def index(request: Request):
+async def index(request: Request):
     vm = ViewModelBase(request)
-    return vm.to_dict()
+    return await vm.to_dict()
 
 
 @router.get('/about')
 @template()
-def about(request: Request):
+async def about(request: Request):
     vm = ViewModelBase(request)
-    return vm.to_dict()
+    return await vm.to_dict()

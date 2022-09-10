@@ -13,14 +13,6 @@ class AccountViewModel(ViewModelBase):
         super().__init__(request)
         self.user: Optional[UserRead] = None
 
-    async def load(self):
-        try:
-            self.user = await user_service.get_me(bearer_token=self.bearer_token)
-        except ValidationError as e:
-            if e.status_code == 401:
-                self.bearer_token_expired = True
-            else:
-                raise e
 
 
 

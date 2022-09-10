@@ -3,6 +3,7 @@ from typing import Optional, List
 from starlette.requests import Request
 
 from models.user import UserRead, UserUpdate
+from models.validation_error import ValidationError
 from services import user_service
 from viewmodels.shared.viewmodel import ViewModelBase
 
@@ -13,10 +14,7 @@ class AccountEditViewModel(ViewModelBase):
         self.user: Optional[UserRead] = None
         self.form: Optional[str] = None
 
-    async def load(self):
-        self.user = await user_service.get_me(bearer_token=self.bearer_token)
-
-    async def load_form(self):
+    async def post_form(self):
         self.form = await self.request.form()
         self.user: UserRead = await user_service.update_user(
             user_updates=UserUpdate(
