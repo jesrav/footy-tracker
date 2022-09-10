@@ -2,7 +2,6 @@ from typing import Any, Union
 
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core.auth import authenticate, create_access_token
