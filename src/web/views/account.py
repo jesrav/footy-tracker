@@ -197,12 +197,10 @@ async def login_post(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    bearer_token = await user_service.login_user(vm.email, vm.password)
-
-    me = await user_service.get_me(bearer_token=bearer_token)
+    me = await user_service.get_me(bearer_token=vm.bearer_token)
     resp = fastapi.responses.RedirectResponse(f'/user/{me.id}', status_code=status.HTTP_302_FOUND)
     cookie_auth.set_user_id_cookie(resp, me.id)
-    cookie_auth.set_bearer_token_cookie(resp, bearer_token)
+    cookie_auth.set_bearer_token_cookie(resp, vm.bearer_token)
 
     return resp
 
