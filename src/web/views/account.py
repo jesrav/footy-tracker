@@ -78,14 +78,30 @@ async def delete_from_azure(file_name: str):
             pass
 
 
+async def redirect_if_not_logged_in(vm):
+    redirect_response = fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
+    if not vm.is_logged_in:
+        vm.redirect_response = redirect_response
+        return vm
+    await vm.load()
+    if vm.bearer_token_expired:
+        cookie_auth.logout(redirect_response)
+        vm.redirect_response = redirect_response
+        return vm
+    else:
+        return vm
+
+
 @router.get('/account')
 @template()
 async def index(request: Request):
     vm = AccountViewModel(request)
-    if not vm.is_logged_in:
-        return fastapi.responses.RedirectResponse('/account/login', status_code=status.HTTP_302_FOUND)
-    await vm.load()
-    return vm.to_dict()
+    vm = await redirect_if_not_logged_in(vm)
+
+    if vm.redirect_response:
+        return vm.redirect_response
+    else:
+        return vm.to_dict()
 
 
 @router.get('/account/edit/')
