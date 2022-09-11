@@ -20,3 +20,6 @@ RUN pip install -r requirements.txt
 
 # add app
 COPY . .
+
+
+ENTRYPOINT ["uvicorn", "main:app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "80"]
