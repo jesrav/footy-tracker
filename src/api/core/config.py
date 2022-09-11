@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     EGG_FACTOR = 1
 
     # JWT
-    JWT_SECRET: str = os.environ["JWT_SECRET"]
+    JWT_SECRET: str
     ALGORITHM: str = "HS256"
 
     # OAUTH2
@@ -33,9 +33,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    DATABASE_URL: str = os.environ["DATABASE_URL"]
-    FIRST_SUPERUSER: EmailStr = "admin@footytracker.com"
-    FIRST_SUPERUSER_PW: str = "CHANGEME"
+    DATABASE_URL: str
 
     class Config:
         case_sensitive = True
