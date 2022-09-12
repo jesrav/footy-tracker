@@ -153,8 +153,9 @@ async def update_profile_image(request: Request, file: UploadFile = File(...)):
         bearer_token=vm.bearer_token
     )
 
-    # delete old user image
-    _ = await delete_from_azure(old_user_details.profile_pic_path[len(storage_base_url):])
+    # delete old user image, if it is not one of the default pokemon images
+    if "pokemons" not in old_user_details.profile_pic_path:
+        _ = await delete_from_azure(old_user_details.profile_pic_path[len(storage_base_url):])
 
     return fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
 
