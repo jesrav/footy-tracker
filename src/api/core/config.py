@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     # Rating settings
     INITIAL_USER_RATING = 1500
     ELO_WIDTH = 400
-    K_FACTOR = 30
+    K_FACTOR = 300
     EGG_FACTOR = 1
 
     # JWT
