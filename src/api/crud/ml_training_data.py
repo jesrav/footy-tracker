@@ -60,7 +60,31 @@ ML_TRAINING_DATA_QUERY = """
 """
 
 
-async def get_ml_training_data(session: AsyncSession) -> List[MLTrainingData]:
-    db_result = session.execute(text(ML_TRAINING_DATA_QUERY))
-    return db_result.scalars().all()
+async def get_ml_training_data(session: AsyncSession) -> MLTrainingData:
+    results = await session.execute(text(ML_TRAINING_DATA_QUERY))
+    results = results.all()
+
+    return MLTrainingData(
+        result_id=[r[0] for r in results],
+        team1_id=[r[1] for r in results],
+        team2_id =[r[2] for r in results],
+        goals_team1=[r[3] for r in results],
+        goals_team2=[r[4] for r in results],
+        team1_defender_user_id=[r[5] for r in results],
+        team1_attacker_user_id=[r[6] for r in results],
+        team2_defender_user_id=[r[7] for r in results],
+        team2_attacker_user_id=[r[8] for r in results],
+        team1_defender_overall_rating_before_game=[r[9] for r in results],
+        team1_defender_defensive_rating_before_game=[r[10] for r in results],
+        team1_defender_offensive_rating_before_game=[r[11] for r in results],
+        team1_attacker_overall_rating_before_game=[r[12] for r in results],
+        team1_attacker_defensive_rating_before_game=[r[13] for r in results],
+        team1_attacker_offensive_rating_before_game=[r[14] for r in results],
+        team2_defender_overall_rating_before_game=[r[15] for r in results],
+        team2_defender_defensive_rating_before_game=[r[16] for r in results],
+        team2_defender_offensive_rating_before_game=[r[17] for r in results],
+        team2_attacker_overall_rating_before_game=[r[18] for r in results],
+        team2_attacker_defensive_rating_before_game=[r[19] for r in results],
+        team2_attacker_offensive_rating_before_game=[r[20] for r in results],
+    )
 

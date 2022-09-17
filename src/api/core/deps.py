@@ -1,16 +1,12 @@
-
 from fastapi import Depends, HTTPException, status
 from jose import jwt, JWTError
-from sqlalchemy import select
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
 
 from core.auth import oauth2_scheme
 from core.config import settings
-from crud.user import get_user_by_email, get_user
-
+from crud.user import get_user
 from database import engine
 from models.auth import TokenData
 from models.user import User
