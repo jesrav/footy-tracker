@@ -1,7 +1,4 @@
-import os
-import pathlib
-
-from pydantic import AnyHttpUrl, BaseSettings, EmailStr, validator
+from pydantic import AnyHttpUrl, BaseSettings, validator
 from typing import List, Union
 
 
