@@ -17,8 +17,8 @@
                                     <th>Goals opposition</th>
                                     <th>Your position</th>
                                     <th>Teammate</th>
-                                    <th>Opposing defender</th>
                                     <th>Opposing attacker</th>
+                                    <th>Opposing defender</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
@@ -33,8 +33,8 @@
                                     </td>
                                     <td data-label="Submitter">${r.submitter.nickname}</td>
                                     <td data-label="Goals your team">${r.goals_user_team}</td>
-                                    <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
-                                    <td data-label="Goals opposing team">${r.user_position}</td>
+                                    <td data-label="Goals opposition">${r.goals_opposing_team}</td>
+                                    <td data-label="Your position">${r.user_position}</td>
                                     <td data-label="Teammate">${r.teammate.nickname}</td>
                                     <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
                                     <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
@@ -79,8 +79,8 @@
                                     <th>Goals opposition</th>
                                     <th>Your position</th>
                                     <th>Teammate</th>
-                                    <th>Opposing defender</th>
                                     <th>Opposing attacker</th>
+                                    <th>Opposing defender</th>
                                     <th>Created</th>
                                     <th></th>
                                 </tr>
@@ -95,8 +95,8 @@
                                     </td>
                                     <td data-label="Submitter">${r.submitter.nickname}</td>
                                     <td data-label="Goals your team">${r.goals_user_team}</td>
-                                    <td data-label="Goals opposing team">${r.goals_opposing_team}</td>
-                                    <td data-label="Goals opposing team">${r.user_position}</td>
+                                    <td data-label="Goals opposition">${r.goals_opposing_team}</td>
+                                    <td data-label="Your position">${r.user_position}</td>
                                     <td data-label="Teammate">${r.teammate.nickname}</td>
                                     <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
                                     <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
