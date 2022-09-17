@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload, joinedload
+from sqlalchemy.orm import joinedload
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from crud.team import get_team, create_team
