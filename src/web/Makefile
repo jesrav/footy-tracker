@@ -2,7 +2,7 @@ include .env
 export
 
 build:
-	docker build -t tracker_web .
+	docker build -t footy-tracker_web .
 
 tag_and_push:
 	az acr login --name footycr
