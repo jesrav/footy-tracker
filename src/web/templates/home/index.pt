@@ -1,21 +1,21 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
 
-
         <div class="content">
 
-            <section class="section">
+            <div class="section">
 
-
-            <div class="notification is-warning">
+            <div tal:condition="results_to_approve" class="notification is-warning">
                 <button class="delete"></button>
-                You have results waiting on your approval.
+                You have results waiting on your approval. <br>
+                <b>Don't be a sore looser!</b>
                 <br>
                 <a href="/results_for_approval" >Click here to see and approve results</a>
             </div>
-            <div class="notification is-info">
+            <div tal:condition="results_for_opposition_to_approve" class="notification is-info">
                 <button class="delete"></button>
-                You have results that are waiting on the approval of your opponent.
+                Results are waiting on your opponents approval. <br>
+                <b>Make sure to punk them until they approve!</b>
                 <br>
                 <a href="/results_for_approval">Click here to see the results</a>
             </div>
@@ -46,40 +46,7 @@
                         </button>
                     </div>
                 </div>
-<!--?            <article class="message is-warning">-->
-<!--?                <div class="message-header">-->
-<!--?                    Results awaiting your approval-->
-<!--?                    <button class="delete"></button>-->
-<!--?                </div>-->
-<!--?                <div class="message-body">-->
-<!--?                        <div>-->
-<!--?                            You have results waiting on your approval.-->
-<!--?                        </div>-->
-<!--?                        <br>-->
-<!--?                        <div>-->
-<!--?                            <button class="button is-warning">Go to approval</button>-->
-<!--?                        </div>-->
-<!--?                </div>-->
-<!--?            </article>-->
 
-<!--?            <article class="message is-info">-->
-<!--?                <div class="message-header">-->
-<!--?                    Results awaiting your opponents approval-->
-<!--?                    <button class="delete"></button>-->
-<!--?                </div>-->
-<!--?                <div class="message-body">-->
-
-<!--?                    <div>-->
-<!--?                        You have results that are waiting on the approval of your opponent.-->
-<!--?                    </div>-->
-<!--?                    <br>-->
-<!--?                    <div>-->
-<!--?                        <button class="button is-info">See resultsl</button>-->
-<!--?                    </div>-->
-<!--?                </div>-->
-<!--?            </article>-->
-
-            <section class="section">
         </div>
     </div>
 
@@ -87,3 +54,18 @@
         <!-- additional css from the page -->
     </div>
 </div>
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+    const $notification = $delete.parentNode;
+
+    $delete.addEventListener('click', () => {
+      $notification.parentNode.removeChild($notification);
+    });
+  });
+});
+
+</script>
