@@ -49,7 +49,7 @@ async def submit_result(request: Request):
     if vm.error:
         return await vm.to_dict()
 
-    return fastapi.responses.RedirectResponse(url='/results_for_approval', status_code=status.HTTP_302_FOUND)
+    return fastapi.responses.RedirectResponse(url='/', status_code=status.HTTP_302_FOUND)
 
 
 @router.get('/results_for_approval')

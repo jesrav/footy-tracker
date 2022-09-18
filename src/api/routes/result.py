@@ -81,8 +81,6 @@ async def create_result(
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
 ):
-
-
     if current_user.id not in [
         result.team1.defender_user_id,
         result.team1.attacker_user_id,

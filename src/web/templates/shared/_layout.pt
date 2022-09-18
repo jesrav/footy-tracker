@@ -29,11 +29,12 @@
     <div class="navbar-menu" id="navbar-links">
         <div class="navbar-start">
 
-            <a tal:condition="is_logged_in" class="navbar-item" href="/user/${user_id}">
+            <a class="navbar-item" href="/">
                 Home
             </a>
-            <a tal:condition="not is_logged_in" class="navbar-item" href="/">
-                Home
+
+            <a tal:condition="is_logged_in" class="navbar-item" href="/user/${user_id}">
+                Your Stats
             </a>
 
             <a tal:condition="is_logged_in" class="navbar-item" href="/submit_result">
@@ -46,6 +47,10 @@
 
             <a class="navbar-item" href="/leaderboard">
                 Leader board
+            </a>
+
+            <a class="navbar-item" href="/about">
+                About
             </a>
 
         </div>
