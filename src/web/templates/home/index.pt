@@ -2,17 +2,30 @@
     <div metal:fill-slot="content" tal:omit-tag="True">
 
         <div class="content">
+        <div class="container">
+        <div class="card">
+            <header class="card-header p-3">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-64x64 mt-3">
+                            <img src="/static/img/footy.png" alt="crown-icon">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-2 mt-4">FootyTracker</p>
+                    </div>
+                </div>
+            </header>
+            <br>
 
-            <div class="section">
-
-            <div tal:condition="results_to_approve" class="notification is-warning">
+            <div tal:condition="results_to_approve" class="notification is-warning mx-5">
                 <button class="delete"></button>
                 You have results waiting on your approval. <br>
                 <b>Don't be a sore looser!</b>
                 <br>
                 <a href="/results_for_approval" >Click here to see and approve results</a>
             </div>
-            <div tal:condition="results_for_opposition_to_approve" class="notification is-info">
+            <div tal:condition="results_for_opposition_to_approve" class="notification is-info mx-5">
                 <button class="delete"></button>
                 Results are waiting on your opponents approval. <br>
                 <b>Make sure to punk them until they approve!</b>
@@ -20,7 +33,7 @@
                 <a href="/results_for_approval">Click here to see the results</a>
             </div>
 
-                <div class="columns">
+                <div class="columns mx-3">
                     <div class="column">
                         <button class="button is-large is-fullwidth" onclick="location.href='/submit_result'">
                           <span class="icon is-large">
@@ -46,7 +59,7 @@
                         </button>
                     </div>
                 </div>
-
+        </div>
         </div>
     </div>
 
