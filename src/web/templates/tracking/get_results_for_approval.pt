@@ -1,10 +1,23 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
         <div class="content">
+        <div class="container">
+        <div class="card">
+            <header class="card-header p-3">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-64x64 mt-3">
+                            <img src="/static/img/checkbox-outline.svg" alt="crown-icon">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-2 mt-4">Approvals</p>
+                    </div>
+                </div>
+            </header>
+            <br>
 
-            <div class="section">
-
-                <div tal:condition="results_to_approve" class="container">
+                <div tal:condition="results_to_approve" class="container mx-6">
                     <h2 class="subtitle">Awaiting your approval</h2>
                     <div class="b-table">
                         <div class="table-wrapper has-mobile-cards">
@@ -66,7 +79,7 @@
                 <br tal:condition="results_to_approve">
                 <br tal:condition="results_to_approve">
 
-                <div tal:condition="results_for_opposition_to_approve" class="container">
+                <div tal:condition="results_for_opposition_to_approve" class="container mx-6">
                     <h2 class="subtitle">Awaiting opponent approval</h2>
                     <div class="b-table">
                         <div class="table-wrapper has-mobile-cards">
@@ -110,7 +123,8 @@
                         </div>
                     </div>
                 </div>
-
+            <br tal:condition="results_for_opposition_to_approve">
+            <br tal:condition="results_for_opposition_to_approve">
 
             </div>
 
@@ -162,7 +176,7 @@
                 </div>
 
             </div>
-
+        </div>
 
         </div>
     </div>
