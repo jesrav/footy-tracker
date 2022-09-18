@@ -8,7 +8,7 @@
                         <div class="media">
                             <div class="media-left">
                                 <figure class="image is-64x64 mt-3">
-                                    <img src="/static/img/crown.png" alt="crown-icon">
+                                    <img src="/static/img/medal-outline.svg" alt="crown-icon">
                                 </figure>
                             </div>
                             <div class="media-content">

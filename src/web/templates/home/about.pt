@@ -3,9 +3,20 @@
 
 
         <div class="content">
-            <div class="box">
-              A foosball tracker App
-            </div>
+
+            <section class="section">
+                <div class="container">
+                    <h1 class="title">
+                        Track your table football results and ratings🚀
+                    </h1>
+                </div>
+            </section>
+
         </div>
+
+    </div>
+
+    <div metal:fill-slot="additional-css" tal:omit-tag="True">
+        <!-- additional css from the page -->
     </div>
 </div>

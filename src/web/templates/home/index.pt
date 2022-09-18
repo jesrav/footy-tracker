@@ -5,15 +5,78 @@
         <div class="content">
 
             <section class="section">
-                <div class="container">
-                    <h1 class="title">
-                        Track your table football results and ratings🚀
-                    </h1>
-                </div>
-            </section>
 
+
+            <div class="notification is-warning">
+                <button class="delete"></button>
+                You have results waiting on your approval.
+                <br>
+                <a href="/results_for_approval" >Click here to see and approve results</a>
+            </div>
+            <div class="notification is-info">
+                <button class="delete"></button>
+                You have results that are waiting on the approval of your opponent.
+                <br>
+                <a href="/results_for_approval">Click here to see the results</a>
+            </div>
+
+
+                <button class="button is-large" onclick="location.href='/submit_result'">
+                  <span class="icon is-large">
+                    <ion-icon name="football"></ion-icon>
+                  </span>
+                    <span>Submit a result</span>
+                </button>
+
+                <button class="button is-large" onclick="location.href='/user/${user_id}'">
+                  <span class="icon is-large">
+                    <ion-icon name="trending-up-outline"></ion-icon>
+                  </span>
+                    <span>Your stats</span>
+                </button>
+
+                <button class="button is-large" onclick="location.href='/leaderboard'">
+                    <span class="icon is-large">
+                        <ion-icon name="medal-outline"></ion-icon>
+                    </span>
+                    <span>Leader board</span>
+                </button>
+
+<!--?            <article class="message is-warning">-->
+<!--?                <div class="message-header">-->
+<!--?                    Results awaiting your approval-->
+<!--?                    <button class="delete"></button>-->
+<!--?                </div>-->
+<!--?                <div class="message-body">-->
+<!--?                        <div>-->
+<!--?                            You have results waiting on your approval.-->
+<!--?                        </div>-->
+<!--?                        <br>-->
+<!--?                        <div>-->
+<!--?                            <button class="button is-warning">Go to approval</button>-->
+<!--?                        </div>-->
+<!--?                </div>-->
+<!--?            </article>-->
+
+<!--?            <article class="message is-info">-->
+<!--?                <div class="message-header">-->
+<!--?                    Results awaiting your opponents approval-->
+<!--?                    <button class="delete"></button>-->
+<!--?                </div>-->
+<!--?                <div class="message-body">-->
+
+<!--?                    <div>-->
+<!--?                        You have results that are waiting on the approval of your opponent.-->
+<!--?                    </div>-->
+<!--?                    <br>-->
+<!--?                    <div>-->
+<!--?                        <button class="button is-info">See resultsl</button>-->
+<!--?                    </div>-->
+<!--?                </div>-->
+<!--?            </article>-->
+
+            <section class="section">
         </div>
-
     </div>
 
     <div metal:fill-slot="additional-css" tal:omit-tag="True">
