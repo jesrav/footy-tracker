@@ -40,7 +40,7 @@
                     <div class="field">
                         <label class="label">Defender</label>
                         <div class="control has-icons-left">
-                            <div class="select">
+                            <div class="select is-fullwidth">
                                 <select name="team1_defender" id="defender-team1">
                                     <option value="">Select team 1 defender</option>
                                     <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
@@ -56,7 +56,7 @@
                         <label class="label">Attacker</label>
                         <div class="control">
                             <div class="control has-icons-left">
-                                <div class="select">
+                                <div class="select is-fullwidth">
                                     <select name="team1_attacker" id="attacker-team1">
                                         <option value="">Select team 1 attacker</option>
                                         <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
@@ -89,7 +89,7 @@
                     <div class="field">
                         <label class="label">Defender</label>
                         <div class="control has-icons-left">
-                            <div class="select">
+                            <div class="select is-fullwidth">
                                 <select name="team2_defender" id="defender-team2">
                                     <option value="">Select team 2 defender</option>
                                     <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
@@ -104,7 +104,7 @@
                     <div class="field">
                         <label class="label">Attacker</label>
                         <div class="control has-icons-left">
-                            <div class="select">
+                            <div class="select is-fullwidth">
                                 <select  name="team2_attacker" id="attacker-team2">
                                     <option value="">Select team 2 attacker</option>
                                     <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>

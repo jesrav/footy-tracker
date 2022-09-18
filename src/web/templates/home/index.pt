@@ -20,28 +20,32 @@
                 <a href="/results_for_approval">Click here to see the results</a>
             </div>
 
-
-                <button class="button is-large" onclick="location.href='/submit_result'">
-                  <span class="icon is-large">
-                    <ion-icon name="football"></ion-icon>
-                  </span>
-                    <span>Submit a result</span>
-                </button>
-
-                <button class="button is-large" onclick="location.href='/user/${user_id}'">
-                  <span class="icon is-large">
-                    <ion-icon name="trending-up-outline"></ion-icon>
-                  </span>
-                    <span>Your stats</span>
-                </button>
-
-                <button class="button is-large" onclick="location.href='/leaderboard'">
-                    <span class="icon is-large">
-                        <ion-icon name="medal-outline"></ion-icon>
-                    </span>
-                    <span>Leader board</span>
-                </button>
-
+                <div class="columns">
+                    <div class="column">
+                        <button class="button is-large is-fullwidth" onclick="location.href='/submit_result'">
+                          <span class="icon is-large">
+                            <ion-icon name="football"></ion-icon>
+                          </span>
+                            <span>Submit a result</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button is-large is-fullwidth" onclick="location.href='/user/${user_id}'">
+                          <span class="icon is-large">
+                            <ion-icon name="trending-up-outline"></ion-icon>
+                          </span>
+                            <span>Your stats</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button is-large is-fullwidth" onclick="location.href='/leaderboard'">
+                            <span class="icon is-large">
+                                <ion-icon name="medal-outline"></ion-icon>
+                            </span>
+                            <span>Leader board</span>
+                        </button>
+                    </div>
+                </div>
 <!--?            <article class="message is-warning">-->
 <!--?                <div class="message-header">-->
 <!--?                    Results awaiting your approval-->
