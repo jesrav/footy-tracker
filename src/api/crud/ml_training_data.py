@@ -1,9 +1,21 @@
-from typing import List
-
+from numpy import random
+import pandas as pd
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.sql import text
 
-from models.ml_training_data import MLTrainingData
+
+def randomize_team_order(df: pd.DataFrame) -> pd.DataFrame:
+    swap_teams = random.rand(len(df)) > 0.5
+    team1_cols = [col for col in df.columns if "team1" in col]
+    team2_cols = [col for col in df.columns if "team2" in col]
+    df.loc[swap_teams, team1_cols + team2_cols] = df.loc[swap_teams, team2_cols + team1_cols].values
+    return df
+
+
+def add_ml_target(df: pd.DataFrame) -> pd.DataFrame:
+    df["goal_diff"] = df.goals_team1 - df.goals_team2
+    return df
+
 
 
 ML_TRAINING_DATA_QUERY = """
@@ -23,6 +35,7 @@ ML_TRAINING_DATA_QUERY = """
      
     select 
         rs.id as result_id,
+        rs.created_dt as result_dt,
         rs.team1_id,
         rs.team2_id,
         rs.goals_team1,
@@ -60,31 +73,35 @@ ML_TRAINING_DATA_QUERY = """
 """
 
 
-async def get_ml_training_data(session: AsyncSession) -> MLTrainingData:
+async def get_ml_training_data(session: AsyncSession) -> pd.DataFrame:
     results = await session.execute(text(ML_TRAINING_DATA_QUERY))
     results = results.all()
-
-    return MLTrainingData(
-        result_id=[r[0] for r in results],
-        team1_id=[r[1] for r in results],
-        team2_id =[r[2] for r in results],
-        goals_team1=[r[3] for r in results],
-        goals_team2=[r[4] for r in results],
-        team1_defender_user_id=[r[5] for r in results],
-        team1_attacker_user_id=[r[6] for r in results],
-        team2_defender_user_id=[r[7] for r in results],
-        team2_attacker_user_id=[r[8] for r in results],
-        team1_defender_overall_rating_before_game=[r[9] for r in results],
-        team1_defender_defensive_rating_before_game=[r[10] for r in results],
-        team1_defender_offensive_rating_before_game=[r[11] for r in results],
-        team1_attacker_overall_rating_before_game=[r[12] for r in results],
-        team1_attacker_defensive_rating_before_game=[r[13] for r in results],
-        team1_attacker_offensive_rating_before_game=[r[14] for r in results],
-        team2_defender_overall_rating_before_game=[r[15] for r in results],
-        team2_defender_defensive_rating_before_game=[r[16] for r in results],
-        team2_defender_offensive_rating_before_game=[r[17] for r in results],
-        team2_attacker_overall_rating_before_game=[r[18] for r in results],
-        team2_attacker_defensive_rating_before_game=[r[19] for r in results],
-        team2_attacker_offensive_rating_before_game=[r[20] for r in results],
+    df = pd.DataFrame(
+        columns=[
+            "result_id",
+            "result_dt",
+            "team1_id",
+            "team2_id",
+            "goals_team1",
+            "goals_team2",
+            "team1_defender_user_id",
+            "team1_attacker_user_id",
+            "team2_defender_user_id",
+            "team2_attacker_user_id",
+            "team1_defender_overall_rating_before_game",
+            "team1_defender_defensive_rating_before_game",
+            "team1_defender_offensive_rating_before_game",
+            "team1_attacker_overall_rating_before_game",
+            "team1_attacker_defensive_rating_before_game",
+            "team1_attacker_offensive_rating_before_game",
+            "team2_defender_overall_rating_before_game",
+            "team2_defender_defensive_rating_before_game",
+            "team2_defender_offensive_rating_before_game",
+            "team2_attacker_overall_rating_before_game",
+            "team2_attacker_defensive_rating_before_game",
+            "team2_attacker_offensive_rating_before_game",
+        ],
+        data=results,
     )
-
+    df = randomize_team_order(df)
+    return add_ml_target(df)
