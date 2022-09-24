@@ -1,16 +1,19 @@
 from typing import List, Optional
 
-from fastapi import Depends, HTTPException, APIRouter
+from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core import deps
 from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import ranking as ranking_crud
+from crud.ml_training_data import get_ml_data
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
 from core.deps import get_session
+from models.ml_data import RowForML, DataForML
+from services.ml import get_ml_prediction
 
 router = APIRouter()
 
@@ -75,9 +78,18 @@ async def validate_result(
     return refreshed_validated_result
 
 
+async def prediction_task(url: str, session: AsyncSession):
+    data_df = await get_ml_data(session, for_prediction=True)
+    baseline_prediction = await get_ml_prediction(
+        url=url, data_for_ml=DataForML(data=[RowForML(**r) for r in data_df.to_dict(orient="records")])
+    )
+    print(baseline_prediction)
+
+
 @router.post("/results/", response_model=result_models.ResultSubmissionRead, tags=["results"])
 async def create_result(
     result: result_models.ResultSubmissionCreate,
+    ml_prediction_background_tasks: BackgroundTasks,
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
 ):
@@ -90,7 +102,18 @@ async def create_result(
         raise HTTPException(
             status_code=400, detail="Submitter must be on one of the teams."
         )
-    return await result_crud.create_result(session=session, submitter=current_user, result=result)
+    result = await result_crud.create_result(session=session, submitter=current_user, result=result)
+    ml_prediction_background_tasks.add_task(
+        prediction_task,
+        url="http://127.0.0.1:8002/rule_based_predict",
+        session=session
+    )
+    ml_prediction_background_tasks.add_task(
+        prediction_task,
+        url="http://127.0.0.1:8002/rule_based_predict",
+        session=session
+    )
+    return result
 
 
 @router.get("/results/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])

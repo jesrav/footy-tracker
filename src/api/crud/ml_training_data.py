@@ -75,7 +75,6 @@ def ml_data_query(n_rows: Union[int, None]) -> str:
         inner join ratings_before_result rbr1a on rbr1a.user_id = t1.attacker_user_id and rs.id = rbr1a.result_id
         inner join ratings_before_result rbr2d on rbr2d.user_id = t2.defender_user_id and rs.id = rbr2d.result_id
         inner join ratings_before_result rbr2a on rbr2a.user_id = t2.attacker_user_id and rs.id = rbr2a.result_id
-        where approved = true
         order by rs.id desc
         {limit_statement}
     """

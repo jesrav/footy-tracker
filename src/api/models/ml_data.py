@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Union
+from typing import Union, List
 
 from pydantic import BaseModel
 
 
-class ColumnsForML(BaseModel):
+class RowForML(BaseModel):
     result_to_predict: bool
     result_id: Union[int, None]
     result_dt: Union[datetime, None]
@@ -29,3 +29,7 @@ class ColumnsForML(BaseModel):
     team2_attacker_defensive_rating_before_game: float
     team2_attacker_offensive_rating_before_game: float
     goal_diff: Union[int, None]
+
+
+class DataForML(BaseModel):
+    data: List[RowForML]
