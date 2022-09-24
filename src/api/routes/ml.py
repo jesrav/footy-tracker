@@ -46,4 +46,4 @@ async def read_results(
     session: AsyncSession = Depends(get_session)
 ):
     results_with_features_df = await get_ml_data(session, N_HISTORICAL_ROWS_FOR_PREDICION + 1, for_prediction=True)
-    return results_with_features_df.to_dict('records')
+    return results_with_features_df.to_dict(orient='records')
