@@ -1,5 +1,6 @@
 from typing import Union
 
+import numpy as np
 from numpy import random
 import pandas as pd
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -19,7 +20,7 @@ def add_ml_target(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def ml_data_query(n_rows: int) -> str:
+def ml_data_query(n_rows: Union[int, None]) -> str:
     if n_rows:
         limit_statement = f"limit {n_rows}"
     else:
@@ -80,7 +81,15 @@ def ml_data_query(n_rows: int) -> str:
     """
 
 
-async def get_ml_data(session: AsyncSession, n_rows: Union[int, None] = None) -> pd.DataFrame:
+async def get_ml_data(
+        session: AsyncSession,
+        n_rows: Union[int, None] = None,
+        for_prediction: bool = False,
+) -> pd.DataFrame:
+    """Get data for ML training or prediction.
+
+    If for_prediction == True, the latest result, will have the outcome columns removed and have a column
+    """
     results = await session.execute(text(ml_data_query(n_rows)))
     results = results.all()
     df = pd.DataFrame(
@@ -111,4 +120,13 @@ async def get_ml_data(session: AsyncSession, n_rows: Union[int, None] = None) ->
         data=results,
     )
     df = randomize_team_order(df)
-    return add_ml_target(df)
+    df = add_ml_target(df)
+    df["result_to_predict"] = False
+    if for_prediction:
+        latest_result = df.result_id.max()
+        df.loc[df.result_id == latest_result, "result_to_predict"] = True
+        df.loc[
+            df.result_id == latest_result,
+            ["result_id", "goals_team1", "goals_team2", "goal_diff"]
+        ] = [None, None, None, None]
+    return df.replace({np.nan:None})
