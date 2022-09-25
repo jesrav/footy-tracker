@@ -4,10 +4,12 @@ from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core import deps
+from core.config import settings
 from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import ranking as ranking_crud
-from crud.ml import get_ml_data
+from crud.ml import get_ml_data, get_ml_models
+from crud.user import get_user
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
@@ -27,7 +29,11 @@ async def read_results_for_approval(
     return result
 
 
-@router.get("/results_for_approval_submitted_by_users_team/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
+@router.get(
+    "/results_for_approval_submitted_by_users_team/",
+    response_model=List[result_models.ResultSubmissionRead],
+    tags=["results"]
+)
 async def read_results_for_approval(
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
@@ -78,8 +84,8 @@ async def validate_result(
     return refreshed_validated_result
 
 
-async def single_prediction_task(ml_url: str, data_for_prediction: DataForML):
-    prediction = await get_ml_prediction(url=ml_url, data_for_prediction=data_for_prediction)
+async def single_prediction_task(ml_model_url: str, data_for_prediction: DataForML):
+    prediction = await get_ml_prediction(url=ml_model_url, data_for_prediction=data_for_prediction)
     print(prediction)
 
 
@@ -99,12 +105,36 @@ async def create_result(
         raise HTTPException(
             status_code=400, detail="Submitter must be on one of the teams."
         )
+    if not await get_user(session=session, user_id=result.team1.defender_user_id):
+        raise HTTPException(
+            status_code=400, detail=f"Team 1 defender (user id {result.team1.defender_user_id}) does not exist."
+        )
+    if not await get_user(session=session, user_id=result.team1.attacker_user_id):
+        raise HTTPException(
+            status_code=400, detail=f"Team 1 attacker (user id {result.team1.attacker_user_id}) does not exist."
+        )
+    if not await get_user(session=session, user_id=result.team2.defender_user_id):
+        raise HTTPException(
+            status_code=400, detail=f"Team 2 defender (user id {result.team2.defender_user_id}) does not exist."
+        )
+    if not await get_user(session=session, user_id=result.team2.attacker_user_id):
+        raise HTTPException(
+            status_code=400, detail=f"Team 2 attacker (user id {result.team2.attacker_user_id}) does not exist."
+        )
     result = await result_crud.create_result(session=session, submitter=current_user, result=result)
-    # ml_prediction_background_tasks.add_task(
-    #     prediction_task,
-    #     url="http://127.0.0.1:8002/rule_based_predict",
-    #     session=session
-    # )
+
+    # Add ML prediction background tasks
+    ml_models = await get_ml_models(session=session)
+    ml_data_frame = await get_ml_data(
+        session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION, for_prediction=True
+    )
+    ml_data = DataForML(data=[RowForML(**r) for r in ml_data_frame.to_dict(orient="records")])
+    for ml_model in ml_models:
+        ml_prediction_background_tasks.add_task(
+            single_prediction_task,
+            ml_model_url=ml_model.model_url,
+            data_for_prediction=ml_data,
+        )
     return result
 
 
@@ -122,7 +152,7 @@ async def read_results(
 
 @router.get("/results/{result_id}", response_model=result_models.ResultSubmissionRead, tags=["results"])
 async def read_result(result_id: int, session: AsyncSession = Depends(get_session)):
-    result = await  result_crud.get_result(session, result_id=result_id)
+    result = await result_crud.get_result(session, result_id=result_id)
     if result is None:
         raise HTTPException(status_code=404, detail="Result not found")
     return result

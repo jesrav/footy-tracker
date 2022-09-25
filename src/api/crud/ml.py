@@ -178,8 +178,8 @@ async def create_user_ml_model(
     return user_ml_model
 
 
-async def get_ml_models(session: AsyncSession, skip: int = 0, limit: int = 100) -> List[MLModel]:
-    statement = select(MLModel).offset(skip).limit(limit)
+async def get_ml_models(session: AsyncSession) -> List[MLModel]:
+    statement = select(MLModel)
     result = await session.execute(statement)
     return result.scalars().all()
 

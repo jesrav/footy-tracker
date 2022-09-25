@@ -6,6 +6,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.responses import StreamingResponse
 
 from core import deps
+from core.config import settings
 from crud.ml import (
     get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, create_user_ml_model
 )
@@ -13,9 +14,6 @@ from core.deps import get_session
 from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead
 from models.user import User
 router = APIRouter()
-
-
-N_HISTORICAL_ROWS_FOR_PREDICTION = 100
 
 
 @router.get("/ml/training_data/csv", response_class=StreamingResponse, tags=["ml"])
@@ -47,7 +45,9 @@ async def get_ml_training_data_json(
 async def get_ml_prediction_data_example_json(
     session: AsyncSession = Depends(get_session)
 ):
-    results_with_features_df = await get_ml_data(session, N_HISTORICAL_ROWS_FOR_PREDICTION + 1, for_prediction=True)
+    results_with_features_df = await get_ml_data(
+        session, settings.N_HISTORICAL_ROWS_FOR_PREDICTION + 1, for_prediction=True
+    )
     return {
         "data": results_with_features_df.to_dict(orient='records')
     }
@@ -76,8 +76,6 @@ async def add_ml_model(
 
 @router.get("/ml/ml_models/", response_model=List[MLModelRead], tags=["ml"])
 async def read_ml_model(
-    skip: int = 0,
-    limit: int = 100,
     session: AsyncSession = Depends(get_session),
 ):
-    return await get_ml_models(session, skip=skip, limit=limit)
+    return await get_ml_models(session)
