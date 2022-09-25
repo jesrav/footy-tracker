@@ -7,10 +7,13 @@ from core import deps
 from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import ranking as ranking_crud
+from crud.ml import get_ml_data
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
 from core.deps import get_session
+from models.ml import DataForML, RowForML
+from services.ml import get_ml_prediction
 
 router = APIRouter()
 
@@ -75,15 +78,9 @@ async def validate_result(
     return refreshed_validated_result
 
 
-# data_df = await get_ml_data(session, for_prediction=True)
-# DataForML(data=[RowForML(**r) for r in data_df.to_dict(orient="records")]
-#
-#
-# async def single_prediction_task(ml_url: str, data_for_prediction: DataForML):
-#     prediction = await get_ml_prediction(
-#         url=ml_url, data_for_prediction=data_for_prediction)
-#     )
-
+async def single_prediction_task(ml_url: str, data_for_prediction: DataForML):
+    prediction = await get_ml_prediction(url=ml_url, data_for_prediction=data_for_prediction)
+    print(prediction)
 
 
 @router.post("/results/", response_model=result_models.ResultSubmissionRead, tags=["results"])

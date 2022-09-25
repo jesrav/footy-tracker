@@ -6,14 +6,16 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.responses import StreamingResponse
 
 from core import deps
-from crud.ml import get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name
+from crud.ml import (
+    get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, create_user_ml_model
+)
 from core.deps import get_session
 from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead
 from models.user import User
 router = APIRouter()
 
 
-N_HISTORICAL_ROWS_FOR_PREDICION = 100
+N_HISTORICAL_ROWS_FOR_PREDICTION = 100
 
 
 @router.get("/ml/training_data/csv", response_class=StreamingResponse, tags=["ml"])
@@ -26,8 +28,7 @@ async def get_ml_training_data_csv(
 
     results_with_features_df.to_csv(stream, index=False)
     response = StreamingResponse(
-        iter([stream.getvalue()]),
-         media_type="text/csv"
+        iter([stream.getvalue()]), media_type="text/csv"
     )
     response.headers["Content-Disposition"] = "attachment; filename=data.csv"
     return response
@@ -46,7 +47,7 @@ async def get_ml_training_data_json(
 async def get_ml_prediction_data_example_json(
     session: AsyncSession = Depends(get_session)
 ):
-    results_with_features_df = await get_ml_data(session, N_HISTORICAL_ROWS_FOR_PREDICION + 1, for_prediction=True)
+    results_with_features_df = await get_ml_data(session, N_HISTORICAL_ROWS_FOR_PREDICTION + 1, for_prediction=True)
     return {
         "data": results_with_features_df.to_dict(orient='records')
     }
@@ -64,7 +65,13 @@ async def add_ml_model(
     preexisting_model_url = await get_ml_model_by_url(session=session, url=ml_model.model_url)
     if preexisting_model_url:
         raise HTTPException(status_code=400, detail="ML model URL already registered. Model URL must be unique.")
-    return await create_ml_model(session=session, user_id=current_user.id, ml_model_create=ml_model)
+    ml_model = await create_ml_model(session=session, ml_model_create=ml_model, commit_changes=False)
+    _ = await create_user_ml_model(
+        session=session, user_id=current_user.id, ml_model_id=ml_model.id, commit_changes=False
+    )
+    await session.commit()
+    await session.refresh(ml_model)
+    return ml_model
 
 
 @router.get("/ml/ml_models/", response_model=List[MLModelRead], tags=["ml"])

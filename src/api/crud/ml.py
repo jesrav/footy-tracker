@@ -7,7 +7,7 @@ import pandas as pd
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.sql import text
 
-from models.ml import MLModel, MLModelCreate
+from models.ml import MLModel, MLModelCreate, UserMLModel
 
 
 async def randomize_team_order(df: pd.DataFrame) -> pd.DataFrame:
@@ -137,16 +137,45 @@ async def get_ml_data(
     return df.replace({np.nan: None})
 
 
-async def create_ml_model(session: AsyncSession, user_id: int, ml_model_create: MLModelCreate) -> MLModel:
+async def create_ml_model(
+    session: AsyncSession,
+        ml_model_create: MLModelCreate,
+        commit_changes: bool = True
+) -> MLModel:
     ml_model = MLModel(
-        user_id=user_id,
         model_name=ml_model_create.model_name,
         model_url=ml_model_create.model_url,
     )
     session.add(ml_model)
-    await session.commit()
-    await session.refresh(ml_model)
+    if commit_changes:
+        await session.commit()
+        await session.refresh(ml_model)
+    else:
+        # Update the user object with autoincrement id from db without committing
+        await session.flush()
+        await session.refresh(ml_model)
     return ml_model
+
+
+async def create_user_ml_model(
+    session: AsyncSession,
+        user_id: int,
+        ml_model_id: int,
+        commit_changes: bool = True
+) -> UserMLModel:
+    user_ml_model = UserMLModel(
+        user_id=user_id,
+        ml_model_id=ml_model_id,
+    )
+    session.add(user_ml_model)
+    if commit_changes:
+        await session.commit()
+        await session.refresh(user_ml_model)
+    else:
+        # Update the user object with autoincrement id from db without committing
+        await session.flush()
+        await session.refresh(user_ml_model)
+    return user_ml_model
 
 
 async def get_ml_models(session: AsyncSession, skip: int = 0, limit: int = 100) -> List[MLModel]:
