@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import Union, List, Optional
 
-from pydantic import BaseModel, AnyHttpUrl
+from pydantic import AnyHttpUrl
 from sqlalchemy import Column, String
 from sqlmodel import SQLModel, Field
 
 
-class RowForML(BaseModel):
+class RowForML(SQLModel):
     result_to_predict: bool
     result_id: Union[int, None]
     result_dt: Union[datetime, None]
@@ -33,8 +33,16 @@ class RowForML(BaseModel):
     goal_diff: Union[int, None]
 
 
-class DataForML(BaseModel):
+class RowForMLInternal(RowForML):
+    teams_switched: bool
+
+
+class DataForML(SQLModel):
     data: List[RowForML]
+
+
+class DataForMLInternal(SQLModel):
+    data: List[RowForMLInternal]
 
 
 class MLModel(SQLModel, table=True):
@@ -51,7 +59,7 @@ class UserMLModel(SQLModel, table=True):
     created_dt: datetime = Field(default_factory=datetime.utcnow)
 
 
-class MLModelCreate(BaseModel):
+class MLModelCreate(SQLModel):
     model_name: str = Field(sa_column=Column("model_name", String, unique=True))
     model_url: AnyHttpUrl = Field(sa_column=Column("model_url", String, unique=True))
 
@@ -59,4 +67,12 @@ class MLModelCreate(BaseModel):
 class MLModelRead(MLModelCreate):
     id: int
     model_name: str
+    created_dt: datetime = Field(default_factory=datetime.utcnow)
+
+
+class Prediction(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    ml_model_id: int = Field(default=None, foreign_key="mlmodel.id")
+    result_id: int = Field(default=None, foreign_key="resultsubmission.id")
+    predicted_goal_diff: int
     created_dt: datetime = Field(default_factory=datetime.utcnow)

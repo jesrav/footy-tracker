@@ -11,8 +11,9 @@ from crud.ml import (
     get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, create_user_ml_model
 )
 from core.deps import get_session
-from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead
+from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, DataForMLInternal
 from models.user import User
+
 router = APIRouter()
 
 
@@ -53,7 +54,7 @@ async def get_ml_prediction_data_example_json(
     }
 
 
-@router.post("/ml/add_ml_models/", response_model=MLModelRead, tags=["ml"])
+@router.post("/ml/ml_models/", response_model=MLModelRead, tags=["ml"])
 async def add_ml_model(
     ml_model: MLModelCreate,
     session: AsyncSession = Depends(get_session),

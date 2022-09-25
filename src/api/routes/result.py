@@ -8,13 +8,13 @@ from core.config import settings
 from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import ranking as ranking_crud
-from crud.ml import get_ml_data, get_ml_models
+from crud.ml import get_ml_data, get_ml_models, single_prediction_task
 from crud.user import get_user
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
 from core.deps import get_session
-from models.ml import DataForML, RowForML
+from models.ml import DataForML, RowForML, RowForMLInternal, DataForMLInternal
 from services.ml import get_ml_prediction
 
 router = APIRouter()
@@ -84,11 +84,6 @@ async def validate_result(
     return refreshed_validated_result
 
 
-async def single_prediction_task(ml_model_url: str, data_for_prediction: DataForML):
-    prediction = await get_ml_prediction(url=ml_model_url, data_for_prediction=data_for_prediction)
-    print(prediction)
-
-
 @router.post("/results/", response_model=result_models.ResultSubmissionRead, tags=["results"])
 async def create_result(
     result: result_models.ResultSubmissionCreate,
@@ -128,12 +123,14 @@ async def create_result(
     ml_data_frame = await get_ml_data(
         session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION, for_prediction=True
     )
-    ml_data = DataForML(data=[RowForML(**r) for r in ml_data_frame.to_dict(orient="records")])
+    ml_data = DataForMLInternal(data=[RowForMLInternal(**r) for r in ml_data_frame.to_dict(orient="records")])
     for ml_model in ml_models:
         ml_prediction_background_tasks.add_task(
             single_prediction_task,
-            ml_model_url=ml_model.model_url,
-            data_for_prediction=ml_data,
+            result_id=result.id,
+            ml_model=ml_model,
+            ml_data=ml_data,
+            session=session,
         )
     return result
 

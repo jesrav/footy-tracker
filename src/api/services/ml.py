@@ -13,3 +13,4 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> int:
             json=json.loads(data_for_prediction.json()),
         )
     return resp.json()
+

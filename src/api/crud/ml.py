@@ -7,15 +7,20 @@ import pandas as pd
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.sql import text
 
-from models.ml import MLModel, MLModelCreate, UserMLModel
+from models.ml import MLModel, MLModelCreate, UserMLModel, Prediction, DataForMLInternal, DataForML
+from services.ml import get_ml_prediction
 
 
 async def randomize_team_order(df: pd.DataFrame) -> pd.DataFrame:
-    """Randomly swap team 1 and team 2 in dataframe with ml data."""
-    swap_teams = random.rand(len(df)) > 0.5
+    """Randomly swap team 1 and team 2 in dataframe with ml data.
+
+    A boolean column teams_switched to indicate if team 1 and team 2 have been switched.
+    """
+    teams_switched = random.rand(len(df)) > 0.5
+    df["teams_switched"] = teams_switched
     team1_cols = [col for col in df.columns if "team1" in col]
     team2_cols = [col for col in df.columns if "team2" in col]
-    df.loc[swap_teams, team1_cols + team2_cols] = df.loc[swap_teams, team2_cols + team1_cols].values
+    df.loc[teams_switched, team1_cols + team2_cols] = df.loc[teams_switched, team2_cols + team1_cols].values
     return df
 
 
@@ -200,3 +205,42 @@ async def get_ml_model_by_url(session: AsyncSession, url: str) -> Optional[MLMod
     statement = select(MLModel).filter(MLModel.model_url == url)
     result = await session.execute(statement)
     return result.scalar_one_or_none()
+
+
+async def add_prediction(
+        session: AsyncSession, model_id: int, result_id: int, predicted_goal_diff: int
+) -> Prediction:
+    prediction = Prediction(
+        ml_model_id=model_id,
+        result_id=result_id,
+        predicted_goal_diff=predicted_goal_diff,
+    )
+    session.add(prediction)
+    await session.commit()
+    await session.refresh(prediction)
+    return prediction
+
+
+async def single_prediction_task(
+    result_id: int,
+    ml_model: MLModel,
+    ml_data: DataForMLInternal,
+    session: AsyncSession,
+):
+    """Make prediction and register prediction using an ML model API"""
+
+    # Get data for prediction, without columns we don't want to send to the ML endpoint
+    data_for_prediction = DataForML.parse_obj(ml_data)
+    prediction = await get_ml_prediction(url=ml_model.model_url, data_for_prediction=data_for_prediction)
+
+    # Get the row that the prediction is to be used on
+    row_to_predict = [r for r in ml_data.data if r.result_to_predict][0]
+    # If the teams have been switched (not shown to the algorithm), we correct the prediction
+    if row_to_predict.teams_switched:
+        prediction = -prediction
+
+    # Add prediction to db
+    prediction = await add_prediction(
+        session=session, model_id=ml_model.id, result_id=result_id, predicted_goal_diff=prediction
+    )
+    return prediction
