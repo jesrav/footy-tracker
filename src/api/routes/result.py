@@ -7,13 +7,10 @@ from core import deps
 from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import ranking as ranking_crud
-from crud.ml_training_data import get_ml_data
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
 from core.deps import get_session
-from models.ml_data import RowForML, DataForML
-from services.ml import get_ml_prediction
 
 router = APIRouter()
 
@@ -78,12 +75,15 @@ async def validate_result(
     return refreshed_validated_result
 
 
-async def prediction_task(url: str, session: AsyncSession):
-    data_df = await get_ml_data(session, for_prediction=True)
-    baseline_prediction = await get_ml_prediction(
-        url=url, data_for_ml=DataForML(data=[RowForML(**r) for r in data_df.to_dict(orient="records")])
-    )
-    print(baseline_prediction)
+# data_df = await get_ml_data(session, for_prediction=True)
+# DataForML(data=[RowForML(**r) for r in data_df.to_dict(orient="records")]
+#
+#
+# async def single_prediction_task(ml_url: str, data_for_prediction: DataForML):
+#     prediction = await get_ml_prediction(
+#         url=ml_url, data_for_prediction=data_for_prediction)
+#     )
+
 
 
 @router.post("/results/", response_model=result_models.ResultSubmissionRead, tags=["results"])
@@ -103,16 +103,11 @@ async def create_result(
             status_code=400, detail="Submitter must be on one of the teams."
         )
     result = await result_crud.create_result(session=session, submitter=current_user, result=result)
-    ml_prediction_background_tasks.add_task(
-        prediction_task,
-        url="http://127.0.0.1:8002/rule_based_predict",
-        session=session
-    )
-    ml_prediction_background_tasks.add_task(
-        prediction_task,
-        url="http://127.0.0.1:8002/rule_based_predict",
-        session=session
-    )
+    # ml_prediction_background_tasks.add_task(
+    #     prediction_task,
+    #     url="http://127.0.0.1:8002/rule_based_predict",
+    #     session=session
+    # )
     return result
 
 

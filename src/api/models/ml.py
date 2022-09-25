@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Union, List
+from typing import Union, List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, AnyHttpUrl
+from sqlalchemy import Column, String
+from sqlmodel import SQLModel, Field
 
 
 class RowForML(BaseModel):
@@ -33,3 +35,23 @@ class RowForML(BaseModel):
 
 class DataForML(BaseModel):
     data: List[RowForML]
+
+
+class MLModel(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(default=None, foreign_key="user.id")
+    model_name: str
+    model_url: AnyHttpUrl
+    created_dt: datetime = Field(default_factory=datetime.utcnow)
+
+
+class MLModelCreate(BaseModel):
+    model_name: str = Field(sa_column=Column("model_name", String, unique=True))
+    model_url: AnyHttpUrl = Field(sa_column=Column("model_url", String, unique=True))
+
+
+class MLModelRead(MLModelCreate):
+    id: int
+    user_id: int
+    model_name: str
+    created_dt: datetime = Field(default_factory=datetime.utcnow)

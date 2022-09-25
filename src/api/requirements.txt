@@ -18,6 +18,8 @@ asyncpg==0.24.0
 psycopg2
 
 python-jose
+numpy
+pandas
 
 
 azure-storage-blob
