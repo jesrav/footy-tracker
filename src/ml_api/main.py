@@ -20,12 +20,13 @@ def predict_goal_diff(result_to_predict: RowForML) -> int:
     Otherwise we predict a random goal diff between -3 and 3, but never 0.
     """
 
+    print(result_to_predict.team1_attacker_user_id)
     if result_to_predict.team1_attacker_user_id == 1:
         return 5
     elif result_to_predict.team2_attacker_user_id == 1:
         return -5
     else:
-        return choice([-3, -2, -1, 1, 2, 3])
+        return 8 #choice([-3, -2, -1, 1, 2, 3])
 
 
 @app.post("/rule_based_predict")
