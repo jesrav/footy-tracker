@@ -12,7 +12,7 @@ app = FastAPI()
 
 
 def predict_goal_diff_rule(result_to_predict: RowForML) -> int:
-    """"Predict the goal diff off the game using only the row of features for the actual game.
+    """Predict the goal diff off the game using only the row of features for the actual game.
 
     If Jesus (user id 1) is on offence, his team will always win by 5
     Otherwise we predict a random goal diff between -3 and 3, but never 0.
