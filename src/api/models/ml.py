@@ -65,7 +65,7 @@ class MLModelCreate(SQLModel):
     model_url: AnyHttpUrl = Field(sa_column=Column("model_url", String, unique=True))
 
 
-class MLModelRead(MLModelCreate):
+class MLModelRead(SQLModel):
     id: int
     model_name: str
     created_dt: datetime = Field(default_factory=datetime.utcnow)
