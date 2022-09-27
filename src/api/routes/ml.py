@@ -11,7 +11,8 @@ from crud.ml import (
     get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, create_user_ml_model
 )
 from core.deps import get_session
-from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, DataForMLInternal
+from crud.result import get_latest_approve_result
+from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead
 from models.user import User
 
 router = APIRouter()
@@ -46,8 +47,11 @@ async def get_ml_training_data_json(
 async def get_ml_prediction_data_example_json(
     session: AsyncSession = Depends(get_session)
 ):
+    latest_approved_result= await get_latest_approve_result(session)
     results_with_features_df = await get_ml_data(
-        session, settings.N_HISTORICAL_ROWS_FOR_PREDICTION + 1, for_prediction=True
+        session=session,
+        n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION + 1,
+        result_id_to_predict=latest_approved_result.id
     )
     return {
         "data": results_with_features_df.to_dict(orient='records')
@@ -76,7 +80,7 @@ async def add_ml_model(
 
 
 @router.get("/ml/ml_models/", response_model=List[MLModelRead], tags=["ml"])
-async def read_ml_model(
+async def read_ml_models(
     session: AsyncSession = Depends(get_session),
 ):
     return await get_ml_models(session)

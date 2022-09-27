@@ -35,23 +35,42 @@ async def ml_data_query(n_rows: Union[int, None]) -> str:
     else:
         limit_statement = ""
     return f"""
-        with ratings_before_result as (
-          select * from 
-          (
-            select 
-                user_id, 
-                latest_result_at_update_id as result_id, 
-                lag(overall_rating, 1) over (order by user_id, created_dt) overall_rating_before_game,
-                lag(rating_defence, 1) over (order by user_id, created_dt) defensive_rating_before_game,
-                lag(rating_offence, 1) over (order by user_id, created_dt) offensive_rating_before_game
-            from userrating
-          ) sub
-          where result_id is not null
-         )
+        with userrating_before_game_was_appoved as (
+    select * from 
+    (
+      select 
+      user_id, 
+      latest_result_at_update_id as result_id, 
+      lag(overall_rating, 1) over (order by user_id, created_dt) overall_rating_before_game,
+      lag(rating_defence, 1) over (order by user_id, created_dt) defensive_rating_before_game,
+      lag(rating_offence, 1) over (order by user_id, created_dt) offensive_rating_before_game
+      from userrating
+    ) sub
+    where result_id is not null
+),
+latest_user_rating as (
+  select distinct
+  r.user_id, 
+  overall_rating as overall_rating_latest_game,
+  rating_defence as rating_defence_latest_game, 
+  rating_offence as rating_offence_latest_game
+  from userrating r
+  inner join (
+   select 
+      user_id, 
+      max(latest_result_at_update_id) as max_result_id 
+      from userrating
+  	  where latest_result_at_update_id is not null
+   group by user_id
+   ) sub
+   on r.latest_result_at_update_id = sub.max_result_id
+)    
+
 
         select 
             rs.id as result_id,
             rs.created_dt as result_dt,
+            rs.approved as result_approved,
             rs.team1_id,
             rs.team2_id,
             rs.goals_team1,
@@ -61,29 +80,33 @@ async def ml_data_query(n_rows: Union[int, None]) -> str:
             t2.defender_user_id as team2_defender_user_id,
             t2.attacker_user_id as team2_attacker_user_id,
 
-            rbr1d.overall_rating_before_game as team1_defender_overall_rating_before_game,
-            rbr1d.defensive_rating_before_game as team1_defender_defensive_rating_before_game,
-            rbr1d.offensive_rating_before_game as team1_defender_offensive_rating_before_game,
+            COALESCE(rbr1d.overall_rating_before_game, COALESCE(lur1d.overall_rating_latest_game, 1500.00)) as team1_defender_overall_rating_before_game,
+            COALESCE(rbr1d.defensive_rating_before_game, COALESCE(lur1d.rating_defence_latest_game, 1500.00)) as team1_defender_defensive_rating_before_game,
+            COALESCE(rbr1d.offensive_rating_before_game, COALESCE(lur1d.rating_offence_latest_game, 1500.00)) as team1_defender_offensive_rating_before_game,
 
-            rbr1a.overall_rating_before_game as team1_attacker_overall_rating_before_game,
-            rbr1a.defensive_rating_before_game as team1_attacker_defensive_rating_before_game,
-            rbr1a.offensive_rating_before_game as team1_attacker_offensive_rating_before_game,
+            COALESCE(rbr1a.overall_rating_before_game, COALESCE(lur1a.overall_rating_latest_game, 1500.00)) as team1_attacker_overall_rating_before_game,
+            COALESCE(rbr1a.defensive_rating_before_game, COALESCE(lur1a.rating_defence_latest_game, 1500.00)) as team1_attacker_defensive_rating_before_game,
+            COALESCE(rbr1a.offensive_rating_before_game, COALESCE(lur1a.rating_offence_latest_game, 1500.00)) as team1_attacker_offensive_rating_before_game,
+         
+	        COALESCE(rbr2d.overall_rating_before_game, COALESCE(lur2d.overall_rating_latest_game, 1500.00)) as team2_defender_overall_rating_before_game,
+            COALESCE(rbr2d.defensive_rating_before_game, COALESCE(lur2d.rating_defence_latest_game, 1500.00)) as team2_defender_defensive_rating_before_game,
+            COALESCE(rbr2d.offensive_rating_before_game, COALESCE(lur2d.rating_offence_latest_game, 1500.00)) as team2_defender_offensive_rating_before_game,
 
-            rbr2d.overall_rating_before_game as team2_defender_overall_rating_before_game,
-            rbr2d.defensive_rating_before_game as team2_defender_defensive_rating_before_game,
-            rbr2d.offensive_rating_before_game as team2_defender_offensive_rating_before_game,
-
-            rbr2a.overall_rating_before_game as team2_attacker_overall_rating_before_game,
-            rbr2a.defensive_rating_before_game as team2_attacker_defensive_rating_before_game,
-            rbr2a.offensive_rating_before_game as team2_attacker_offensive_rating_before_game
+	        COALESCE(rbr2a.overall_rating_before_game, COALESCE(lur2a.overall_rating_latest_game, 1500.00)) as team2_attacker_overall_rating_before_game,
+            COALESCE(rbr2a.defensive_rating_before_game, COALESCE(lur2a.rating_defence_latest_game, 1500.00)) as team2_attacker_defensive_rating_before_game,
+            COALESCE(rbr2a.offensive_rating_before_game, COALESCE(lur2a.rating_offence_latest_game, 1500.00)) as team2_attacker_offensive_rating_before_game
 
         from resultsubmission rs
         inner join team t1 on rs.team1_id = t1.id
         inner join team t2 on rs.team2_id = t2.id
-        inner join ratings_before_result rbr1d on rbr1d.user_id = t1.defender_user_id and rs.id = rbr1d.result_id
-        inner join ratings_before_result rbr1a on rbr1a.user_id = t1.attacker_user_id and rs.id = rbr1a.result_id
-        inner join ratings_before_result rbr2d on rbr2d.user_id = t2.defender_user_id and rs.id = rbr2d.result_id
-        inner join ratings_before_result rbr2a on rbr2a.user_id = t2.attacker_user_id and rs.id = rbr2a.result_id
+        left join userrating_before_game_was_appoved rbr1d on rbr1d.user_id = t1.defender_user_id and rs.id = rbr1d.result_id
+        left join userrating_before_game_was_appoved rbr1a on rbr1a.user_id = t1.attacker_user_id and rs.id = rbr1a.result_id
+        left join userrating_before_game_was_appoved rbr2d on rbr2d.user_id = t2.defender_user_id and rs.id = rbr2d.result_id
+        left join userrating_before_game_was_appoved rbr2a on rbr2a.user_id = t2.attacker_user_id and rs.id = rbr2a.result_id
+        left join latest_user_rating lur1d on lur1d.user_id = t1.defender_user_id
+        left join latest_user_rating lur1a on lur1a.user_id = t1.attacker_user_id
+        left join latest_user_rating lur2d on lur2d.user_id = t2.defender_user_id
+        left join latest_user_rating lur2a on lur2a.user_id = t2.attacker_user_id
         order by rs.id desc
         {limit_statement}
     """
@@ -92,11 +115,12 @@ async def ml_data_query(n_rows: Union[int, None]) -> str:
 async def get_ml_data(
         session: AsyncSession,
         n_rows: Union[int, None] = None,
-        for_prediction: bool = False,
+        result_id_to_predict: Union[int, None] = None,
 ) -> pd.DataFrame:
     """Get data for ML training or prediction.
 
-    If for_prediction == True, the latest result, will have the outcome columns removed and have a column
+    If result_id_to_predict is passed, no results after this result id will be included and the result with that id,
+    will have the outcome columns removed and have a column
     """
     query = await ml_data_query(n_rows)
     results = await session.execute(text(query))
@@ -105,6 +129,7 @@ async def get_ml_data(
         columns=[
             "result_id",
             "result_dt",
+            "result_approved",
             "team1_id",
             "team2_id",
             "goals_team1",
@@ -132,7 +157,8 @@ async def get_ml_data(
     df = await add_ml_target(df)
 
     df["result_to_predict"] = False
-    if for_prediction:
+    if result_id_to_predict:
+        df = df[df.result_id <= result_id_to_predict]
         latest_result = df.result_id.max()
         df.loc[df.result_id == latest_result, "result_to_predict"] = True
         df.loc[
