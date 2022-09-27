@@ -121,7 +121,7 @@ async def create_result(
     # Add ML prediction background tasks
     ml_models = await get_ml_models(session=session)
     ml_data_frame = await get_ml_data(
-        session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION, for_prediction=True
+        session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION, result_id_to_predict=result.id
     )
     ml_data = DataForMLInternal(data=[RowForMLInternal(**r) for r in ml_data_frame.to_dict(orient="records")])
     for ml_model in ml_models:
