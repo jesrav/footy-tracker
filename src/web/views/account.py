@@ -128,7 +128,7 @@ async def update_profile_image(request: Request):
 @template()
 async def update_profile_image(request: Request, file: UploadFile = File(...)):
     vm = AccountViewModel(request)
-    vm.authorize()
+    await vm.authorize()
     file_suffix = Path(file.filename).suffix
     guid = uuid.uuid4()
     storage_base_url = os.environ["BLOB_STORAGE_BASE_URL"]

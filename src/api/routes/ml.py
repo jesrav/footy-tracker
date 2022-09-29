@@ -12,7 +12,7 @@ from crud.ml import (
 )
 from core.deps import get_session
 from crud.result import get_latest_approve_result
-from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead
+from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel
 from models.user import User
 
 router = APIRouter()
@@ -89,8 +89,9 @@ async def read_ml_models(
     return await get_ml_models(session)
 
 
-@router.get("/ml/ml_models/user/{user_id}", response_model=List[MLModelRead], tags=["ml"])
-async def read_ml_models(
+@router.get("/ml/ml_models/me", response_model=List[MLModel], tags=["ml"])
+async def read_ml_models_for_user(
     session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(deps.get_current_user),
 ):
-    return await get_ml_models(session)
+    return await get_ml_models_by_user(session, user_id=current_user.id)
