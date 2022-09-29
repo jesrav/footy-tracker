@@ -8,12 +8,14 @@ from starlette.responses import StreamingResponse
 from core import deps
 from core.config import settings
 from crud.ml import (
-    get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user
+    create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user
 )
 from core.deps import get_session
 from crud.result import get_latest_approve_result
 from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel
+from models.team import TeamsSuggestion, UsersForTeamsSuggestion, TeamCreate
 from models.user import User
+#from services.ml import suggest_most_fair_teams, get_ml_data
 
 router = APIRouter()
 
@@ -95,3 +97,15 @@ async def read_ml_models_for_user(
     current_user: User = Depends(deps.get_current_user),
 ):
     return await get_ml_models_by_user(session, user_id=current_user.id)
+
+
+# @router.post("/ml/sugest_teams/", tags=["ml"])
+# async def suggest_teams(
+#     users: UsersForTeamsSuggestion,
+#     session: AsyncSession = Depends(get_session),
+# ):
+#     return await suggest_most_fair_teams(users=users, session=session)
+#     #return TeamsSuggestion(
+#     #    team1=TeamCreate(defender_user_id=users.user_id_1, attacker_user_id=users.user_id_2),
+#     #    team2=TeamCreate(defender_user_id=users.user_id_3, attacker_user_id=users.user_id_4),
+#     #)

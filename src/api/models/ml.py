@@ -11,8 +11,6 @@ class RowForML(SQLModel):
     result_id: Union[int, None]
     result_dt: Union[datetime, None]
     result_approved: Union[bool, None]
-    team1_id: int
-    team2_id: int
     goals_team1: Union[int, None]
     goals_team2: Union[int, None]
     team1_defender_user_id: int

@@ -8,14 +8,14 @@ from core.config import settings
 from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import ranking as ranking_crud
-from crud.ml import get_ml_data, get_ml_models, single_prediction_task
+from crud.ml import get_ml_models, single_prediction_task
 from crud.user import get_user
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
 from core.deps import get_session
-from models.ml import DataForML, RowForML, RowForMLInternal, DataForMLInternal
-from services.ml import get_ml_prediction
+from models.ml import RowForMLInternal, DataForMLInternal
+from services.ml import get_ml_data
 
 router = APIRouter()
 
