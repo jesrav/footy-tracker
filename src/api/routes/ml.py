@@ -8,7 +8,7 @@ from starlette.responses import StreamingResponse
 from core import deps
 from core.config import settings
 from crud.ml import (
-    get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, create_user_ml_model
+    get_ml_data, create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user
 )
 from core.deps import get_session
 from crud.result import get_latest_approve_result
@@ -67,19 +67,29 @@ async def add_ml_model(
     preexisting_model_name = await get_ml_model_by_name(session=session, name=ml_model.model_name)
     if preexisting_model_name:
         raise HTTPException(status_code=400, detail="ML model name already registered. Model name must be unique.")
+
     preexisting_model_url = await get_ml_model_by_url(session=session, url=ml_model.model_url)
     if preexisting_model_url:
         raise HTTPException(status_code=400, detail="ML model URL already registered. Model URL must be unique.")
-    ml_model = await create_ml_model(session=session, ml_model_create=ml_model, commit_changes=False)
-    _ = await create_user_ml_model(
-        session=session, user_id=current_user.id, ml_model_id=ml_model.id, commit_changes=False
-    )
-    await session.commit()
-    await session.refresh(ml_model)
+
+    current_user_models = await get_ml_models_by_user(session=session, user_id=current_user.id)
+    if len(current_user_models) > 2:
+        raise HTTPException(
+            status_code=400,
+            detail="A user can hve no more than 3 ML models registered. Please edit one of your current models"
+        )
+    ml_model = await create_ml_model(session=session, ml_model_create=ml_model, user_id=current_user.id)
     return ml_model
 
 
 @router.get("/ml/ml_models/", response_model=List[MLModelRead], tags=["ml"])
+async def read_ml_models(
+    session: AsyncSession = Depends(get_session),
+):
+    return await get_ml_models(session)
+
+
+@router.get("/ml/ml_models/user/{user_id}", response_model=List[MLModelRead], tags=["ml"])
 async def read_ml_models(
     session: AsyncSession = Depends(get_session),
 ):

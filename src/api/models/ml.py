@@ -48,15 +48,9 @@ class DataForMLInternal(SQLModel):
 
 class MLModel(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(default=None, foreign_key="user.id")
     model_name: str
     model_url: AnyHttpUrl
-    created_dt: datetime = Field(default_factory=datetime.utcnow)
-
-
-class UserMLModel(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: int = Field(default=None, foreign_key="user.id")
-    ml_model_id: int = Field(default=None, foreign_key="mlmodel.id")
     created_dt: datetime = Field(default_factory=datetime.utcnow)
 
 

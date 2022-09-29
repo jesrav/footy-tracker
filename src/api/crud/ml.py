@@ -7,7 +7,7 @@ import pandas as pd
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.sql import text
 
-from models.ml import MLModel, MLModelCreate, UserMLModel, Prediction, DataForMLInternal, DataForML
+from models.ml import MLModel, MLModelCreate, Prediction, DataForMLInternal, DataForML
 from services.ml import get_ml_prediction
 
 
@@ -171,46 +171,28 @@ async def get_ml_data(
 async def create_ml_model(
     session: AsyncSession,
         ml_model_create: MLModelCreate,
-        commit_changes: bool = True
+        user_id: int,
 ) -> MLModel:
     ml_model = MLModel(
         model_name=ml_model_create.model_name,
         model_url=ml_model_create.model_url,
+        user_id=user_id
     )
     session.add(ml_model)
-    if commit_changes:
-        await session.commit()
-        await session.refresh(ml_model)
-    else:
-        # Update the user object with autoincrement id from db without committing
-        await session.flush()
-        await session.refresh(ml_model)
+    await session.commit()
+    await session.refresh(ml_model)
+
     return ml_model
-
-
-async def create_user_ml_model(
-    session: AsyncSession,
-        user_id: int,
-        ml_model_id: int,
-        commit_changes: bool = True
-) -> UserMLModel:
-    user_ml_model = UserMLModel(
-        user_id=user_id,
-        ml_model_id=ml_model_id,
-    )
-    session.add(user_ml_model)
-    if commit_changes:
-        await session.commit()
-        await session.refresh(user_ml_model)
-    else:
-        # Update the user object with autoincrement id from db without committing
-        await session.flush()
-        await session.refresh(user_ml_model)
-    return user_ml_model
 
 
 async def get_ml_models(session: AsyncSession) -> List[MLModel]:
     statement = select(MLModel)
+    result = await session.execute(statement)
+    return result.scalars().all()
+
+
+async def get_ml_models_by_user(session: AsyncSession, user_id: int) -> List[MLModel]:
+    statement = select(MLModel).filter(MLModel.user_id == user_id)
     result = await session.execute(statement)
     return result.scalars().all()
 
