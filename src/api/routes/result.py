@@ -100,22 +100,16 @@ async def create_result(
         raise HTTPException(
             status_code=400, detail="Submitter must be on one of the teams."
         )
-    if not await get_user(session=session, user_id=result.team1.defender_user_id):
-        raise HTTPException(
-            status_code=400, detail=f"Team 1 defender (user id {result.team1.defender_user_id}) does not exist."
-        )
-    if not await get_user(session=session, user_id=result.team1.attacker_user_id):
-        raise HTTPException(
-            status_code=400, detail=f"Team 1 attacker (user id {result.team1.attacker_user_id}) does not exist."
-        )
-    if not await get_user(session=session, user_id=result.team2.defender_user_id):
-        raise HTTPException(
-            status_code=400, detail=f"Team 2 defender (user id {result.team2.defender_user_id}) does not exist."
-        )
-    if not await get_user(session=session, user_id=result.team2.attacker_user_id):
-        raise HTTPException(
-            status_code=400, detail=f"Team 2 attacker (user id {result.team2.attacker_user_id}) does not exist."
-        )
+    for user_id in [
+        result.team1.defender_user_id,
+        result.team1.attacker_user_id,
+        result.team1.attacker_user_id,
+        result.team2.defender_user_id,
+    ]:
+        if not await get_user(session=session, user_id=user_id):
+            raise HTTPException(
+                status_code=400, detail=f"One of the user id's does not exist."
+            )
     result = await result_crud.create_result(session=session, submitter=current_user, result=result)
 
     # Add ML prediction background tasks

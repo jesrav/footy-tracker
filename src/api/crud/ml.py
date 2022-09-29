@@ -259,6 +259,9 @@ async def single_prediction_task(
     data_for_prediction = DataForML.parse_obj(ml_data)
     prediction = await get_ml_prediction(url=ml_model.model_url, data_for_prediction=data_for_prediction)
 
+    if not prediction:
+        return None
+
     # Get the row that the prediction is to be used on
     row_to_predict = [r for r in ml_data.data if r.result_to_predict][0]
     # If the teams have been switched (not shown to the algorithm), we correct the prediction
