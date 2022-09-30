@@ -16,6 +16,7 @@ from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel
 from models.team import TeamsSuggestion, UsersForTeamsSuggestion, TeamCreate
 from models.user import User
 #from services.ml import suggest_most_fair_teams, get_ml_data
+from services.ml import suggest_most_fair_teams
 
 router = APIRouter()
 
@@ -99,13 +100,9 @@ async def read_ml_models_for_user(
     return await get_ml_models_by_user(session, user_id=current_user.id)
 
 
-# @router.post("/ml/sugest_teams/", tags=["ml"])
-# async def suggest_teams(
-#     users: UsersForTeamsSuggestion,
-#     session: AsyncSession = Depends(get_session),
-# ):
-#     return await suggest_most_fair_teams(users=users, session=session)
-#     #return TeamsSuggestion(
-#     #    team1=TeamCreate(defender_user_id=users.user_id_1, attacker_user_id=users.user_id_2),
-#     #    team2=TeamCreate(defender_user_id=users.user_id_3, attacker_user_id=users.user_id_4),
-#     #)
+@router.post("/ml/sugest_teams/", tags=["ml"])
+async def suggest_teams(
+    users: UsersForTeamsSuggestion,
+    session: AsyncSession = Depends(get_session),
+):
+    return await suggest_most_fair_teams(users=users, session=session)

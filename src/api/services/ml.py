@@ -1,4 +1,6 @@
+import itertools
 import json
+from datetime import datetime
 from typing import Union
 
 from numpy import random
@@ -11,9 +13,10 @@ from sqlalchemy.sql import text
 import pandas as pd
 
 from core.deps import get_session
-from models.ml import DataForML
+from crud.rating import get_latest_ratings
+from models.ml import DataForML, DataForMLInternal, RowForMLInternal, RowForML
 from core.config import settings
-from models.team import UsersForTeamsSuggestion, TeamsSuggestion
+from models.team import UsersForTeamsSuggestion, TeamsSuggestion, TeamCreate
 
 
 async def randomize_team_order(df: pd.DataFrame) -> pd.DataFrame:
@@ -188,43 +191,74 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[i
     else:
         return None
 
-#
-# async def suggest_most_fair_teams(
-#         users: UsersForTeamsSuggestion, session: AsyncSession = Depends(get_session)
-# ) -> TeamsSuggestion:
-#     """Get most teams by minimiing the predicted goal difference
-#
-#     We call a prediction API to get the goal difference for all team combinations
-#     """
-#     # Get data for prediction for previous results
-#     ml_data = await get_ml_data(
-#         session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION
-#     )
-#
-#
-#     df = pd.DataFrame(
-#         columns=[
-#             "result_dt",
-#             "goals_team1",
-#             "goals_team2",
-#             "team1_defender_user_id",
-#             "team1_attacker_user_id",
-#             "team2_defender_user_id",
-#             "team2_attacker_user_id",
-#             "team1_defender_overall_rating_before_game",
-#             "team1_defender_defensive_rating_before_game",
-#             "team1_defender_offensive_rating_before_game",
-#             "team1_attacker_overall_rating_before_game",
-#             "team1_attacker_defensive_rating_before_game",
-#             "team1_attacker_offensive_rating_before_game",
-#             "team2_defender_overall_rating_before_game",
-#             "team2_defender_defensive_rating_before_game",
-#             "team2_defender_offensive_rating_before_game",
-#             "team2_attacker_overall_rating_before_game",
-#             "team2_attacker_defensive_rating_before_game",
-#             "team2_attacker_offensive_rating_before_game",
-#         ],
-#         data=results,
-#     )
-    #df.loc[df.result_id == latest_result, "result_to_predict"] = True
 
+async def suggest_most_fair_teams(
+        users: UsersForTeamsSuggestion, session: AsyncSession = Depends(get_session)
+) -> TeamsSuggestion:
+    """Get most fair teams by minimizing the predicted goal difference
+
+    We call a prediction API to get the goal difference for all team combinations
+    """
+    # Get data for prediction for previous results
+    ml_data = await get_ml_data(
+        session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION
+    )
+
+    # Get the latest ratings for players
+    user_ids = [users.user_id_1, users.user_id_2, users.user_id_3, users.user_id_4]
+    latest_ratings = await get_latest_ratings(session=session)
+    user_ratings = {
+        r.user_id: {
+            "rating_defence": r.rating_defence, "rating_offence": r.rating_offence, "rating_overall": r.overall_rating
+        }
+        for r in latest_ratings if r.user_id in user_ids
+    }
+
+    # Create all combinations of users
+    possible_user_combinations = list(itertools.permutations(user_ids))
+
+    user_comb_predictions: dict= {}
+    for user_comb in possible_user_combinations:
+        combination_date_for_pred = RowForML(
+            result_to_predict=True,
+            result_dt= datetime.now(),
+            team1_defender_user_id=user_comb[0],
+            team1_attacker_user_id=user_comb[1],
+            team2_defender_user_id=user_comb[2],
+            team2_attacker_user_id=user_comb[3],
+            team1_defender_overall_rating_before_game=user_ratings[user_comb[0]]["rating_overall"],
+            team1_defender_defensive_rating_before_game=user_ratings[user_comb[0]]["rating_defence"],
+            team1_defender_offensive_rating_before_game=user_ratings[user_comb[0]]["rating_offence"],
+            team1_attacker_overall_rating_before_game=user_ratings[user_comb[1]]["rating_overall"],
+            team1_attacker_defensive_rating_before_game=user_ratings[user_comb[1]]["rating_defence"],
+            team1_attacker_offensive_rating_before_game=user_ratings[user_comb[1]]["rating_offence"],
+            team2_defender_overall_rating_before_game=user_ratings[user_comb[2]]["rating_overall"],
+            team2_defender_defensive_rating_before_game=user_ratings[user_comb[2]]["rating_defence"],
+            team2_defender_offensive_rating_before_game=user_ratings[user_comb[2]]["rating_offence"],
+            team2_attacker_overall_rating_before_game=user_ratings[user_comb[3]]["rating_overall"],
+            team2_attacker_defensive_rating_before_game=user_ratings[user_comb[3]]["rating_defence"],
+            team2_attacker_offensive_rating_before_game=user_ratings[user_comb[3]]["rating_offence"],
+        )
+
+        data_for_prediction = DataForML(
+            data=[RowForML(**r) for r in ml_data.to_dict(orient="records")] + [combination_date_for_pred]
+        )
+        user_comb_predictions[user_comb] = await get_ml_prediction(
+            url=settings.ML_MODEL_API_BASE_URL, data_for_prediction=data_for_prediction
+        )
+
+    # Get user combinations with the lowest predicted goal difference
+    min_goal_diffs = min(user_comb_predictions.values())
+    user_combinations_with_mon_expected_goal_dff = [k for k, v in user_comb_predictions.items() if v == min_goal_diffs]
+
+    # Return first user combination with min expected goal diff
+    return TeamsSuggestion(
+        team1=TeamCreate(
+            defender_user_id=user_combinations_with_mon_expected_goal_dff[0][0],
+            attacker_user_id=user_combinations_with_mon_expected_goal_dff[0][1],
+        ),
+        team2=TeamCreate(
+            defender_user_id=user_combinations_with_mon_expected_goal_dff[0][2],
+            attacker_user_id=user_combinations_with_mon_expected_goal_dff[0][3],
+        ),
+    )

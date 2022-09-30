@@ -1,11 +1,7 @@
-from typing import Optional, List, Union
+from typing import Optional, List
 
 from sqlalchemy import select
-import numpy as np
-from numpy import random
-import pandas as pd
 from sqlmodel.ext.asyncio.session import AsyncSession
-from sqlalchemy.sql import text
 
 from models.ml import MLModel, MLModelCreate, Prediction, DataForMLInternal, DataForML
 from services.ml import get_ml_prediction
