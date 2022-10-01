@@ -21,8 +21,5 @@ tag_and_push:
 run:
 	uvicorn main:app --reload
 
-
-seed_dev_db:
-	python seed.py
-
-
+run_docker:
+	docker run -p 80:80 --env-file=.env footy-tracker_api
