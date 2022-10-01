@@ -1,3 +1,12 @@
+build:
+	docker-compose build
+
+up:
+	docker-compose up
+
+down:
+	docker-compose down
+
 tag_and_push:
 	az acr login --name footycr
 	docker tag footy-tracker_web:latest footycr.azurecr.io/footy-tracker_web:latest	

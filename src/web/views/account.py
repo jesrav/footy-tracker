@@ -20,6 +20,7 @@ from viewmodels.account.account_viewmodel import AccountViewModel
 from viewmodels.account.edit_viewmodel import AccountEditViewModel
 from viewmodels.account.login_viewmodel import LoginViewModel
 from viewmodels.account.register_viewmodel import RegisterViewModel
+from config import settings
 
 router = fastapi.APIRouter()
 
@@ -52,9 +53,7 @@ def get_format_for_pillow(suffix: str) -> str:
 
 
 async def upload_image_to_azure(image: Image, file_name: str):
-    connect_str = os.environ["BLOB_STORAGE_CON_STR"]
-    blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-    container_name = os.environ["BLOB_PROFILE_IMAGE_CONTAINER"]
+    blob_service_client = BlobServiceClient.from_connection_string(settings.BLOB_STORAGE_CON_STR)
 
     image_rotated = exif_transpose(image)
     image_resized = crop_and_resize_image(image_rotated)
@@ -62,15 +61,15 @@ async def upload_image_to_azure(image: Image, file_name: str):
     image_resized.save(image_data_resized, format=get_format_for_pillow(Path(file_name).suffix))
 
     async with blob_service_client:
-        container_client = blob_service_client.get_container_client(container_name)
+        container_client = blob_service_client.get_container_client(settings.BLOB_PROFILE_IMAGE_CONTAINER)
         blob_client = container_client.get_blob_client(file_name)
         await blob_client.upload_blob(image_data_resized.getvalue(), overwrite=True)
 
 
 async def delete_from_azure(file_name: str):
-    connect_str = os.environ["BLOB_STORAGE_CON_STR"]
-    container_name = os.environ["BLOB_PROFILE_IMAGE_CONTAINER"]
-    container_service_client = ContainerClient.from_connection_string(conn_str=connect_str, container_name=container_name)
+    container_service_client = ContainerClient.from_connection_string(
+        conn_str=settings.BLOB_STORAGE_CON_STR, container_name=settings.BLOB_PROFILE_IMAGE_CONTAINER
+    )
     async with container_service_client:
         try:
             await container_service_client.delete_blob(blob=file_name)
