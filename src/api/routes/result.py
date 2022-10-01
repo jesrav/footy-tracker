@@ -4,20 +4,73 @@ from fastapi import Depends, HTTPException, APIRouter, BackgroundTasks
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from core import deps
-from core.config import settings
 from crud import rating as ratings_crud
 from crud import result as result_crud
 from crud import ranking as ranking_crud
-from crud.ml import get_ml_models, single_prediction_task
 from crud.user import get_user
 from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
 from core.deps import get_session
-from models.ml import RowForMLInternal, DataForMLInternal
-from services.ml import get_ml_data
+from services.ml import add_prediction_background_tasks
 
 router = APIRouter()
+
+
+@router.post("/results/", response_model=result_models.ResultSubmissionRead, tags=["results"])
+async def create_result(
+    result: result_models.ResultSubmissionCreate,
+    ml_prediction_background_tasks: BackgroundTasks,
+    session: AsyncSession = Depends(get_session),
+    current_user: user_models.User = Depends(deps.get_current_user),
+):
+    if current_user.id not in [
+        result.team1.defender_user_id,
+        result.team1.attacker_user_id,
+        result.team2.defender_user_id,
+        result.team2.attacker_user_id,
+    ]:
+        raise HTTPException(
+            status_code=400, detail="Submitter must be on one of the teams."
+        )
+    for user_id in [
+        result.team1.defender_user_id,
+        result.team1.attacker_user_id,
+        result.team1.attacker_user_id,
+        result.team2.defender_user_id,
+    ]:
+        if not await get_user(session=session, user_id=user_id):
+            raise HTTPException(
+                status_code=400, detail=f"One of the user id's does not exist."
+            )
+    result = await result_crud.create_result(session=session, submitter=current_user, result=result)
+
+    await add_prediction_background_tasks(
+        result=result,
+        ml_prediction_background_tasks=ml_prediction_background_tasks,
+        session=session,
+    )
+    return result
+
+
+@router.get("/results/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
+async def read_results(
+        for_approval: bool = False,
+        skip: int = 0,
+        limit: int = 100,
+        user_id: Optional[int] = None,
+        session: AsyncSession = Depends(get_session)
+):
+    results = await result_crud.get_results(session, skip=skip, limit=limit, for_approval=for_approval, user_id=user_id)
+    return results
+
+
+@router.get("/results/{result_id}", response_model=result_models.ResultSubmissionRead, tags=["results"])
+async def read_result(result_id: int, session: AsyncSession = Depends(get_session)):
+    result = await result_crud.get_result(session, result_id=result_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Result not found")
+    return result
 
 
 @router.get("/results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
@@ -82,68 +135,3 @@ async def validate_result(
     await session.refresh(validated_result)
     refreshed_validated_result = await result_crud.get_result(session, result_id=validated_result.id)
     return refreshed_validated_result
-
-
-@router.post("/results/", response_model=result_models.ResultSubmissionRead, tags=["results"])
-async def create_result(
-    result: result_models.ResultSubmissionCreate,
-    ml_prediction_background_tasks: BackgroundTasks,
-    session: AsyncSession = Depends(get_session),
-    current_user: user_models.User = Depends(deps.get_current_user),
-):
-    if current_user.id not in [
-        result.team1.defender_user_id,
-        result.team1.attacker_user_id,
-        result.team2.defender_user_id,
-        result.team2.attacker_user_id,
-    ]:
-        raise HTTPException(
-            status_code=400, detail="Submitter must be on one of the teams."
-        )
-    for user_id in [
-        result.team1.defender_user_id,
-        result.team1.attacker_user_id,
-        result.team1.attacker_user_id,
-        result.team2.defender_user_id,
-    ]:
-        if not await get_user(session=session, user_id=user_id):
-            raise HTTPException(
-                status_code=400, detail=f"One of the user id's does not exist."
-            )
-    result = await result_crud.create_result(session=session, submitter=current_user, result=result)
-
-    # Add ML prediction background tasks
-    ml_models = await get_ml_models(session=session)
-    ml_data_frame = await get_ml_data(
-        session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION, result_id_to_predict=result.id
-    )
-    ml_data = DataForMLInternal(data=[RowForMLInternal(**r) for r in ml_data_frame.to_dict(orient="records")])
-    for ml_model in ml_models:
-        ml_prediction_background_tasks.add_task(
-            single_prediction_task,
-            result_id=result.id,
-            ml_model=ml_model,
-            ml_data=ml_data,
-            session=session,
-        )
-    return result
-
-
-@router.get("/results/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
-async def read_results(
-        for_approval: bool = False,
-        skip: int = 0,
-        limit: int = 100,
-        user_id: Optional[int] = None,
-        session: AsyncSession = Depends(get_session)
-):
-    results = await result_crud.get_results(session, skip=skip, limit=limit, for_approval=for_approval, user_id=user_id)
-    return results
-
-
-@router.get("/results/{result_id}", response_model=result_models.ResultSubmissionRead, tags=["results"])
-async def read_result(result_id: int, session: AsyncSession = Depends(get_session)):
-    result = await result_crud.get_result(session, result_id=result_id)
-    if result is None:
-        raise HTTPException(status_code=404, detail="Result not found")
-    return result

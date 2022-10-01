@@ -3,8 +3,7 @@ from typing import Optional, List
 from sqlalchemy import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from models.ml import MLModel, MLModelCreate, Prediction, DataForMLInternal, DataForML
-from services.ml import get_ml_prediction
+from models.ml import MLModel, MLModelCreate, Prediction
 
 
 async def create_ml_model(
@@ -65,32 +64,4 @@ async def add_prediction(
     session.add(prediction)
     await session.commit()
     await session.refresh(prediction)
-    return prediction
-
-
-async def single_prediction_task(
-    result_id: int,
-    ml_model: MLModel,
-    ml_data: DataForMLInternal,
-    session: AsyncSession,
-):
-    """Make prediction and register prediction using an ML model API"""
-
-    # Get data for prediction, without columns we don't want to send to the ML endpoint
-    data_for_prediction = DataForML.parse_obj(ml_data)
-    prediction = await get_ml_prediction(url=ml_model.model_url, data_for_prediction=data_for_prediction)
-
-    if not prediction:
-        return None
-
-    # Get the row that the prediction is to be used on
-    row_to_predict = [r for r in ml_data.data if r.result_to_predict][0]
-    # If the teams have been switched (not shown to the algorithm), we correct the prediction
-    if row_to_predict.teams_switched:
-        prediction = -prediction
-
-    # Add prediction to db
-    prediction = await add_prediction(
-        session=session, model_id=ml_model.id, result_id=result_id, predicted_goal_diff=prediction
-    )
     return prediction
