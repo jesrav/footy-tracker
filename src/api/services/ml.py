@@ -17,7 +17,7 @@ from starlette.background import BackgroundTasks
 from core.deps import get_session
 from crud.ml import get_ml_models, add_prediction
 from crud.rating import get_latest_ratings
-from models.ml import DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel
+from models.ml import DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction
 from core.config import settings
 from models.result import ResultSubmission
 from models.team import UsersForTeamsSuggestion, TeamsSuggestion, TeamCreate
@@ -28,7 +28,7 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[i
 
     The prediction is supposed to be made for the row `RowForML` with attribute result_to_predict = True.
 
-    If we do not get a succesful response with a status code 200, where the json content is an integer,
+    If we do not get a successful response with a status code 200, where the json content is an integer,
     we return None
     """
     async with httpx.AsyncClient() as client:
@@ -49,7 +49,7 @@ async def single_prediction_task(
     ml_model: MLModel,
     ml_data: DataForMLInternal,
     session: AsyncSession,
-) -> Union[int, None]:
+) -> Union[Prediction, None]:
     """Make prediction for a specific result id using an ML model API and write prediction to db.
 
     If the API call is unsuccessful we return None and no prediction is written to the db.
@@ -204,7 +204,7 @@ async def suggest_most_fair_teams(
     for user_comb in possible_user_combinations:
         combination_date_for_pred = RowForML(
             result_to_predict=True,
-            result_dt= datetime.now(),
+            result_dt=datetime.now(),
             team1_defender_user_id=user_comb[0],
             team1_attacker_user_id=user_comb[1],
             team2_defender_user_id=user_comb[2],
@@ -259,7 +259,6 @@ async def randomize_team_order(df: pd.DataFrame) -> pd.DataFrame:
     team2_cols = [col for col in df.columns if "team2" in col]
     df.loc[teams_switched, team1_cols + team2_cols] = df.loc[teams_switched, team2_cols + team1_cols].values
     return df
-
 
 
 async def add_ml_target(df: pd.DataFrame) -> pd.DataFrame:
