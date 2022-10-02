@@ -4,19 +4,19 @@ services:
 
   api:
     build: ../api
-    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 81
+    entrypoint: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 81
     ports:
       - "8001:81"
     environment:
     - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/footy
-    - ML_MODEL_API_BASE_URL=http://ml_api:82/rating_based_predict
+    - ML_MODEL_URL=http://ml_api:82/rating_based_predict
     - JWT_SECRET=mysecret
     depends_on:
       - db
 
   ml_api:
     build: ../ml_api
-    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 82
+    entrypoint: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 82
     ports:
       - "8002:82"
   db:

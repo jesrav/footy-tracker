@@ -36,7 +36,7 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
 
-    ML_MODEL_API_BASE_URL: str
+    ML_MODEL_URL: str
 
     class Config:
         case_sensitive = True
