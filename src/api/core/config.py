@@ -3,6 +3,10 @@ from typing import List, Union
 
 
 class Settings(BaseSettings):
+
+    # ML Settings
+    N_HISTORICAL_ROWS_FOR_PREDICTION = 100
+
     # Rating settings
     INITIAL_USER_RATING = 1500
     ELO_WIDTH = 400
@@ -32,9 +36,10 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
 
+    ML_MODEL_API_BASE_URL: str
+
     class Config:
         case_sensitive = True
 
 
 settings = Settings()
-

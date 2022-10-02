@@ -2,7 +2,7 @@
 FROM python:3.9
 
 # set working directory
-WORKDIR /usr/src/api
+WORKDIR /usr/src/ml_api
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1

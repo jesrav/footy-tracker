@@ -34,7 +34,7 @@ async def login_user(email: str, password: str) -> Union[str, None]:
 async def get_me(bearer_token: str) -> Union[UserRead, None]:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(
-            url=BASE_WEB_API_URL + f"/me",
+            url=BASE_WEB_API_URL + f"/users/me",
             headers={"Authorization": f"Bearer {bearer_token}"}
         )
         if resp.status_code == 404:
@@ -55,7 +55,7 @@ async def update_user(user_updates: UserUpdate, bearer_token: str) -> Optional[U
     }
     async with httpx.AsyncClient() as client:
         resp: Response = await client.post(
-            url=BASE_WEB_API_URL + f"/me/update/",
+            url=BASE_WEB_API_URL + f"/users/me/update/",
             json=json_data,
             headers={"Authorization": f"Bearer {bearer_token}"},
         )

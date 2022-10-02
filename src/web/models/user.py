@@ -4,15 +4,13 @@ from typing import Optional
 import random
 
 from pydantic import BaseModel, validator
-
-
-BLOB_STORAGE_BASE_URL = os.environ['BLOB_STORAGE_BASE_URL']
+from config import settings
 
 
 def get_profile_pic_url_from_nickname(nickname: str) -> str:
     random.seed(nickname)
     image_number = random.choices(list(range(1, 906)))[0]
-    return f"{BLOB_STORAGE_BASE_URL}pokemons/{image_number}.png"
+    return f"{settings.BLOB_STORAGE_BASE_URL}/{settings.BLOB_PROFILE_IMAGE_CONTAINER}/pokemons/{image_number}.png"
 
 
 class UserReadUnauthorized(BaseModel):

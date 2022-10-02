@@ -196,3 +196,15 @@ async def get_result(session: AsyncSession, result_id: int) -> Optional[result_m
         joinedload('team2.attacker'),
     ))
     return db_result.scalars().first()
+
+
+async def get_latest_approve_result(session: AsyncSession) -> List[result_models.ResultSubmission]:
+
+    statement = (
+        select(result_models.ResultSubmission)
+        .filter(result_models.ResultSubmission.approved != None)
+        .order_by(result_models.ResultSubmission.id.desc())
+    )
+
+    db_result = await session.execute(statement)
+    return db_result.scalars().first()

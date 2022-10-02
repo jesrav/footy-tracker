@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  web:
+    build: ./src/web
+    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 80
+    ports:
+      - "8000:80"
+    environment:
+      - API_URL=http://api:81
+      - BLOB_STORAGE_BASE_URL=${BLOB_STORAGE_BASE_URL}
+      - BLOB_STORAGE_CON_STR=${BLOB_STORAGE_CON_STR}
+      - BLOB_PROFILE_IMAGE_CONTAINER=profileimages
+    depends_on:
+      - api
+
+  api:
+    build: src/api
+    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 81
+    ports:
+      - "8001:81"
+    environment:
+    - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/footy
+    - ML_MODEL_API_BASE_URL=http://ml_api:82/rating_based_predict
+    - JWT_SECRET=mysecret
+    depends_on:
+      - db
+
+  ml_api:
+    build: src/ml_api
+    command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 82
+    ports:
+      - "8002:82"
+  db:
+    image: postgres:13.4
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=footy
