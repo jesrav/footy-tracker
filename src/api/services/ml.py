@@ -227,7 +227,7 @@ async def suggest_most_fair_teams(
             data=[RowForML(**r) for r in ml_data.to_dict(orient="records")] + [combination_date_for_pred]
         )
         user_comb_predictions[user_comb] = await get_ml_prediction(
-            url=settings.ML_MODEL_API_BASE_URL, data_for_prediction=data_for_prediction
+            url=settings.ML_MODEL_URL, data_for_prediction=data_for_prediction
         )
 
     # Get user combinations with the lowest predicted goal difference
