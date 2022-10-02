@@ -1,9 +1,17 @@
 # FootyTracker
-A table soccer tracking web app.
+A table soccer tracking web app. Find a deployed version here: 
 
-A work in progress.
+Work in progress.
 
 # Get started
+Right now the development setup uses an Azure blob storage account for storing profile images, 
+so you will need to set that up to see and store user images.
+
+Copy and fill out the template for environment variable.
+```bash
+cp .env_example .env
+```
+
 To run the app locally in Docker
 ```bash
 docker-compose up
@@ -18,3 +26,6 @@ To stop the app, stop the containers. To kill the containers (You will lose the 
 ```bash
 docker-compose down
 ```
+
+# Development
+To develop and debug the individual components (web / api / ml_api), open subprojects individually.

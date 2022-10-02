@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     EGG_FACTOR = 1
 
     # JWT
-    JWT_SECRET: str
+    JWT_SECRET: str = "mysecret"
     ALGORITHM: str = "HS256"
 
     # OAUTH2
