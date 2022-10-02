@@ -1,24 +1,11 @@
-from pathlib import Path
-
 import fastapi
 import fastapi_chameleon
-import uvicorn
 from starlette.staticfiles import StaticFiles
 
 from views import home, account, tracking
+from config import settings
 
 app = fastapi.FastAPI()
-
-
-def main():
-    configure(dev_mode=True)
-    # noinspection PyTypeChecker
-    uvicorn.run(app, host='127.0.0.1', port=8001, debug=True)
-
-
-def configure(dev_mode: bool):
-    configure_templates(dev_mode)
-    configure_routes()
 
 
 def configure_templates(dev_mode: bool):
@@ -32,7 +19,5 @@ def configure_routes():
     app.include_router(tracking.router)
 
 
-if __name__ == '__main__':
-    main()
-else:
-    configure(dev_mode=False)
+configure_templates(dev_mode=settings.DEV_MODE)
+configure_routes()
