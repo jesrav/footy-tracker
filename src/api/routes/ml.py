@@ -12,10 +12,10 @@ from crud.ml import (
 )
 from core.deps import get_session
 from crud.result import get_latest_approve_result
+from crud.user import get_user
 from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel
 from models.team import TeamsSuggestion, UsersForTeamsSuggestion, TeamCreate
 from models.user import User
-#from services.ml import suggest_most_fair_teams, get_ml_data
 from services.ml import suggest_most_fair_teams
 
 router = APIRouter()
@@ -105,4 +105,14 @@ async def suggest_teams(
     users: UsersForTeamsSuggestion,
     session: AsyncSession = Depends(get_session),
 ):
+    for user_id in [
+        users.user_id_1,
+        users.user_id_2,
+        users.user_id_3,
+        users.user_id_4,
+    ]:
+        if not await get_user(session=session, user_id=user_id):
+            raise HTTPException(
+                status_code=400, detail=f"One of the user id's does not exist."
+            )
     return await suggest_most_fair_teams(users=users, session=session)
