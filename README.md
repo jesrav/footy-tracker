@@ -1,5 +1,5 @@
 # FootyTracker
-A table soccer tracking web app. Find a deployed version here: 
+A table soccer tracking web app. Find a deployed version here: https://footy-tracker.azurewebsites.net
 
 Work in progress.
 
