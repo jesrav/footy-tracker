@@ -4,6 +4,7 @@ from starlette import status
 from starlette.requests import Request
 
 from services import tracking_service
+from viewmodels.shared.viewmodel import ViewModelBase
 from viewmodels.tracking.approve_results_viewmodel import ApproveResultsViewModel
 from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
 from viewmodels.tracking.leaderboard_viewmodel import LeaderboardViewModel
@@ -77,3 +78,12 @@ async def approve_result(request: Request):
         bearer_token=vm.bearer_token
     )
     return fastapi.responses.RedirectResponse('/results_for_approval', status_code=status.HTTP_302_FOUND)
+
+
+@router.get('/suggest_teams')
+@template()
+async def suggest_teams(request: Request):
+    vm = ViewModelBase(request)
+    if vm.error:
+        return await vm.to_dict()
+    return await vm.to_dict()
