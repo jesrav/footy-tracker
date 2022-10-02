@@ -2,12 +2,13 @@ import fastapi
 from fastapi_chameleon import template
 from starlette import status
 from starlette.requests import Request
+from starlette.responses import HTMLResponse
 
 from services import tracking_service
-from viewmodels.shared.viewmodel import ViewModelBase
 from viewmodels.tracking.approve_results_viewmodel import ApproveResultsViewModel
 from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
 from viewmodels.tracking.leaderboard_viewmodel import LeaderboardViewModel
+from viewmodels.tracking.suggest_teams_viewmodel import SuggestTeamsViewModel
 from viewmodels.tracking.user_viewmodel import UserViewModel
 
 router = fastapi.APIRouter()
@@ -83,7 +84,39 @@ async def approve_result(request: Request):
 @router.get('/suggest_teams')
 @template()
 async def suggest_teams(request: Request):
-    vm = ViewModelBase(request)
+    vm = SuggestTeamsViewModel(request)
+    await vm.authorize()
+    if vm.redirect_response:
+        return vm.redirect_response
+    await vm.load()
+    return await vm.to_dict()
+
+
+@router.post('/suggest_teams', response_class=HTMLResponse)
+#@template()
+async def suggest_teams(request: Request):
+    vm = SuggestTeamsViewModel(request)
+
+    await vm.post_form()
+
     if vm.error:
         return await vm.to_dict()
-    return await vm.to_dict()
+    return f"""
+            <head>
+                <title>Some HTML in here</title>
+            </head>
+            <body>
+                <h1>team 1: {vm.user1}, {vm.user2}</h1>
+            </body>
+            <div class="field">
+                <div class="control">
+                    <button hx-get="/suggest_teams"
+                        onclick="location.href='/suggest_teams'"
+                        class="button is-primary"
+                    >
+                        Back to user selection
+                    </button>
+                </div>
+            </div>
+        """
+    #return fastapi.responses.HTMLResponse(content=)
