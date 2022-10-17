@@ -126,7 +126,7 @@
             <div class="column">
                 <div class="field">
                 <div class="control">
-                    <button type="submit" class="button is-primary">Submit</button>
+                    <button type="submit" class="button is-primary" id="submit-button">Submit</button>
                 </div>
                 </div>
             </div>
@@ -153,7 +153,7 @@
     const attackerTeam1Selection = document.querySelector('#attacker-team1')
     const defenderTeam2Selection = document.querySelector('#defender-team2')
     const attackerTeam2Selection = document.querySelector('#attacker-team2')
-
+    const submitButton = document.querySelector('#submit-button')
 
     // Event listeners to update the status and warning text of the elements containing goals for team 1 and team 2
     goalsTeam1.addEventListener('input', ()=>{
@@ -168,6 +168,9 @@
     attackerTeam1Selection.addEventListener('change', updateDropdownMenus);
     defenderTeam2Selection.addEventListener('change', updateDropdownMenus);
     attackerTeam2Selection.addEventListener('change', updateDropdownMenus);
+
+    // When the submit button is clicked, make the button have a spinner
+    submitButton.addEventListener('click', startSpinner)
 
 
     function updateGoalInputStatus(goalInputElement, goalWarningTextElement, goalInputStatusIconElement) {
@@ -231,6 +234,10 @@
 
     function unhide(element) {
         element.classList.remove('is-hidden')
+    }
+
+    function startSpinner() {
+        submitButton.classList.add('is-loading')
     }
 
     function isLargerThanZeroInteger(integerInput) {
