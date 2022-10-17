@@ -1,0 +1,153 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+        <div class="content">
+            <div class="container">
+                <div class="card">
+
+                    <header class="card-header p-3">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-64x64 mt-3">
+                                    <img src="/static/img/people-outline.svg" alt="football-icon">
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p class="title is-3 mt-4">team suggestion</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="card-content" id="team-suggestion">
+                        <form action="" method="POST" class="form">
+                            <div class="field">
+                                <label class="label">User 1</label>
+                                <div class="control has-icons-left">
+                                    <div class="select is-fullwidth">
+                                        <select name="user1" id="user1">
+                                            <option value="">Select user 1</option>
+                                            <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
+                                        </select>
+                                    </div>
+                                    <span class="icon is-small is-left">
+                                        <ion-icon name="person"></ion-icon>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">User 2</label>
+                                <div class="control">
+                                    <div class="control has-icons-left">
+                                        <div class="select is-fullwidth">
+                                            <select name="user2" id="user2">
+                                                <option value="">Select user 2</option>
+                                                <option tal:repeat="u users"
+                                                        value="${u.id}">${u.nickname}</option>
+                                            </select>
+                                        </div>
+                                        <span class="icon is-small is-left">
+                                            <ion-icon name="person"></ion-icon>
+                                        </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="label">User 3</label>
+                                        <div class="control has-icons-left">
+                                            <div class="select is-fullwidth">
+                                                <select name="user3" id="user3">
+                                                    <option value="">Select user 3</option>
+                                                    <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
+                                                </select>
+                                            </div>
+                                            <span class="icon is-small is-left">
+                                                <ion-icon name="person"></ion-icon>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <label class="label">User 4</label>
+                                        <div class="control has-icons-left">
+                                            <div class="select is-fullwidth">
+                                                <select name="user4" id="user4">
+                                                    <option value="">Select user 4</option>
+                                                    <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
+                                                </select>
+                                            </div>
+                                            <span class="icon is-small is-left">
+                                                <ion-icon name="person"></ion-icon>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="field">
+                                        <div class="control">
+                                            <button type="submit" class="button is-primary">Submit</button>
+                                        </div>
+                                    </div>
+
+                            <h5 class="help is-danger" tal:condition="error">${ error }</h5>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    const user1Selection = document.querySelector('#user1')
+    const user2Selection = document.querySelector('#user2')
+    const user3Selection = document.querySelector('#user3')
+    const user4Selection = document.querySelector('#user4')
+
+    // Event Listeners to update the possible dropdown user selections
+    user1Selection.addEventListener('change', updateDropdownMenus);
+    user2Selection.addEventListener('change', updateDropdownMenus);
+    user3Selection.addEventListener('change', updateDropdownMenus);
+    user4Selection.addEventListener('change', updateDropdownMenus);
+
+
+    function updateDropdownMenus() {
+
+        var dropdownMenus = [user1Selection, user2Selection, user3Selection, user4Selection]
+
+        for (let i = 0; i < dropdownMenus.length; i++) {
+
+            // Remove all previous is-hidden modifiers
+            for (let option of dropdownMenus[i].options) {
+                unhide(option)
+            }
+
+            // Find user selection in all dropdown menus except the one we are modifying
+            var otherDropDownMenus = [...dropdownMenus.slice(0, i), ...dropdownMenus.slice(i + 1, dropdownMenus.length)]
+
+            for (let otherDropdownMenu of otherDropDownMenus) {
+                // Hide element selected in other dropdown
+                if (otherDropdownMenu.options.selectedIndex !== 0) {
+                    hide(dropdownMenus[i].options[otherDropdownMenu.options.selectedIndex])
+                }
+            }
+        }
+    }
+
+    function hide(element) {
+        element.classList.add('is-hidden')
+    }
+
+    function unhide(element) {
+        element.classList.remove('is-hidden')
+    }
+
+    function isLargerThanZeroInteger(integerInput) {
+        const num = Number(integerInput);
+        return Number.isInteger(num) && num >= 0;
+    }
+
+</script>
+

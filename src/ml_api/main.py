@@ -4,7 +4,6 @@ FootyTracker ML microservice to predict goal difference of match.
 Right now it's just a sigmoid transformation of the difference in team ratings.
 """
 import math
-from random import choice
 
 from fastapi import FastAPI
 
@@ -13,7 +12,7 @@ from schemas import RowForML, DataForML
 app = FastAPI()
 
 
-def magic_footy_sigmoid(x):
+async def magic_footy_sigmoid(x):
     """"Magic footy sigmoid that outputs value between -10 and 10"""
     if x >= 0:
         z = math.exp(-x)
@@ -23,7 +22,7 @@ def magic_footy_sigmoid(x):
         return 20 * (z / (1 + z)) - 10
 
 
-def predict_goal_diff_based_on_ratings(result_to_predict: RowForML) -> int:
+async def predict_goal_diff_based_on_ratings(result_to_predict: RowForML) -> int:
     """"
     Naive rule to predict the result based on the teams combined rating
     """
@@ -37,10 +36,11 @@ def predict_goal_diff_based_on_ratings(result_to_predict: RowForML) -> int:
         result_to_predict.team2_attacker_offensive_rating_before_game
         + result_to_predict.team2_defender_defensive_rating_before_game
     ) / 2
-    return round(magic_footy_sigmoid((team1_rating - team2_rating) / magic_factor))
+    predicted_goal_diff = await magic_footy_sigmoid((team1_rating - team2_rating) / magic_factor)
+    return round(predicted_goal_diff)
 
 
 @app.post("/rating_based_predict")
-def predict(body: DataForML) -> int:
+async def predict(body: DataForML) -> int:
     result_to_predict = [r for r in body.data if r.result_to_predict][0]
-    return predict_goal_diff_based_on_ratings(result_to_predict)
+    return await predict_goal_diff_based_on_ratings(result_to_predict)

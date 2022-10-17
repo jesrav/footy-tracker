@@ -42,7 +42,8 @@
                         <div class="control has-icons-left">
                             <div class="select is-fullwidth">
                                 <select name="team1_defender" id="defender-team1">
-                                    <option value="">Select team 1 defender</option>
+                                    <option tal:condition="team1_defender is not None" value="${team1_defender.id}">${team1_defender.nickname}</option>
+                                    <option tal:condition="team1_defender is None" value="">Select team 1 defender</option>
                                     <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
                                 </select>
                             </div>
@@ -58,7 +59,8 @@
                             <div class="control has-icons-left">
                                 <div class="select is-fullwidth">
                                     <select name="team1_attacker" id="attacker-team1">
-                                        <option value="">Select team 1 attacker</option>
+                                        <option tal:condition="team1_attacker is not None" value="${team1_attacker.id}">${team1_attacker.nickname}</option>
+                                        <option tal:condition="team1_attacker is None" value="">Select team 1 attacker</option>
                                         <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
                                     </select>
                                 </div>
@@ -91,7 +93,8 @@
                         <div class="control has-icons-left">
                             <div class="select is-fullwidth">
                                 <select name="team2_defender" id="defender-team2">
-                                    <option value="">Select team 2 defender</option>
+                                    <option tal:condition="team2_defender is not None" value="${team2_defender.id}">${team2_defender.nickname}</option>
+                                    <option tal:condition="team2_defender is None" value="">Select team 2 defender</option>
                                     <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
                                 </select>
                             </div>
@@ -106,7 +109,9 @@
                         <div class="control has-icons-left">
                             <div class="select is-fullwidth">
                                 <select  name="team2_attacker" id="attacker-team2">
-                                    <option value="">Select team 2 attacker</option>
+                                    <option tal:condition="team2_attacker is not None" value="${team2_attacker.id}">${team2_attacker.nickname}</option>
+                                    <option tal:condition="team2_attacker is None" value="">Select team 2 attacker
+                                    </option>
                                     <option tal:repeat="u users" value="${u.id}">${u.nickname}</option>
                                 </select>
                             </div>

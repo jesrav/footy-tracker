@@ -9,7 +9,7 @@ services:
       - "8001:81"
     environment:
     - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/footy
-    - ML_MODEL_URL=http://ml_api:82/rating_based_predict
+    - ML_MODEL_API_BASE_URL=http://ml_api:82/rating_based_predict
     - JWT_SECRET=mysecret
     depends_on:
       - db

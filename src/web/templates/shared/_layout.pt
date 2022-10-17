@@ -41,6 +41,10 @@
                 Submit a result
             </a>
 
+            <a tal:condition="is_logged_in" class="navbar-item" href="/suggest_teams">
+                Suggest teams
+            </a>
+
             <a tal:condition="is_logged_in" class="navbar-item" href="/results_for_approval">
                 Results awaiting approval
             </a>
@@ -96,7 +100,7 @@
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-
+<script src="https://unpkg.com/htmx.org@1.8.0" integrity="sha384-cZuAZ+ZbwkNRnrKi05G/fjBX+azI9DNOkNYysZ0I/X5ZFgsmMiBXgDZof30F5ofc" crossorigin="anonymous"></script>
 <div metal:define-slot="additional-js" tal:omit-tag="True"></div>
 
 </body>

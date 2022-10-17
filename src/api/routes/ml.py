@@ -100,7 +100,7 @@ async def read_ml_models_for_user(
     return await get_ml_models_by_user(session, user_id=current_user.id)
 
 
-@router.post("/ml/sugest_teams/", tags=["ml"])
+@router.post("/ml/suggest_teams/", tags=["ml"])
 async def suggest_teams(
     users: UsersForTeamsSuggestion,
     session: AsyncSession = Depends(get_session),

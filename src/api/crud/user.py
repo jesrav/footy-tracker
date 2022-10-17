@@ -25,6 +25,8 @@ async def update_user(session: AsyncSession, user_id: int, user_updates: user_mo
         user.motto = user_updates.motto
     if user_updates.profile_pic_path:
         user.profile_pic_path = user_updates.profile_pic_path
+    if user_updates.password:
+        user.hash_password = get_password_hash(user_updates.password)
     await session.commit()
     await session.refresh(user)
     return user

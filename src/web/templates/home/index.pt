@@ -12,7 +12,7 @@
                         </figure>
                     </div>
                     <div class="media-content">
-                        <p class="title is-2 mt-4">FootyTracker</p>
+                        <p class="title is-2 mt-4">Footy&shy;Tracker</p>
                     </div>
                 </div>
             </header>
@@ -39,7 +39,15 @@
                           <span class="icon is-large">
                             <ion-icon name="football"></ion-icon>
                           </span>
-                            <span>Submit a result</span>
+                        <span>Submit a result</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button is-large is-fullwidth" onclick="location.href='/suggest_teams'">
+                          <span class="icon is-large">
+                            <ion-icon name="people-outline"></ion-icon>
+                          </span>
+                          <span>team suggestion</span>
                         </button>
                     </div>
                     <div class="column">
