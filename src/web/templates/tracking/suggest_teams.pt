@@ -19,7 +19,7 @@
                     </header>
 
                     <div class="card-content" id="team-suggestion">
-                        <form action="" method="POST" class="form" hx-post="/suggest_teams">
+                        <form action="" method="POST" class="form">
                             <div class="field">
                                 <label class="label">User 1</label>
                                 <div class="control has-icons-left">
@@ -150,6 +150,4 @@
     }
 
 </script>
-
-<!--?<script src="/static/js/htmx.min.js"></script>-->
 

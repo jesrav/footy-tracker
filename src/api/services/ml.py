@@ -1,3 +1,4 @@
+import asyncio
 import itertools
 import json
 from datetime import datetime
@@ -199,9 +200,7 @@ async def suggest_most_fair_teams(
     # Create all combinations of users
     possible_user_combinations = list(itertools.permutations(user_ids))
 
-    # For each user combination, we predict the goal difference
-    user_comb_predictions: dict = {}
-    for user_comb in possible_user_combinations:
+    async def preparare_data_and_get_prediction(user_comb):
         combination_date_for_pred = RowForML(
             result_to_predict=True,
             result_dt=datetime.now(),
@@ -226,16 +225,20 @@ async def suggest_most_fair_teams(
         data_for_prediction = DataForML(
             data=[RowForML(**r) for r in ml_data.to_dict(orient="records")] + [combination_date_for_pred]
         )
-        user_comb_predictions[user_comb] = await get_ml_prediction(
+        return await get_ml_prediction(
             url=settings.ML_MODEL_URL, data_for_prediction=data_for_prediction
         )
+    # For each user combination, we predict the goal difference, with an async call to the prediction API
+    results = await asyncio.gather(*map(preparare_data_and_get_prediction, possible_user_combinations))
 
     # Get user combinations with the lowest predicted goal difference
-    min_goal_diffs = min(user_comb_predictions.values())
-    user_combinations_with_mon_expected_goal_dff = [k for k, v in user_comb_predictions.items() if v == min_goal_diffs]
+    min_goal_diffs = min(results)
+    user_combinations_with_min_expected_goal_diff = [
+        uc for i, uc in enumerate(possible_user_combinations) if results[i] == min_goal_diffs
+    ]
 
     # Return a random user combination among the ones with the lowest expected goal difference
-    suggested_user_comb = choice(user_combinations_with_mon_expected_goal_dff)
+    suggested_user_comb = choice(user_combinations_with_min_expected_goal_diff)
     return TeamsSuggestion(
         team1=TeamCreate(
             defender_user_id=suggested_user_comb[0],

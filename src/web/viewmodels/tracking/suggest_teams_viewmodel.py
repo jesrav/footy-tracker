@@ -3,11 +3,10 @@ from typing import List, Optional
 
 from starlette.requests import Request
 
-from models.result import ResultSubmissionCreate
-from models.team import TeamCreate, UsersForTeamsSuggestion, TeamsSuggestion
+from models.team import UsersForTeamsSuggestion, TeamsSuggestion
 from models.user import UserReadUnauthorized
 from models.validation_error import ValidationError
-from services import user_service, tracking_service
+from services import ml_service, user_service
 from viewmodels.shared.viewmodel import ViewModelBase
 
 
@@ -48,25 +47,16 @@ class SuggestTeamsViewModel(ViewModelBase):
                 self.error = "Match contestants must be 4 unique users."
 
         else:
-            self.suggested_teams = TeamsSuggestion(
-                team1=TeamCreate(defender_user_id=self.user1, attacker_user_id=self.user2),
-                team2=TeamCreate(defender_user_id=self.user3, attacker_user_id=self.user4),
-            )
-            # # Try to get a team suggestion
-            # try:
-            #     result = ResultSubmissionCreate(
-            #         submitter_id=self.user_id,
-            #         team1=TeamCreate(
-            #             defender_user_id=self.team1_defender,
-            #             attacker_user_id=self.team1_attacker,
-            #         ),
-            #         team2=TeamCreate(
-            #             defender_user_id=self.team2_defender,
-            #             attacker_user_id=self.team2_attacker,
-            #         ),
-            #         goals_team1=self.goals_team1,
-            #         goals_team2=self.goals_team2,
-            #     )
-            #     _ = await tracking_service.register_result(result, bearer_token=self.bearer_token)
-            # except ValidationError as e:
-            #     self.error = e.error_msg
+            # Try to get a team suggestion
+            try:
+                self.suggested_teams = await ml_service.get_teams_suggestion(
+                    users=UsersForTeamsSuggestion(
+                        user_id_1=self.user1,
+                        user_id_2=self.user2,
+                        user_id_3=self.user3,
+                        user_id_4=self.user4,
+                    ),
+                    bearer_token=self.bearer_token
+                )
+            except ValidationError as e:
+                self.error = e.error_msg
