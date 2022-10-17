@@ -32,10 +32,11 @@ class TeamRead(BaseModel):
             return None
 
     def get_teammate(self, user_id) -> Optional[UserReadUnauthorized]:
-        if not self.user_in_team(user_id):
-            return None
-        else:
-            return [user for user in self.get_team_members() if user.id != user_id][0]
+        return (
+            [user for user in self.get_team_members() if user.id != user_id][0]
+            if self.user_in_team(user_id)
+            else None
+        )
 
 
 class TeamsSuggestion(BaseModel):

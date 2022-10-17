@@ -61,9 +61,8 @@ async def create_user(session: AsyncSession, user: user_models.UserCreate, commi
     session.add(user)
     if commit_changes:
         await session.commit()
-        await session.refresh(user)
     else:
         # Update the user object with autoincrement id from db without committing
         await session.flush()
-        await session.refresh(user)
+    await session.refresh(user)
     return user
