@@ -8,13 +8,13 @@ from starlette.responses import StreamingResponse
 from core import deps
 from core.config import settings
 from crud.ml import (
-    create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user
+    create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions
 )
 from core.deps import get_session
 from crud.result import get_latest_approve_result
 from crud.user import get_user
-from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel
-from models.team import TeamsSuggestion, UsersForTeamsSuggestion, TeamCreate
+from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead
+from models.team import UsersForTeamsSuggestion
 from models.user import User
 from services.ml import suggest_most_fair_teams
 
@@ -116,3 +116,10 @@ async def suggest_teams(
                 status_code=400, detail=f"One of the user id's does not exist."
             )
     return await suggest_most_fair_teams(users=users, session=session)
+
+
+@router.get("/ml/predictions/", response_model=List[PredictionRead], tags=["ml"])
+async def read_ml_predictions(
+    session: AsyncSession = Depends(get_session),
+):
+    return await get_predictions(session)

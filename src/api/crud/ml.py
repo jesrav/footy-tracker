@@ -1,9 +1,10 @@
 from typing import Optional, List
 
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from models.ml import MLModel, MLModelCreate, Prediction
+from models.ml import MLModel, MLModelCreate, Prediction, PredictionRead
 
 
 async def create_ml_model(
@@ -65,3 +66,25 @@ async def add_prediction(
     await session.commit()
     await session.refresh(prediction)
     return prediction
+
+
+async def get_predictions(session: AsyncSession) -> List[PredictionRead]:
+    statement = select(Prediction)
+    result = await session.execute(statement.options(joinedload('result'),))
+    predictions = result.scalars().all()
+    predictions_read = []
+    for prediction in predictions:
+        predictions_read.append(
+            PredictionRead(
+                id=prediction.id,
+                ml_model_id=prediction.ml_model_id,
+                result_id=prediction.result_id,
+                predicted_goal_diff=prediction.predicted_goal_diff,
+                result_goal_diff=(
+                    prediction.result.goals_team1 - prediction.result.goals_team2
+                    if prediction.result.approved else None
+                ),
+                created_dt=prediction.created_dt,
+            )
+        )
+    return predictions_read
