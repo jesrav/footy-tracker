@@ -47,7 +47,7 @@
                           <span class="icon is-large">
                             <ion-icon name="people-outline"></ion-icon>
                           </span>
-                          <span>team suggestion</span>
+                          <span>Team suggestion</span>
                         </button>
                     </div>
                     <div class="column">
@@ -64,6 +64,14 @@
                                 <ion-icon name="medal-outline"></ion-icon>
                             </span>
                             <span>Leader board</span>
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button is-large is-fullwidth" onclick="location.href='/ai_leaderboard'">
+                            <span class="icon is-large">
+                                <ion-icon name="dice-outline"></ion-icon>
+                            </span>
+                            <span>ML Leader board</span>
                         </button>
                     </div>
                 </div>
