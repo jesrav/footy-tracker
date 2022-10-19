@@ -88,6 +88,8 @@ async def approve_result(request: Request):
     if vm.error:
         return await vm.to_dict()
 
+    await vm.load_form()
+
     _ = await tracking_service.validate_result(
         result_id=vm.result_id,
         approved=vm.approved,
