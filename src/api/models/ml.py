@@ -72,7 +72,7 @@ class Prediction(SQLModel, table=True):
 
 
 class PredictionRead(SQLModel):
-    id: Optional[int]
+    id: int
     ml_model_id: int
     result_id: int
     predicted_goal_diff: int
@@ -80,7 +80,16 @@ class PredictionRead(SQLModel):
     result_goal_diff: Optional[float]
 
 
-class RollingMAE(SQLModel):
-    prediction_id: Optional[int]
-    rolling_mae: float
+
+class MLMetric(SQLModel, talbe=True):
+    prediction_id: int
+    ml_model_id: int
     prediction_dt: datetime
+    rolling_mae: float
+
+
+class RollingMAE(SQLModel):
+    prediction_id: int
+    ml_model_id: int
+    prediction_dt: datetime
+    rolling_mae: float

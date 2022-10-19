@@ -1,6 +1,7 @@
 import asyncio
 import itertools
 import json
+import math
 from datetime import datetime
 from random import choice
 from typing import Union, List
@@ -16,9 +17,10 @@ import pandas as pd
 from starlette.background import BackgroundTasks
 
 from core.deps import get_session
-from crud.ml import get_ml_models, add_prediction
+from crud.ml import get_ml_models, add_prediction, update_ml_metrics
 from crud.rating import get_latest_ratings
-from models.ml import DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction
+from models.ml import DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction, PredictionRead, \
+    RollingMAE, MLMetric
 from core.config import settings
 from models.result import ResultSubmission
 from models.team import UsersForTeamsSuggestion, TeamsSuggestion, TeamCreate
@@ -114,6 +116,34 @@ async def add_prediction_background_tasks(
             ml_data=ml_data,
             session=session,
         )
+
+
+def update_ml_metrics_from_predictions(predictions: List[PredictionRead]):
+    rolling_maes = get_rolling_maes(predictions)
+    ml_metrics = [MLMetric(**r) for r in rolling_maes.dict()]
+    update_ml_metrics(ml_metrics)
+
+
+def mean_absolute_error(y_pred: float, y_actual: int) -> float:
+    return abs(y_pred - y_actual)
+
+
+def get_rolling_maes(predictions: List[PredictionRead]) -> List[RollingMAE]:
+    predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'], ascending=False)
+    predictions_df['mae'] = predictions_df.apply(lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1)
+    predictions_df["rolling_mae"] = (
+        predictions_df.groupby('ml_model_id')["mae"]
+        .rolling(window=settings.METRICS_WINDOW, min_periods=1)
+        .mean().reset_index()["mae"]
+    )
+    predictions_df = predictions_df.rename(columns={'created_dt': 'prediction_dt', "id": "prediction_id"})
+    rolling_mae_data = predictions_df.to_dict('records')
+    for rec in rolling_mae_data:
+        rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
+        rec['rolling_mae'] = None if math.isnan(rec['rolling_mae']) else rec['rolling_mae']
+    rolling_maes = [RollingMAE(**row) for row in rolling_mae_data]
+    return rolling_maes
 
 
 async def get_ml_data(
