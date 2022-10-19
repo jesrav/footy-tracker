@@ -27,7 +27,7 @@ from models.result import ResultSubmission
 from models.team import UsersForTeamsSuggestion, TeamsSuggestion, TeamCreate
 
 
-async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[int, None]:
+async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[float, None]:
     """Get prediction for goal difference (team1 goals - team2 goals) from ML microservice
 
     The prediction is supposed to be made for the row `RowForML` with attribute result_to_predict = True.

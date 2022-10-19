@@ -55,7 +55,7 @@ async def get_ml_model_by_url(session: AsyncSession, url: str) -> Optional[MLMod
 
 
 async def add_prediction(
-        session: AsyncSession, model_id: int, result_id: int, predicted_goal_diff: int
+        session: AsyncSession, model_id: int, result_id: int, predicted_goal_diff: float
 ) -> Prediction:
     prediction = Prediction(
         ml_model_id=model_id,

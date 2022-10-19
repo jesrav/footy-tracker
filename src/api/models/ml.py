@@ -66,7 +66,7 @@ class Prediction(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     ml_model_id: int = Field(default=None, foreign_key="mlmodel.id")
     result_id: int = Field(default=None, foreign_key="resultsubmission.id")
-    predicted_goal_diff: int
+    predicted_goal_diff: float
     created_dt: datetime = Field(default_factory=datetime.utcnow)
     result: "ResultSubmission" = Relationship()
 
@@ -75,7 +75,7 @@ class PredictionRead(SQLModel):
     id: int
     ml_model_id: int
     result_id: int
-    predicted_goal_diff: int
+    predicted_goal_diff: float
     created_dt: datetime
     result_goal_diff: Optional[float]
 
@@ -87,6 +87,6 @@ class MLMetric(SQLModel, table=True):
     ml_model_id: int
     prediction_dt: datetime
     result_goal_diff: int
-    predicted_goal_diff: int
+    predicted_goal_diff: float
     rolling_mae: float
 
