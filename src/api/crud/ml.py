@@ -96,12 +96,7 @@ async def get_ml_metrics(session: AsyncSession) -> List[MLMetric]:
     return result.scalars().all()
 
 
-async def update_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> None:
-    # Truncate table
-    statement = delete(MLMetric)
-    _ = await session.execute(statement)
-
-    # Insert new ML Metrics
+async def add_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> None:
     for ml_metric in ml_metrics:
         session.add(ml_metric)
     await session.commit()
