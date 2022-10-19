@@ -32,7 +32,8 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[i
     If we do not get a successful response with a status code 200, where the json content is an integer,
     we return None
     """
-    async with httpx.AsyncClient() as client:
+    timeout = httpx.Timeout(10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         resp: Response = await client.post(
             url=url,
             json=json.loads(data_for_prediction.json()),

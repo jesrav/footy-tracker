@@ -13,7 +13,7 @@
                                 </figure>
                             </div>
                             <div class="media-content">
-                                <p class="title is-3 mt-4">Team suggestion</p>
+                                <p class="title is-3 mt-4">team suggestion</p>
                             </div>
                         </div>
                     </header>
@@ -83,9 +83,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="field">
+                                    <div class="field" id="test">
                                         <div class="control">
-                                            <button type="submit" class="button is-primary">Submit</button>
+                                            <button type="submit" class="button is-primary" id="submit-button" onclick="console.log('did stuff inline');">Submit</button>
                                         </div>
                                     </div>
 
@@ -105,12 +105,16 @@
     const user2Selection = document.querySelector('#user2')
     const user3Selection = document.querySelector('#user3')
     const user4Selection = document.querySelector('#user4')
+    const submitButton = document.querySelector('#submit-button')
 
     // Event Listeners to update the possible dropdown user selections
     user1Selection.addEventListener('change', updateDropdownMenus);
     user2Selection.addEventListener('change', updateDropdownMenus);
     user3Selection.addEventListener('change', updateDropdownMenus);
     user4Selection.addEventListener('change', updateDropdownMenus);
+
+    // When the submit button is clicked, make the button have a spinner
+    submitButton.addEventListener('click', startSpinner)
 
 
     function updateDropdownMenus() {
@@ -136,6 +140,7 @@
         }
     }
 
+
     function hide(element) {
         element.classList.add('is-hidden')
     }
@@ -143,6 +148,11 @@
     function unhide(element) {
         element.classList.remove('is-hidden')
     }
+
+    function startSpinner() {
+        submitButton.classList.add('is-loading')
+    }
+
 
     function isLargerThanZeroInteger(integerInput) {
         const num = Number(integerInput);
