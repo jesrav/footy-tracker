@@ -19,8 +19,9 @@ from starlette.background import BackgroundTasks
 from core.deps import get_session
 from crud.ml import get_ml_models, add_prediction, add_ml_metrics, get_predictions, get_ml_metrics
 from crud.rating import get_latest_ratings
-from models.ml import DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction, PredictionRead, \
-    RollingMAE, MLMetric
+from models.ml import (
+    DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction, PredictionRead, MLMetric
+)
 from core.config import settings
 from models.result import ResultSubmission
 from models.team import UsersForTeamsSuggestion, TeamsSuggestion, TeamCreate
@@ -121,10 +122,7 @@ async def add_prediction_background_tasks(
 async def update_ml_metrics_from_predictions(session: AsyncSession):
     """Add model metrics for any new approved results"""
     predictions = await get_predictions(session=session)
-    existing_ml_metrics = await get_ml_metrics(session=session)
-    new_predictions = [p for p in predictions if p.id not in [m.prediction_id for m in existing_ml_metrics]]
-    rolling_maes = get_rolling_maes(new_predictions)
-    ml_metrics = [MLMetric(**r.dict()) for r in rolling_maes]
+    ml_metrics = calculate_ml_metrics(predictions)
     await add_ml_metrics(ml_metrics, session=session)
 
 
@@ -132,27 +130,27 @@ def mean_absolute_error(y_pred: float, y_actual: int) -> float:
     return abs(y_pred - y_actual)
 
 
-def get_rolling_maes(predictions: List[PredictionRead]) -> List[RollingMAE]:
+def calculate_ml_metrics(predictions: List[PredictionRead]) -> List[MLMetric]:
     """Calculate rolling means absolute error for each model."""
     # Only use results that have a goal dif (They have been approved)
     predictions = [pred for pred in predictions if pred.result_goal_diff is not None]
 
     predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
-    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'], ascending=False)
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
     predictions_df['mae'] = predictions_df.apply(lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1)
     predictions_df["rolling_mae"] = (
         predictions_df.groupby('ml_model_id')["mae"]
         .rolling(window=settings.METRICS_WINDOW_SIZE, min_periods=1)
-        .mean().reset_index()["mae"]
+        .mean().values
     )
     predictions_df = predictions_df.rename(columns={'created_dt': 'prediction_dt', "id": "prediction_id"})
-    rolling_mae_data = predictions_df.to_dict('records')
-    for rec in rolling_mae_data:
+    ml_metrics_data = predictions_df.to_dict('records')
+    for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
         rec['rolling_mae'] = None if math.isnan(rec['rolling_mae']) else rec['rolling_mae']
 
-    rolling_maes = [RollingMAE(**row) for row in rolling_mae_data]
-    return rolling_maes
+    ml_metrics = [MLMetric(**row) for row in ml_metrics_data]
+    return ml_metrics
 
 
 async def get_ml_data(

@@ -97,6 +97,8 @@ async def get_ml_metrics(session: AsyncSession) -> List[MLMetric]:
 
 
 async def add_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> None:
-    for ml_metric in ml_metrics:
+    existing_ml_metrics = await get_ml_metrics(session=session)
+    new_ml_metrics = [m for m in ml_metrics if m.prediction_id not in [m.prediction_id for m in existing_ml_metrics]]
+    for ml_metric in new_ml_metrics:
         session.add(ml_metric)
     await session.commit()

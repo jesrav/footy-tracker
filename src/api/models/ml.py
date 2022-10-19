@@ -86,12 +86,7 @@ class MLMetric(SQLModel, table=True):
     result_id: int
     ml_model_id: int
     prediction_dt: datetime
+    result_goal_diff: int
+    predicted_goal_diff: int
     rolling_mae: float
 
-
-class RollingMAE(SQLModel):
-    prediction_id: int
-    result_id: int
-    ml_model_id: int
-    prediction_dt: datetime
-    rolling_mae: float
