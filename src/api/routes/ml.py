@@ -8,7 +8,8 @@ from starlette.responses import StreamingResponse
 from core import deps
 from core.config import settings
 from crud.ml import (
-    create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions
+    create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions,
+    get_ml_metrics
 )
 from core.deps import get_session
 from crud.result import get_latest_approve_result
@@ -122,4 +123,6 @@ async def suggest_teams(
 async def read_ml_predictions(
     session: AsyncSession = Depends(get_session),
 ):
-    return await get_predictions(session)
+    predictions =  await get_predictions(session)
+    test = get_ml_metrics(predictions)
+    return test

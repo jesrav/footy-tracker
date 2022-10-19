@@ -3,7 +3,7 @@ import itertools
 import json
 from datetime import datetime
 from random import choice
-from typing import Union
+from typing import Union, List
 
 from numpy import random
 import httpx

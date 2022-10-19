@@ -78,3 +78,9 @@ class PredictionRead(SQLModel):
     predicted_goal_diff: int
     created_dt: datetime
     result_goal_diff: Optional[float]
+
+
+class RollingMAE(SQLModel):
+    prediction_id: Optional[int]
+    rolling_mae: float
+    prediction_dt: datetime

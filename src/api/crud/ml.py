@@ -1,10 +1,11 @@
 from typing import Optional, List
 
+import pandas as pd
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from models.ml import MLModel, MLModelCreate, Prediction, PredictionRead
+from models.ml import MLModel, MLModelCreate, Prediction, PredictionRead, RollingMAE
 
 
 async def create_ml_model(
@@ -88,3 +89,16 @@ async def get_predictions(session: AsyncSession) -> List[PredictionRead]:
             )
         )
     return predictions_read
+
+
+def mean_absolute_error(y_pred: float, y_actual: int) -> float:
+    return abs(y_pred - y_actual)
+
+
+def get_ml_metrics(predictions: PredictionRead) -> List[RollingMAE]:
+    window = 5
+    predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'], ascending=False)
+    predictions_df['mae'] = predictions_df.apply(lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1)
+    predictions_df["rolling_model_mae"] = predictions_df.groupby('ml_model_id')["mae"].rolling(window=window, min_periods=1).mean().reset_index()["mae"]
+    return predictions_df
