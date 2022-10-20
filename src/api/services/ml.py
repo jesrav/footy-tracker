@@ -359,10 +359,8 @@ latest_user_rating as (
   	  where latest_result_at_update_id is not null
    group by user_id
    ) sub
-   on r.latest_result_at_update_id = sub.max_result_id
+   on r.latest_result_at_update_id = sub.max_result_id and r.user_id = sub.user_id
 )    
-
-
         select 
             rs.id as result_id,
             rs.created_dt as result_dt,

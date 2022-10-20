@@ -12,12 +12,12 @@ from crud.ml import (
     get_ml_metrics
 )
 from core.deps import get_session
-from crud.result import get_latest_approve_result
+from crud.result import get_latest_approved_result
 from crud.user import get_user
 from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead, MLMetric
 from models.team import UsersForTeamsSuggestion
 from models.user import User
-from services.ml import suggest_most_fair_teams, get_ml_data, calculate_ml_metrics
+from services.ml import suggest_most_fair_teams, get_ml_data
 
 router = APIRouter()
 
@@ -51,11 +51,11 @@ async def get_ml_training_data_json(
 async def get_ml_prediction_data_example_json(
     session: AsyncSession = Depends(get_session)
 ):
-    latest_approved_result= await get_latest_approve_result(session)
+    latest_approved_result = await get_latest_approved_result(session)
     results_with_features_df = await get_ml_data(
         session=session,
         n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION + 1,
-        result_id_to_predict=latest_approved_result.id
+        result_id_to_predict=latest_approved_result.id,
     )
     return {
         "data": results_with_features_df.to_dict(orient='records')
