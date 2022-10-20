@@ -198,7 +198,7 @@ async def get_result(session: AsyncSession, result_id: int) -> Optional[result_m
     return db_result.scalars().first()
 
 
-async def get_latest_approve_result(session: AsyncSession) -> List[result_models.ResultSubmission]:
+async def get_latest_approved_result(session: AsyncSession) -> List[result_models.ResultSubmission]:
 
     statement = (
         select(result_models.ResultSubmission)

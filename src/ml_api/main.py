@@ -22,7 +22,7 @@ async def magic_footy_sigmoid(x):
         return 20 * (z / (1 + z)) - 10
 
 
-async def predict_goal_diff_based_on_ratings(result_to_predict: RowForML) -> int:
+async def predict_goal_diff_based_on_ratings(result_to_predict: RowForML) -> float:
     """"
     Naive rule to predict the result based on the teams combined rating
     """
@@ -36,11 +36,17 @@ async def predict_goal_diff_based_on_ratings(result_to_predict: RowForML) -> int
         result_to_predict.team2_attacker_offensive_rating_before_game
         + result_to_predict.team2_defender_defensive_rating_before_game
     ) / 2
-    predicted_goal_diff = await magic_footy_sigmoid((team1_rating - team2_rating) / magic_factor)
-    return round(predicted_goal_diff)
+    return await magic_footy_sigmoid((team1_rating - team2_rating) / magic_factor)
 
 
 @app.post("/rating_based_predict")
-async def predict(body: DataForML) -> int:
+async def predict(body: DataForML) -> float:
     result_to_predict = [r for r in body.data if r.result_to_predict][0]
     return await predict_goal_diff_based_on_ratings(result_to_predict)
+
+
+@app.post("/rating_based_predict_inv")
+async def predict(body: DataForML) -> float:
+    result_to_predict = [r for r in body.data if r.result_to_predict][0]
+    pred = await predict_goal_diff_based_on_ratings(result_to_predict)
+    return -pred

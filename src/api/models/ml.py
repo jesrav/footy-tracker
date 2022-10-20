@@ -3,7 +3,7 @@ from typing import Union, List, Optional
 
 from pydantic import AnyHttpUrl
 from sqlalchemy import Column, String
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 
 
 class RowForML(SQLModel):
@@ -51,7 +51,6 @@ class MLModel(SQLModel, table=True):
     model_url: AnyHttpUrl
     created_dt: datetime = Field(default_factory=datetime.utcnow)
 
-
 class MLModelCreate(SQLModel):
     model_name: str = Field(sa_column=Column("model_name", String, unique=True))
     model_url: AnyHttpUrl = Field(sa_column=Column("model_url", String, unique=True))
@@ -67,5 +66,27 @@ class Prediction(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     ml_model_id: int = Field(default=None, foreign_key="mlmodel.id")
     result_id: int = Field(default=None, foreign_key="resultsubmission.id")
-    predicted_goal_diff: int
+    predicted_goal_diff: float
     created_dt: datetime = Field(default_factory=datetime.utcnow)
+    result: "ResultSubmission" = Relationship()
+
+
+class PredictionRead(SQLModel):
+    id: int
+    ml_model_id: int
+    result_id: int
+    predicted_goal_diff: float
+    created_dt: datetime
+    result_goal_diff: Optional[float]
+
+
+class MLMetric(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    prediction_id: int
+    result_id: int
+    ml_model_id: int
+    prediction_dt: datetime
+    result_goal_diff: int
+    predicted_goal_diff: float
+    rolling_short_window_mae: float
+    rolling_long_window_mae: float

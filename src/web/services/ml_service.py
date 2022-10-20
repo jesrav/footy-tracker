@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 import httpx
 from httpx import Response
 

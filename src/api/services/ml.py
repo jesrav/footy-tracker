@@ -1,9 +1,10 @@
 import asyncio
 import itertools
 import json
+import math
 from datetime import datetime
 from random import choice
-from typing import Union
+from typing import Union, List
 
 from numpy import random
 import httpx
@@ -16,15 +17,17 @@ import pandas as pd
 from starlette.background import BackgroundTasks
 
 from core.deps import get_session
-from crud.ml import get_ml_models, add_prediction
+from crud.ml import get_ml_models, add_prediction, add_ml_metrics, get_predictions, get_ml_metrics
 from crud.rating import get_latest_ratings
-from models.ml import DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction
+from models.ml import (
+    DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction, PredictionRead, MLMetric
+)
 from core.config import settings
 from models.result import ResultSubmission
 from models.team import UsersForTeamsSuggestion, TeamsSuggestion, TeamCreate
 
 
-async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[int, None]:
+async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[float, None]:
     """Get prediction for goal difference (team1 goals - team2 goals) from ML microservice
 
     The prediction is supposed to be made for the row `RowForML` with attribute result_to_predict = True.
@@ -32,14 +35,15 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[i
     If we do not get a successful response with a status code 200, where the json content is an integer,
     we return None
     """
-    async with httpx.AsyncClient() as client:
+    timeout = httpx.Timeout(10.0)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         resp: Response = await client.post(
             url=url,
             json=json.loads(data_for_prediction.json()),
         )
     if resp.status_code == 200:
         json_resp = resp.json()
-        if isinstance(json_resp, int):
+        if isinstance(json_resp, float):
             return json_resp
     else:
         return None
@@ -114,6 +118,56 @@ async def add_prediction_background_tasks(
             ml_data=ml_data,
             session=session,
         )
+
+
+async def update_ml_metrics_from_predictions(session: AsyncSession):
+    """Add model metrics for any new approved results"""
+    predictions = await get_predictions(session=session)
+    ml_metrics = calculate_ml_metrics(predictions)
+    await add_ml_metrics(ml_metrics, session=session)
+
+
+def mean_absolute_error(y_pred: float, y_actual: int) -> float:
+    return abs(y_pred - y_actual)
+
+
+def calculate_ml_metrics(predictions: List[PredictionRead]) -> List[MLMetric]:
+    """Calculate metrics for each model."""
+    # Only use results that have a goal dif (They have been approved)
+    predictions = [pred for pred in predictions if pred.result_goal_diff is not None]
+
+    # Get data into a dataframe
+    predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
+
+    # Add the absolute error of each prediction
+    predictions_df['ae'] = predictions_df.apply(
+        lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1
+    )
+
+    # Add the rolling mean absolute error for each model for a short and long window
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
+    predictions_df["rolling_short_window_mae"] = (
+        predictions_df.groupby('ml_model_id')["ae"]
+        .rolling(window=settings.METRICS_SHORT_WINDOW_SIZE, min_periods=1)
+        .mean().values
+    )
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
+    predictions_df["rolling_long_window_mae"] = (
+        predictions_df.groupby('ml_model_id')["ae"]
+        .rolling(window=settings.METRICS_LONG_WINDOW_SIZE, min_periods=1)
+        .mean().values
+    )
+
+    # Rename columns to match MLMetric pydantic model
+    predictions_df = predictions_df.rename(columns={'created_dt': 'prediction_dt', "id": "prediction_id"})
+
+    # Make dictionary representation of data jsonifiable
+    ml_metrics_data = predictions_df.to_dict('records')
+    for rec in ml_metrics_data:
+        rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
+
+    ml_metrics = [MLMetric(**row) for row in ml_metrics_data]
+    return ml_metrics
 
 
 async def get_ml_data(
@@ -305,10 +359,8 @@ latest_user_rating as (
   	  where latest_result_at_update_id is not null
    group by user_id
    ) sub
-   on r.latest_result_at_update_id = sub.max_result_id
+   on r.latest_result_at_update_id = sub.max_result_id and r.user_id = sub.user_id
 )    
-
-
         select 
             rs.id as result_id,
             rs.created_dt as result_dt,
