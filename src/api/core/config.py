@@ -6,6 +6,8 @@ class Settings(BaseSettings):
 
     # ML Settings
     N_HISTORICAL_ROWS_FOR_PREDICTION = 100
+    METRICS_SHORT_WINDOW_SIZE = 10
+    METRICS_LONG_WINDOW_SIZE = 100
 
     # Rating settings
     INITIAL_USER_RATING = 1500

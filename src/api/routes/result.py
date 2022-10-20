@@ -12,7 +12,7 @@ from crud.user_stats import update_user_participant_stats_based_on_result
 from models import result as result_models
 from models import user as user_models
 from core.deps import get_session
-from services.ml import add_prediction_background_tasks
+from services.ml import add_prediction_background_tasks, update_ml_metrics_from_predictions
 
 router = APIRouter()
 
@@ -98,6 +98,7 @@ async def read_results_for_approval(
 async def validate_result(
     result_id: int,
     approved: bool,
+    update_ml_metrics_background_task: BackgroundTasks,
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(deps.get_current_user),
 ):
@@ -130,7 +131,10 @@ async def validate_result(
         _ = await ratings_crud.update_ratings_from_result(session, result=validated_result, commit_changes=False)
         _ = await ranking_crud.update_user_rankings(session, commit_changes=False)
         _ = await update_user_participant_stats_based_on_result(session, result=validated_result, commit_changes=False)
-
+        update_ml_metrics_background_task.add_task(
+            update_ml_metrics_from_predictions,
+            session=session,
+        )
     await session.commit()
     await session.refresh(validated_result)
     refreshed_validated_result = await result_crud.get_result(session, result_id=validated_result.id)
