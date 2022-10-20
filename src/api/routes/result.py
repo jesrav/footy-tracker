@@ -41,8 +41,9 @@ async def create_result(
     ]:
         if not await get_user(session=session, user_id=user_id):
             raise HTTPException(
-                status_code=400, detail=f"One of the user id's does not exist."
+                status_code=400, detail="One of the user id's does not exist."
             )
+
     result = await result_crud.create_result(session=session, submitter=current_user, result=result)
 
     await add_prediction_background_tasks(

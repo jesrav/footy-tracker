@@ -114,8 +114,9 @@ async def suggest_teams(
     ]:
         if not await get_user(session=session, user_id=user_id):
             raise HTTPException(
-                status_code=400, detail=f"One of the user id's does not exist."
+                status_code=400, detail="One of the user id's does not exist."
             )
+
     return await suggest_most_fair_teams(users=users, session=session)
 
 

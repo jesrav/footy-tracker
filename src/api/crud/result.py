@@ -41,7 +41,7 @@ async def get_results(
     statement = select(result_models.ResultSubmission).offset(skip).limit(limit)
 
     if for_approval:
-        statement = statement.filter(result_models.ResultSubmission.approved == None)
+        statement = statement.filter(result_models.ResultSubmission.approved is None)
     else:
         statement = statement.filter(result_models.ResultSubmission.approved != None)
 
@@ -57,25 +57,25 @@ async def get_results(
     ))
     if not user_id:
         return db_result.scalars().all()
-    else:
-        all_results = db_result.scalars().all()
-        return [r for r in all_results if user_id in r.match_participants]
+    all_results = db_result.scalars().all()
+    return [r for r in all_results if user_id in r.match_participants]
 
 
 async def _get_results_with_user_participation(
         results: List[result_models.ResultSubmission],
         user_id: int,
 ) -> List[result_models.ResultSubmission]:
-    results_with_user_participation = []
-    for r in results:
-        if user_id in [
+    return [
+        r
+        for r in results
+        if user_id
+        in [
             r.team1.defender_user_id,
             r.team1.attacker_user_id,
             r.team2.defender_user_id,
-            r.team2.attacker_user_id
-        ]:
-            results_with_user_participation.append(r)
-    return results_with_user_participation
+            r.team2.attacker_user_id,
+        ]
+    ]
 
 
 async def get_results_for_approval_by_user(session: AsyncSession, user_id: int) -> List[result_models.ResultSubmission]:
@@ -89,9 +89,10 @@ async def get_results_for_approval_by_user(session: AsyncSession, user_id: int) 
     """
 
     statement = select(result_models.ResultSubmission).filter(
-        result_models.ResultSubmission.approved == None,
-        result_models.ResultSubmission.submitter_id != user_id
+        result_models.ResultSubmission.approved is None,
+        result_models.ResultSubmission.submitter_id != user_id,
     )
+
     db_result = await session.execute(statement.options(
         joinedload('validator'),
         joinedload('submitter'),
@@ -114,11 +115,12 @@ async def get_results_for_approval_by_user(session: AsyncSession, user_id: int) 
         for r in results_with_user_participation
     ]
 
-    results_user_and_submitter_not_teammates = [
-        r for i, r in enumerate(results_with_user_participation)
-        if r.submitter_id not in [user_teams[i].defender_user_id, user_teams[i].attacker_user_id]
+    return [
+        r
+        for i, r in enumerate(results_with_user_participation)
+        if r.submitter_id
+        not in [user_teams[i].defender_user_id, user_teams[i].attacker_user_id]
     ]
-    return results_user_and_submitter_not_teammates
 
 
 async def get_results_for_approval_submitted_by_users_team(session: AsyncSession, user_id: int) -> List[result_models.ResultSubmission]:
@@ -130,8 +132,9 @@ async def get_results_for_approval_submitted_by_users_team(session: AsyncSession
     """
 
     statement = select(result_models.ResultSubmission).filter(
-        result_models.ResultSubmission.approved == None,
+        result_models.ResultSubmission.approved is None
     )
+
     db_result = await session.execute(statement.options(
         joinedload('validator'),
         joinedload('submitter'),
@@ -153,11 +156,12 @@ async def get_results_for_approval_submitted_by_users_team(session: AsyncSession
         for r in results_with_user_participation
     ]
 
-    results_submitter_in_users_team = [
-        r for i, r in enumerate(results_with_user_participation)
-        if r.submitter_id in [user_teams[i].defender_user_id, user_teams[i].attacker_user_id]
+    return [
+        r
+        for i, r in enumerate(results_with_user_participation)
+        if r.submitter_id
+        in [user_teams[i].defender_user_id, user_teams[i].attacker_user_id]
     ]
-    return results_submitter_in_users_team
 
 
 async def approve_result(

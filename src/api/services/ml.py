@@ -41,12 +41,11 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
             url=url,
             json=json.loads(data_for_prediction.json()),
         )
-    if resp.status_code == 200:
-        json_resp = resp.json()
-        if isinstance(json_resp, float):
-            return json_resp
-    else:
+    if resp.status_code != 200:
         return None
+    json_resp = resp.json()
+    if isinstance(json_resp, float):
+        return json_resp
 
 
 async def single_prediction_task(
@@ -166,8 +165,7 @@ def calculate_ml_metrics(predictions: List[PredictionRead]) -> List[MLMetric]:
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
 
-    ml_metrics = [MLMetric(**row) for row in ml_metrics_data]
-    return ml_metrics
+    return [MLMetric(**row) for row in ml_metrics_data]
 
 
 async def get_ml_data(
@@ -282,11 +280,12 @@ async def suggest_most_fair_teams(
         return await get_ml_prediction(
             url=settings.ML_MODEL_URL, data_for_prediction=data_for_prediction
         )
+
     # For each user combination, we predict the goal difference, with an async call to the prediction API
     results = await asyncio.gather(*map(preparare_data_and_get_prediction, possible_user_combinations))
 
     # Get user combinations with the lowest predicted goal difference
-    min_goal_diffs = min([abs(r) for r in results])
+    min_goal_diffs = min(abs(r) for r in results)
     user_combinations_with_min_expected_goal_diff = [
         uc for i, uc in enumerate(possible_user_combinations) if results[i] == min_goal_diffs
     ]
@@ -326,10 +325,7 @@ async def add_ml_target(df: pd.DataFrame) -> pd.DataFrame:
 
 async def ml_data_query(n_rows: Union[int, None]) -> str:
     """Get SQL query for historical data to be use in ML training and prediction"""
-    if n_rows:
-        limit_statement = f"limit {n_rows}"
-    else:
-        limit_statement = ""
+    limit_statement = f"limit {n_rows}" if n_rows else ""
     return f"""
         with userrating_before_game_was_appoved as (
     select * from 

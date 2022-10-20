@@ -72,22 +72,21 @@ async def get_predictions(session: AsyncSession) -> List[PredictionRead]:
     statement = select(Prediction)
     result = await session.execute(statement.options(joinedload('result'),))
     predictions = result.scalars().all()
-    predictions_read = []
-    for prediction in predictions:
-        predictions_read.append(
-            PredictionRead(
-                id=prediction.id,
-                ml_model_id=prediction.ml_model_id,
-                result_id=prediction.result_id,
-                predicted_goal_diff=prediction.predicted_goal_diff,
-                result_goal_diff=(
-                    prediction.result.goals_team1 - prediction.result.goals_team2
-                    if prediction.result.approved else None
-                ),
-                created_dt=prediction.created_dt,
-            )
+    return [
+        PredictionRead(
+            id=prediction.id,
+            ml_model_id=prediction.ml_model_id,
+            result_id=prediction.result_id,
+            predicted_goal_diff=prediction.predicted_goal_diff,
+            result_goal_diff=(
+                prediction.result.goals_team1 - prediction.result.goals_team2
+                if prediction.result.approved
+                else None
+            ),
+            created_dt=prediction.created_dt,
         )
-    return predictions_read
+        for prediction in predictions
+    ]
 
 
 async def get_ml_metrics(session: AsyncSession) -> List[MLMetric]:
