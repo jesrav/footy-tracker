@@ -88,5 +88,5 @@ class MLMetric(SQLModel, table=True):
     prediction_dt: datetime
     result_goal_diff: int
     predicted_goal_diff: float
-    rolling_mae: float
-
+    rolling_short_window_mae: float
+    rolling_long_window_mae: float

@@ -43,7 +43,7 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
         )
     if resp.status_code == 200:
         json_resp = resp.json()
-        if isinstance(json_resp, int):
+        if isinstance(json_resp, float):
             return json_resp
     else:
         return None
@@ -132,23 +132,39 @@ def mean_absolute_error(y_pred: float, y_actual: int) -> float:
 
 
 def calculate_ml_metrics(predictions: List[PredictionRead]) -> List[MLMetric]:
-    """Calculate rolling means absolute error for each model."""
+    """Calculate metrics for each model."""
     # Only use results that have a goal dif (They have been approved)
     predictions = [pred for pred in predictions if pred.result_goal_diff is not None]
 
+    # Get data into a dataframe
     predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
+
+    # Add the absolute error of each prediction
+    predictions_df['ae'] = predictions_df.apply(
+        lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1
+    )
+
+    # Add the rolling mean absolute error for each model for a short and long window
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
-    predictions_df['mae'] = predictions_df.apply(lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1)
-    predictions_df["rolling_mae"] = (
-        predictions_df.groupby('ml_model_id')["mae"]
-        .rolling(window=settings.METRICS_WINDOW_SIZE, min_periods=1)
+    predictions_df["rolling_short_window_mae"] = (
+        predictions_df.groupby('ml_model_id')["ae"]
+        .rolling(window=settings.METRICS_SHORT_WINDOW_SIZE, min_periods=1)
         .mean().values
     )
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
+    predictions_df["rolling_long_window_mae"] = (
+        predictions_df.groupby('ml_model_id')["ae"]
+        .rolling(window=settings.METRICS_LONG_WINDOW_SIZE, min_periods=1)
+        .mean().values
+    )
+
+    # Rename columns to match MLMetric pydantic model
     predictions_df = predictions_df.rename(columns={'created_dt': 'prediction_dt', "id": "prediction_id"})
+
+    # Make dictionary representation of data jsonifiable
     ml_metrics_data = predictions_df.to_dict('records')
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
-        rec['rolling_mae'] = None if math.isnan(rec['rolling_mae']) else rec['rolling_mae']
 
     ml_metrics = [MLMetric(**row) for row in ml_metrics_data]
     return ml_metrics
