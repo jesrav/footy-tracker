@@ -1,32 +1,21 @@
-import asyncio
-import itertools
 import json
-import math
-from datetime import datetime
-from functools import partial
-from random import choice
-from typing import Union, List, Optional
+from typing import Union, List
 
 from numpy import random
 import httpx
 import numpy as np
-from fastapi import Depends
 from httpx import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 import pandas as pd
 from starlette.background import BackgroundTasks
 
-from core.deps import get_session
-from crud.ml import get_ml_models, add_prediction, add_ml_metrics, get_predictions, get_ml_metrics
-from crud.rating import get_latest_ratings
+from crud.ml import get_ml_models, add_prediction, add_ml_metrics, get_predictions
 from models.ml import (
-    DataForML, DataForMLInternal, RowForMLInternal, RowForML, MLModel, Prediction, PredictionRead, MLMetric
+    DataForML, DataForMLInternal, RowForMLInternal, MLModel, Prediction, PredictionRead, MLMetric
 )
 from core.config import settings
-from models.rating import UserRating
 from models.result import ResultSubmission
-from models.team import UsersForTeamsSuggestion, TeamsSuggestion, TeamCreate
 
 
 async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[float, None]:
@@ -185,7 +174,7 @@ async def get_ml_data(
     We randomize the team order to avoid the information leakage present in knowing that team1 registered on a result
     is almost always the winner.
     """
-    query = await ml_data_query(n_rows)
+    query = await get_ml_data_query(n_rows)
     results = await session.execute(text(query))
     results = results.all()
     df = pd.DataFrame(
@@ -230,115 +219,6 @@ async def get_ml_data(
     return DataForMLInternal(data=[RowForMLInternal(**r) for r in df.to_dict(orient="records")])
 
 
-async def suggest_most_fair_teams(
-        users: UsersForTeamsSuggestion, session: AsyncSession = Depends(get_session)
-) -> TeamsSuggestion:
-    """Get most fair teams by minimizing the predicted goal difference
-
-    We call a prediction API to get the goal difference for all team combinations.
-    If multiple combinations have the minimum expected goal diff, we return a random one of these combinations.
-    """
-    # Get data for prediction for all previous results
-    ml_data = await get_ml_data(
-        session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION
-    )
-
-    def get_all_user_permutations(users: UsersForTeamsSuggestion) -> List[UsersForTeamsSuggestion]:
-        """Get all possible permutations of users."""
-        user_ids = [users.user_id_1, users.user_id_2, users.user_id_3, users.user_id_4]
-        possible_user_combinations = list(itertools.permutations(user_ids))
-        return [UsersForTeamsSuggestion(
-            user_id_1=user_ids[0],
-            user_id_2=user_ids[1],
-            user_id_3=user_ids[2],
-            user_id_4=user_ids[3],
-        ) for user_ids in possible_user_combinations]
-
-
-    # Create all combinations of users
-    possible_user_combinations = get_all_user_permutations(users)
-
-    latest_ratings = await get_latest_ratings(session=session)
-
-    async def prepare_data_and_get_prediction(
-            user_combination: UsersForTeamsSuggestion,
-            latest_ratings: List[UserRating],
-            historical_ml_data: DataForMLInternal
-    ) -> Optional[float]:
-        """Prepare a row representing the user combination to add to the existing data for prediction
-        and get the prediction for this combination.
-        """
-
-        # Get the latest ratings for players
-        user_ratings = {
-            r.user_id: {
-                "rating_defence": r.rating_defence, "rating_offence": r.rating_offence,
-                "rating_overall": r.overall_rating
-            }
-            for r in latest_ratings if r.user_id in [
-                user_combination.user_id_1,
-                user_combination.user_id_2,
-                user_combination.user_id_3,
-                user_combination.user_id_4
-            ]
-        }
-
-
-        combination_data_for_pred = RowForML(
-            result_to_predict=True,
-            result_dt=datetime.now(),
-            team1_defender_user_id=user_combination.user_id_1,
-            team1_attacker_user_id=user_combination.user_id_2,
-            team2_defender_user_id=user_combination.user_id_3,
-            team2_attacker_user_id=user_combination.user_id_4,
-            team1_defender_overall_rating_before_game=user_ratings[user_combination.user_id_1]["rating_overall"],
-            team1_defender_defensive_rating_before_game=user_ratings[user_combination.user_id_1]["rating_defence"],
-            team1_defender_offensive_rating_before_game=user_ratings[user_combination.user_id_1]["rating_offence"],
-            team1_attacker_overall_rating_before_game=user_ratings[user_combination.user_id_2]["rating_overall"],
-            team1_attacker_defensive_rating_before_game=user_ratings[user_combination.user_id_2]["rating_defence"],
-            team1_attacker_offensive_rating_before_game=user_ratings[user_combination.user_id_2]["rating_offence"],
-            team2_defender_overall_rating_before_game=user_ratings[user_combination.user_id_3]["rating_overall"],
-            team2_defender_defensive_rating_before_game=user_ratings[user_combination.user_id_3]["rating_defence"],
-            team2_defender_offensive_rating_before_game=user_ratings[user_combination.user_id_3]["rating_offence"],
-            team2_attacker_overall_rating_before_game=user_ratings[user_combination.user_id_4]["rating_overall"],
-            team2_attacker_defensive_rating_before_game=user_ratings[user_combination.user_id_4]["rating_defence"],
-            team2_attacker_offensive_rating_before_game=user_ratings[user_combination.user_id_4]["rating_offence"],
-        )
-
-        data_for_prediction = DataForML(
-            data=[RowForML(**row.dict()) for row in historical_ml_data.data] + [combination_data_for_pred]
-        )
-        return await get_ml_prediction(
-            url=settings.ML_MODEL_URL, data_for_prediction=data_for_prediction
-        )
-    # For each user combination, we predict the goal difference, with an async call to the prediction API
-    results = await asyncio.gather(
-        *map(
-            partial(prepare_data_and_get_prediction, historical_ml_data=ml_data, latest_ratings=latest_ratings),
-            possible_user_combinations,
-        )
-    )
-
-    # Get user combinations with the lowest predicted goal difference
-    min_goal_diffs = min([abs(r) for r in results])
-    user_combinations_with_min_expected_goal_diff = [
-        uc for i, uc in enumerate(possible_user_combinations) if results[i] == min_goal_diffs
-    ]
-
-    # Return a random user combination among the ones with the lowest expected goal difference
-    suggested_user_comb = choice(user_combinations_with_min_expected_goal_diff)
-    return TeamsSuggestion(
-        team1=TeamCreate(
-            defender_user_id=suggested_user_comb[0],
-            attacker_user_id=suggested_user_comb[1],
-        ),
-        team2=TeamCreate(
-            defender_user_id=suggested_user_comb[2],
-            attacker_user_id=suggested_user_comb[3],
-        ),
-    )
-
-
 async def randomize_team_order(df: pd.DataFrame) -> pd.DataFrame:
     """Randomly swap team 1 and team 2 in dataframe with ml data.
 
@@ -358,7 +238,7 @@ async def add_ml_target(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-async def ml_data_query(n_rows: Union[int, None]) -> str:
+async def get_ml_data_query(n_rows: Union[int, None]) -> str:
     """Get SQL query for historical data to be use in ML training and prediction"""
     if n_rows:
         limit_statement = f"limit {n_rows}"

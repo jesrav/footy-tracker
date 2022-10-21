@@ -17,7 +17,8 @@ from crud.user import get_user
 from models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead, MLMetric
 from models.team import UsersForTeamsSuggestion
 from models.user import User
-from services.ml import suggest_most_fair_teams, get_ml_data
+from services.ml import get_ml_data
+from services.team_suggestion import suggest_most_fair_teams
 
 router = APIRouter()
 

@@ -33,6 +33,8 @@ class RowForML(SQLModel):
 
 
 class RowForMLInternal(RowForML):
+    """Internally a row for the ML data also has an attribute that indicates if the teams have been switched,
+    meaning that team1 and team2 are switched."""
     teams_switched: bool
 
 
