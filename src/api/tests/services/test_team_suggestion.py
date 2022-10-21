@@ -17,11 +17,11 @@ def test_get_all_user_permutations():
     assert len(all_user_combinations) == 24, "There should be 24 possible combinations"
 
     # Test that all combinations are unique
-    unique_user_combinationes = []
+    unique_user_combinations = []
     for user_combination in all_user_combinations:
-        if user_combination not in unique_user_combinationes:
-            unique_user_combinationes.append(user_combination)
-    assert len(unique_user_combinationes) == 24, "There should be 24 unique combinations"
+        if user_combination not in unique_user_combinations:
+            unique_user_combinations.append(user_combination)
+    assert len(unique_user_combinations) == 24, "There should be 24 unique combinations"
 
 
 @pytest.mark.asyncio
