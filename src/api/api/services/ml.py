@@ -113,7 +113,11 @@ async def add_prediction_background_tasks(
 async def update_ml_metrics_from_predictions(session: AsyncSession):
     """Add model metrics for any new approved results"""
     predictions = await get_predictions(session=session)
-    ml_metrics = calculate_ml_metrics(predictions)
+    ml_metrics = calculate_ml_metrics(
+        predictions,
+        short_rolling_window_size=settings.SHORT_ROLLING_WINDOW_SIZE,
+        long_rolling_window_size=settings.LONG_ROLLING_WINDOW_SIZE
+    )
     await add_ml_metrics(ml_metrics, session=session)
 
 
@@ -121,7 +125,11 @@ def mean_absolute_error(y_pred: float, y_actual: int) -> float:
     return abs(y_pred - y_actual)
 
 
-def calculate_ml_metrics(predictions: List[PredictionRead]) -> List[MLMetric]:
+def calculate_ml_metrics(
+    predictions: List[PredictionRead],
+    short_rolling_window_size: int = 10,
+    long_rolling_window_size: int = 100,
+) -> List[MLMetric]:
     """Calculate metrics for each model."""
     # Only use results that have a goal dif (They have been approved)
     predictions = [pred for pred in predictions if pred.result_goal_diff is not None]
@@ -138,13 +146,13 @@ def calculate_ml_metrics(predictions: List[PredictionRead]) -> List[MLMetric]:
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
     predictions_df["rolling_short_window_mae"] = (
         predictions_df.groupby('ml_model_id')["ae"]
-        .rolling(window=settings.METRICS_SHORT_WINDOW_SIZE, min_periods=1)
+        .rolling(window=short_rolling_window_size, min_periods=1)
         .mean().values
     )
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
     predictions_df["rolling_long_window_mae"] = (
         predictions_df.groupby('ml_model_id')["ae"]
-        .rolling(window=settings.METRICS_LONG_WINDOW_SIZE, min_periods=1)
+        .rolling(window=long_rolling_window_size, min_periods=1)
         .mean().values
     )
 
