@@ -232,6 +232,7 @@ async def randomize_team_order(df: pd.DataFrame) -> pd.DataFrame:
 
     A boolean column teams_switched to indicate if team 1 and team 2 have been switched.
     """
+    df = df.copy()
     teams_switched = random.rand(len(df)) > 0.5
     df["teams_switched"] = teams_switched
     team1_cols = [col for col in df.columns if "team1" in col]
