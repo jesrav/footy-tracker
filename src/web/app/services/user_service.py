@@ -3,9 +3,9 @@ from typing import Optional, List, Union
 import httpx
 from httpx import Response
 
-from models.user import UserRead, UserReadUnauthorized, UserUpdate
-from models.validation_error import ValidationError
-from config import settings
+from app.models.user import UserRead, UserReadUnauthorized, UserUpdate
+from app.models.validation_error import ValidationError
+from app.config import settings
 
 
 async def create_account(nickname: str, email: str, password: str) -> UserRead:

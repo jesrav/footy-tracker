@@ -6,12 +6,12 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, RedirectResponse
 
-from services import tracking_service
-from viewmodels.tracking.approve_results_viewmodel import ApproveResultsViewModel
-from viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
-from viewmodels.tracking.leaderboard_viewmodel import LeaderboardViewModel
-from viewmodels.tracking.suggest_teams_viewmodel import SuggestTeamsViewModel
-from viewmodels.tracking.user_viewmodel import UserViewModel
+from app.services import tracking_service
+from app.viewmodels.tracking.approve_results_viewmodel import ApproveResultsViewModel
+from app.viewmodels.tracking.submit_result_viewmodel import SubmitResultViewModel
+from app.viewmodels.tracking.leaderboard_viewmodel import LeaderboardViewModel
+from app.viewmodels.tracking.suggest_teams_viewmodel import SuggestTeamsViewModel
+from app.viewmodels.tracking.user_viewmodel import UserViewModel
 
 router = fastapi.APIRouter()
 

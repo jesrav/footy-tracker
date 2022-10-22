@@ -2,10 +2,10 @@ from typing import Optional, List
 
 from starlette.requests import Request
 
-from models.user import UserRead
-from models.result import ResultForUserDisplay
-from services import tracking_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.user import UserRead
+from app.models.result import ResultForUserDisplay
+from app.services import tracking_service
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class ApproveResultsViewModel(ViewModelBase):

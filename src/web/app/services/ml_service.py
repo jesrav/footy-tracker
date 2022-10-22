@@ -1,9 +1,9 @@
 import httpx
 from httpx import Response
 
-from models.team import UsersForTeamsSuggestion, TeamsSuggestion
-from models.validation_error import ValidationError
-from config import settings
+from app.models.team import UsersForTeamsSuggestion, TeamsSuggestion
+from app.models.validation_error import ValidationError
+from app.config import settings
 
 
 async def get_teams_suggestion(

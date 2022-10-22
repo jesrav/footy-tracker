@@ -1,10 +1,9 @@
-import os
 from datetime import datetime
 from typing import Optional
 import random
 
 from pydantic import BaseModel, validator
-from config import settings
+from app.config import settings
 
 
 def get_profile_pic_url_from_nickname(nickname: str) -> str:

@@ -1,8 +1,8 @@
 from starlette.requests import Request
 
-from models.validation_error import ValidationError
-from services import user_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.validation_error import ValidationError
+from app.services import user_service
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class LoginViewModel(ViewModelBase):

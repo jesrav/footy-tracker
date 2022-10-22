@@ -4,9 +4,9 @@ from starlette import status
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
-from infrastructure import cookie_auth
-from models.validation_error import ValidationError
-from services import user_service
+from app.infrastructure import cookie_auth
+from app.models.validation_error import ValidationError
+from app.services import user_service
 
 
 class ViewModelBase:

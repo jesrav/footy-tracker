@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from models.user import UserReadUnauthorized
+from app.models.user import UserReadUnauthorized
 
 
 class UserRating(BaseModel):

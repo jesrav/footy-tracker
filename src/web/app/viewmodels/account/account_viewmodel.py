@@ -1,11 +1,9 @@
-from typing import Optional, List
+from typing import Optional
 
 from starlette.requests import Request
 
-from models.user import UserRead
-from models.validation_error import ValidationError
-from services import user_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.user import UserRead
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class AccountViewModel(ViewModelBase):

@@ -3,8 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from models.team import TeamRead, TeamCreate
-from models.user import UserReadUnauthorized
+from app.models.team import TeamRead, TeamCreate
+from app.models.user import UserReadUnauthorized
 
 
 class ResultSubmissionCreate(BaseModel):

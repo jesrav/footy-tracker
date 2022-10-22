@@ -2,18 +2,18 @@ from typing import Optional, List
 
 from starlette.requests import Request
 
-from models.rankings import UserRanking
-from models.ratings import UserRating
-from models.user import UserRead
-from models.result import ResultSubmissionRead, ResultForUserDisplay
-from models.user_stats import UserStats
-from services import user_service, tracking_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.rankings import UserRanking
+from app.models.ratings import UserRating
+from app.models.user import UserRead
+from app.models.result import ResultSubmissionRead, ResultForUserDisplay
+from app.models.user_stats import UserStats
+from app.services import user_service, tracking_service
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class HistoricalUserRatings:
 
-    TREND_DELTA: float = 5.0 # Delta that must be present before we classify something as a trend
+    TREND_DELTA: float = 5.0  # Delta that must be present before we classify something as a trend
 
     def __init__(self, user_ratings: List[UserRating], trend_window_size: int):
         self.ratings = sorted(user_ratings, key= lambda x: x.created_dt)

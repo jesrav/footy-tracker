@@ -13,14 +13,14 @@ from fastapi_chameleon import template
 from starlette import status
 from starlette.requests import Request
 
-from infrastructure import cookie_auth
-from models.user import UserUpdate
-from services import user_service
-from viewmodels.account.account_viewmodel import AccountViewModel
-from viewmodels.account.edit_viewmodel import AccountEditViewModel
-from viewmodels.account.login_viewmodel import LoginViewModel
-from viewmodels.account.register_viewmodel import RegisterViewModel
-from config import settings
+from app.infrastructure import cookie_auth
+from app.models.user import UserUpdate
+from app.services import user_service
+from app.viewmodels.account.account_viewmodel import AccountViewModel
+from app.viewmodels.account.edit_viewmodel import AccountEditViewModel
+from app.viewmodels.account.login_viewmodel import LoginViewModel
+from app.viewmodels.account.register_viewmodel import RegisterViewModel
+from app.config import settings
 
 router = fastapi.APIRouter()
 

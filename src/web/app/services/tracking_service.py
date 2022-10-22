@@ -3,12 +3,12 @@ from typing import List, Optional
 import httpx
 from httpx import Response
 
-from config import settings
-from models.rankings import UserRanking
-from models.result import ResultSubmissionCreate, ResultSubmissionRead
-from models.ratings import UserRating
-from models.user_stats import UserStats
-from models.validation_error import ValidationError
+from app.config import settings
+from app.models.rankings import UserRanking
+from app.models.result import ResultSubmissionCreate, ResultSubmissionRead
+from app.models.ratings import UserRating
+from app.models.user_stats import UserStats
+from app.models.validation_error import ValidationError
 
 
 async def register_result(result: ResultSubmissionCreate, bearer_token: str) -> ResultSubmissionRead:

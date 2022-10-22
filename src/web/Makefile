@@ -8,4 +8,4 @@ stop_services:
 	docker-compose stop
 
 run:
-	uvicorn main:app --reload
+	uvicorn app.main:app --reload

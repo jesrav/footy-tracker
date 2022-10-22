@@ -1,5 +1,4 @@
-from pydantic import AnyHttpUrl, BaseSettings, validator
-from typing import List, Union
+from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -14,4 +13,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-

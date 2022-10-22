@@ -3,7 +3,7 @@ from typing import List, Optional, Union
 
 from pydantic import BaseModel, root_validator
 
-from models.user import UserReadUnauthorized
+from app.models.user import UserReadUnauthorized
 
 
 class TeamCreate(BaseModel):

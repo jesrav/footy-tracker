@@ -1,13 +1,11 @@
 from dataclasses import dataclass
-from typing import Optional, List, Dict
+from typing import List
 
 from starlette.requests import Request
 
-from models.rankings import UserRanking
-from models.ratings import UserRating
-from models.user import UserRead
-from services import user_service, tracking_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.user import UserRead
+from app.services import tracking_service
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 @dataclass

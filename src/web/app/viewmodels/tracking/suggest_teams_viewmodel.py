@@ -1,13 +1,12 @@
-import ast
 from typing import List, Optional
 
 from starlette.requests import Request
 
-from models.team import UsersForTeamsSuggestion, TeamsSuggestion
-from models.user import UserReadUnauthorized
-from models.validation_error import ValidationError
-from services import ml_service, user_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.team import UsersForTeamsSuggestion, TeamsSuggestion
+from app.models.user import UserReadUnauthorized
+from app.models.validation_error import ValidationError
+from app.services import ml_service, user_service
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class SuggestTeamsViewModel(ViewModelBase):

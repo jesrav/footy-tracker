@@ -2,12 +2,12 @@ from typing import List, Optional
 
 from starlette.requests import Request
 
-from models.result import ResultSubmissionCreate
-from models.team import TeamCreate
-from models.user import UserReadUnauthorized
-from models.validation_error import ValidationError
-from services import user_service, tracking_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.result import ResultSubmissionCreate
+from app.models.team import TeamCreate
+from app.models.user import UserReadUnauthorized
+from app.models.validation_error import ValidationError
+from app.services import user_service, tracking_service
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class SubmitResultViewModel(ViewModelBase):

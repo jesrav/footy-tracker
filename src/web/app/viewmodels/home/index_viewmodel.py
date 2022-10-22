@@ -2,9 +2,9 @@ from typing import Optional, List
 
 from starlette.requests import Request
 
-from models.result import ResultSubmissionRead, ResultForUserDisplay
-from services import tracking_service
-from viewmodels.shared.viewmodel import ViewModelBase
+from app.models.result import ResultSubmissionRead, ResultForUserDisplay
+from app.services import tracking_service
+from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class IndexViewModel(ViewModelBase):
