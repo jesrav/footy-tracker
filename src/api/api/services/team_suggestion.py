@@ -116,7 +116,7 @@ async def suggest_most_fair_teams(
     )
 
     # Get user combinations with the lowest predicted goal difference
-    min_goal_diffs = min([abs(r) for r in results])
+    min_goal_diffs = min(abs(r) for r in results)
     user_combinations_with_min_expected_goal_diff = [
         uc for i, uc in enumerate(possible_user_combinations) if results[i] == min_goal_diffs
     ]
