@@ -4,7 +4,7 @@ services:
 
   web:
     build: ./src/web
-    entrypoint: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 80
+    entrypoint: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 80
     ports:
       - "8000:80"
     environment:
@@ -16,8 +16,8 @@ services:
       - api
 
   api:
-    build: src/api
-    entrypoint: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 81
+    build: ./src/api
+    entrypoint: uvicorn api.main:app --reload --workers 1 --host 0.0.0.0 --port 81
     ports:
       - "8001:81"
     environment:
@@ -28,7 +28,7 @@ services:
       - db
 
   ml_api:
-    build: src/ml_api
+    build: ./src/ml_api
     entrypoint: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 82
     ports:
       - "8002:82"
