@@ -44,9 +44,3 @@ async def predict(body: DataForML) -> float:
     result_to_predict = [r for r in body.data if r.result_to_predict][0]
     return await predict_goal_diff_based_on_ratings(result_to_predict)
 
-
-@app.post("/rating_based_predict_inv")
-async def predict(body: DataForML) -> float:
-    result_to_predict = [r for r in body.data if r.result_to_predict][0]
-    pred = await predict_goal_diff_based_on_ratings(result_to_predict)
-    return -pred
