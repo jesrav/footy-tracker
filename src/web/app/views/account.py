@@ -46,10 +46,7 @@ def crop_and_resize_image(image: Image) -> Image:
 
 def get_format_for_pillow(suffix: str) -> str:
     image_format = suffix[1:]
-    if image_format.lower() == 'jpg':
-        return 'jpeg'
-    else:
-        return image_format
+    return 'jpeg' if image_format.lower() == 'jpg' else image_format
 
 
 async def upload_image_to_azure(image: Image, file_name: str):
@@ -82,10 +79,7 @@ async def delete_from_azure(file_name: str):
 async def index(request: Request):
     vm = AccountEditViewModel(request)
     await vm.authorize()
-    if vm.redirect_response:
-        return vm.redirect_response
-    else:
-        return await vm.to_dict()
+    return vm.redirect_response or await vm.to_dict()
 
 
 @router.get('/account/edit/')
@@ -93,10 +87,7 @@ async def index(request: Request):
 async def edit(request: Request):
     vm = AccountEditViewModel(request)
     await vm.authorize()
-    if vm.redirect_response:
-        return vm.redirect_response
-    else:
-        return await vm.to_dict()
+    return vm.redirect_response or await vm.to_dict()
 
 
 @router.post('/account/edit/')
@@ -108,8 +99,9 @@ async def edit(request: Request):
     if vm.error:
         return vm.to_dict()
 
-    response = fastapi.responses.RedirectResponse(url='/account', status_code=status.HTTP_302_FOUND)
-    return response
+    return fastapi.responses.RedirectResponse(
+        url='/account', status_code=status.HTTP_302_FOUND
+    )
 
 
 @router.get("/account/update_profile_image")
@@ -117,10 +109,7 @@ async def edit(request: Request):
 async def update_profile_image(request: Request):
     vm = AccountEditViewModel(request)
     await vm.authorize()
-    if vm.redirect_response:
-        return vm.redirect_response
-    else:
-        return await vm.to_dict()
+    return vm.redirect_response or await vm.to_dict()
 
 
 @router.post("/account/update_profile_image")

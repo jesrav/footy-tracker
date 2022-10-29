@@ -13,8 +13,7 @@ router = APIRouter()
 
 @router.get("/users/me", response_model=user_models.UserRead, tags=["users"])
 async def get_me(current_user: user_models.User = Depends(get_current_user)):
-    user = current_user
-    return user
+    return current_user
 
 
 @router.put("/users/me", response_model=user_models.UserRead, tags=["users"])
@@ -32,8 +31,7 @@ async def read_users(
     limit: int = 100,
     session: AsyncSession = Depends(get_session),
 ):
-    users = await user_crud.get_users(session, skip=skip, limit=limit)
-    return users
+    return await user_crud.get_users(session, skip=skip, limit=limit)
 
 
 @router.get("/users/{user_id}", response_model=user_models.UserReadUnauthorized, tags=["users"])
