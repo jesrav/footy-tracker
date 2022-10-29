@@ -4,17 +4,19 @@ from typing import List, Union
 import pandas as pd
 from fastapi import Depends, APIRouter, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
-from starlette.responses import StreamingResponse
+from starlette.responses import StreamingResponse, Response
+from starlette.status import HTTP_204_NO_CONTENT
 
 from api.core.deps import get_session, get_current_user
 from api.core.config import settings
 from api.crud.ml import (
     create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions,
-    get_ml_metrics
+    get_ml_metrics, get_ml_model, delete_ml_model_by_id
 )
 from api.crud.result import get_latest_approved_result
 from api.crud.user import get_user
-from api.models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead, MLMetric
+from api.models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead, MLMetric, \
+    MLModelUpdate
 from api.models.team import UsersForTeamsSuggestion
 from api.models.user import User
 from api.services.team_suggestion import suggest_most_fair_teams
@@ -61,7 +63,7 @@ async def get_ml_prediction_data_example_json(
     )
 
 
-@router.post("/ml/ml_models/", response_model=MLModelRead, tags=["ml"])
+@router.post("/ml/ml_models/", tags=["ml"])
 async def add_ml_model(
     ml_model: MLModelCreate,
     session: AsyncSession = Depends(get_session),
@@ -92,12 +94,58 @@ async def read_ml_models(
     return await get_ml_models(session)
 
 
-@router.get("/ml/ml_models/me", response_model=List[MLModel], tags=["ml"])
+@router.get("/ml/ml_models/{id}", response_model=MLModel, tags=["ml"])
+async def read_ml_model(
+    model_id: int,
+    session: AsyncSession = Depends(get_session),
+):
+    ml_model = await get_ml_model(session, model_id=model_id)
+    if not ml_model:
+        raise HTTPException(status_code=404, detail="ML model not found")
+    return ml_model
+
+
+@router.get("/ml/ml_models/me/", response_model=List[MLModel], tags=["ml"])
 async def read_ml_models_for_user(
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     return await get_ml_models_by_user(session, user_id=current_user.id)
+
+
+@router.put("/ml/ml_models/{model_id}", response_model=MLModel, tags=["ml"])
+async def update_ml_model(
+    model_id: int,
+    ml_model_update: MLModelUpdate,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    ml_model = await get_ml_model(session, model_id=model_id)
+    if not ml_model:
+        raise HTTPException(status_code=404, detail="ML model not found")
+    if ml_model.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only edit your own ML models")
+    if ml_model_update.model_name:
+        ml_model.model_name = ml_model_update.model_name
+    if ml_model_update.model_url:
+        ml_model.model_url = ml_model_update.model_url
+    await session.commit()
+    await session.refresh(ml_model)
+    return ml_model
+
+
+@router.delete("/ml/ml_models/{model_id}", status_code=HTTP_204_NO_CONTENT, response_class=Response, tags=["ml"])
+async def delete_ml_model(
+    model_id: int,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    ml_model = await get_ml_model(session, model_id=model_id)
+    if not ml_model:
+        raise HTTPException(status_code=404, detail="ML model not found")
+    if ml_model.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="You can only delete your own ML models")
+    await delete_ml_model_by_id(session, model_id=model_id)
 
 
 @router.post("/ml/suggest_teams/", tags=["ml"])

@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Union, List, Optional
 
-from pydantic import AnyHttpUrl
-from sqlalchemy import Column, String
+from pydantic import AnyHttpUrl, root_validator
+from sqlalchemy import Column, Integer, ForeignKey
 from sqlmodel import SQLModel, Field, Relationship
 
 
@@ -52,21 +52,43 @@ class MLModel(SQLModel, table=True):
     model_name: str
     model_url: AnyHttpUrl
     created_dt: datetime = Field(default_factory=datetime.utcnow)
+    predictions: "Prediction" = Relationship(
+        sa_relationship_kwargs={
+            "cascade": "all, delete",  # Instruct the ORM how to track changes to local objects
+        },
+    )
+
 
 class MLModelCreate(SQLModel):
-    model_name: str = Field(sa_column=Column("model_name", String, unique=True))
-    model_url: AnyHttpUrl = Field(sa_column=Column("model_url", String, unique=True))
+    model_name: str
+    model_url: AnyHttpUrl
+
+
+class MLModelUpdate(SQLModel):
+    model_name: Optional[str]
+    model_url: Optional[AnyHttpUrl]
+
+    @root_validator(pre=False)
+    def one_value_must_be_changed(cls, values):
+        model_name = values.get('model_name')
+        model_url = values.get('model_url')
+        if not model_name and not model_url:
+            raise ValueError('At least one of model_name or model_url must be changed.')
+        return values
 
 
 class MLModelRead(SQLModel):
     id: int
     model_name: str
+    user_id: int
     created_dt: datetime = Field(default_factory=datetime.utcnow)
 
 
 class Prediction(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    ml_model_id: int = Field(default=None, foreign_key="mlmodel.id")
+    ml_model_id: int = Field(
+        default=None, sa_column=Column(Integer, ForeignKey("mlmodel.id", ondelete="CASCADE"))
+    )
     result_id: int = Field(default=None, foreign_key="resultsubmission.id")
     predicted_goal_diff: float
     created_dt: datetime = Field(default_factory=datetime.utcnow)
