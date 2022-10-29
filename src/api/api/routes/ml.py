@@ -1,6 +1,7 @@
 import io
 from typing import List, Union
 
+import pandas as pd
 from fastapi import Depends, APIRouter, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.responses import StreamingResponse
@@ -27,10 +28,12 @@ async def get_ml_training_data_csv(
     n_rows: Union[int, None] = None,
     session: AsyncSession = Depends(get_session)
 ):
-    results_with_features_df = await get_ml_data(session, n_rows)
+    ml_data_internal = await get_ml_data(session, n_rows)
+    ml_data = DataForML(data = [RowForML(**row.dict()) for row in ml_data_internal.data])
+    ml_data_df = pd.DataFrame([row.dict() for row in ml_data.data])
     stream = io.StringIO()
 
-    results_with_features_df.to_csv(stream, index=False)
+    ml_data_df.to_csv(stream, index=False)
     response = StreamingResponse(
         iter([stream.getvalue()]), media_type="text/csv"
     )
@@ -38,13 +41,12 @@ async def get_ml_training_data_csv(
     return response
 
 
-@router.get("/ml/training_data/json", response_model=List[RowForML], tags=["ml"])
+@router.get("/ml/training_data/json", response_model=DataForML, tags=["ml"])
 async def get_ml_training_data_json(
     n_rows: Union[int, None] = None,
     session: AsyncSession = Depends(get_session)
 ):
-    results_with_features_df = await get_ml_data(session, n_rows)
-    return results_with_features_df.to_dict('records')
+    return await get_ml_data(session, n_rows)
 
 
 @router.get("/ml/example_prediction_data/json", response_model=DataForML, tags=["ml"])
@@ -52,14 +54,11 @@ async def get_ml_prediction_data_example_json(
     session: AsyncSession = Depends(get_session)
 ):
     latest_approved_result = await get_latest_approved_result(session)
-    results_with_features_df = await get_ml_data(
+    return await get_ml_data(
         session=session,
         n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION + 1,
         result_id_to_predict=latest_approved_result.id,
     )
-    return {
-        "data": results_with_features_df.to_dict(orient='records')
-    }
 
 
 @router.post("/ml/ml_models/", response_model=MLModelRead, tags=["ml"])
