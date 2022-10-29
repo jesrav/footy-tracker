@@ -38,7 +38,7 @@ async def get_approved_results(skip: int = 0, limit: int = 100, user_id: Optiona
 async def get_results_for_approval_by_user(bearer_token: str) -> List[ResultSubmissionRead]:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(
-            url=settings.BASE_WEB_API_URL + f"/results_for_approval_by_user/",
+            url=settings.BASE_WEB_API_URL + f"/results_for_approval/me",
             headers={"Authorization": f"Bearer {bearer_token}"},
         )
         if resp.status_code != 200:
@@ -49,7 +49,7 @@ async def get_results_for_approval_by_user(bearer_token: str) -> List[ResultSubm
 async def get_results_for_approval_submitted_by_users_team(bearer_token: str) -> List[ResultSubmissionRead]:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(
-            url=settings.BASE_WEB_API_URL + f"/results_for_approval_submitted_by_users_team/",
+            url=settings.BASE_WEB_API_URL + f"/results_waiting_on_oppositions_approval/me",
             headers={"Authorization": f"Bearer {bearer_token}"},
         )
         if resp.status_code != 200:
