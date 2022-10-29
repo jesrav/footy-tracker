@@ -147,7 +147,7 @@ async def update_profile_image(request: Request, file: UploadFile = File(...)):
     await upload_image_to_azure(image, name)
 
     # Update user info
-    _ = await user_service.update_user(
+    _ = await user_service.update_me(
         user_updates=UserUpdate(profile_pic_path=storage_base_url + name),
         bearer_token=vm.bearer_token
     )

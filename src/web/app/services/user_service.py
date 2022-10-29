@@ -43,7 +43,7 @@ async def get_me(bearer_token: str) -> Union[UserRead, None]:
             return UserRead(**resp.json())
 
 
-async def update_user(user_updates: UserUpdate, bearer_token: str) -> Optional[UserRead]:
+async def update_me(user_updates: UserUpdate, bearer_token: str) -> Optional[UserRead]:
     json_data = {
         "nickname": user_updates.nickname,
         "password": user_updates.password,
@@ -52,8 +52,8 @@ async def update_user(user_updates: UserUpdate, bearer_token: str) -> Optional[U
         "profile_pic_path": user_updates.profile_pic_path,
     }
     async with httpx.AsyncClient() as client:
-        resp: Response = await client.post(
-            url=settings.BASE_WEB_API_URL + f"/users/me/update/",
+        resp: Response = await client.put(
+            url=settings.BASE_WEB_API_URL + f"/users/me",
             json=json_data,
             headers={"Authorization": f"Bearer {bearer_token}"},
         )

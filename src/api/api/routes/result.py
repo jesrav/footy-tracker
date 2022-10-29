@@ -72,17 +72,17 @@ async def read_result(result_id: int, session: AsyncSession = Depends(get_sessio
     return result
 
 
-@router.get("/results_for_approval_by_user/", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
+@router.get("/results_for_approval/me", response_model=List[result_models.ResultSubmissionRead], tags=["results"])
 async def read_results_for_approval(
+    for_approval: bool = False,
     session: AsyncSession = Depends(get_session),
     current_user: user_models.User = Depends(get_current_user),
 ):
-    result = await result_crud.get_results_for_approval_by_user(session, user_id=current_user.id)
-    return result
+    return await result_crud.get_results_for_approval_by_user(session, user_id=current_user.id)
 
 
 @router.get(
-    "/results_for_approval_submitted_by_users_team/",
+    "/results_waiting_on_oppositions_approval/me",
     response_model=List[result_models.ResultSubmissionRead],
     tags=["results"]
 )

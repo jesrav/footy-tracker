@@ -115,8 +115,8 @@ async def update_ml_metrics_from_predictions(session: AsyncSession):
     predictions = await get_predictions(session=session)
     ml_metrics = calculate_ml_metrics(
         predictions,
-        short_rolling_window_size=settings.SHORT_ROLLING_WINDOW_SIZE,
-        long_rolling_window_size=settings.LONG_ROLLING_WINDOW_SIZE
+        short_rolling_window_size=settings.METRICS_SHORT_WINDOW_SIZE,
+        long_rolling_window_size=settings.METRICS_LONG_WINDOW_SIZE
     )
     await add_ml_metrics(ml_metrics, session=session)
 

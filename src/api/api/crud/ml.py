@@ -54,6 +54,12 @@ async def get_ml_model_by_url(session: AsyncSession, url: str) -> Optional[MLMod
     return result.scalar_one_or_none()
 
 
+async def delete_ml_model_by_id(session: AsyncSession, model_id: int):
+    statement = delete(MLModel).filter(MLModel.id == model_id)
+    await session.execute(statement)
+    await session.commit()
+
+
 async def add_prediction(
         session: AsyncSession, model_id: int, result_id: int, predicted_goal_diff: float
 ) -> Prediction:
