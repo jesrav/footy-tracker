@@ -17,7 +17,7 @@ async def get_me(current_user: user_models.User = Depends(get_current_user)):
     return user
 
 
-@router.post("/users/me/update/", response_model=user_models.UserRead, tags=["users"])
+@router.put("/users/me", response_model=user_models.UserRead, tags=["users"])
 async def update_me(
     user_updates: user_models.UserUpdate,
     session: AsyncSession = Depends(get_session),
