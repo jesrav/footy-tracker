@@ -1,5 +1,5 @@
 # FootyTracker
-A table soccer tracking web app. Find a deployed version of the web app here: [https://www.footy-tracker.live](https://www.footy-tracker.live) and the api here: [https://api.footy-tracker.live](https://api.footy-tracker.live).
+A table soccer tracking web app. Find a deployed version of the web app here: [https://www.footy-tracker.live](https://www.footy-tracker.live) and the api here: [https://api.footy-tracker.live](https://api.footy-tracker.live/docs).
 
 Work in progress.
 
