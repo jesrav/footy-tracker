@@ -52,11 +52,8 @@ class MLModel(SQLModel, table=True):
     model_name: str
     model_url: AnyHttpUrl
     created_dt: datetime = Field(default_factory=datetime.utcnow)
-    predictions: "Prediction" = Relationship(
-        sa_relationship_kwargs={
-            "cascade": "all, delete",  # Instruct the ORM how to track changes to local objects
-        },
-    )
+    predictions: "Prediction" = Relationship(sa_relationship_kwargs={"cascade": "all, delete"})
+    mlmetrics: "MLMetric" = Relationship(sa_relationship_kwargs={"cascade": "all, delete"})
 
 
 class MLModelCreate(SQLModel):
@@ -86,10 +83,8 @@ class MLModelRead(SQLModel):
 
 class Prediction(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    ml_model_id: int = Field(
-        default=None, sa_column=Column(Integer, ForeignKey("mlmodel.id", ondelete="CASCADE"))
-    )
-    result_id: int = Field(default=None, foreign_key="resultsubmission.id")
+    ml_model_id: int = Field(sa_column=Column(Integer, ForeignKey("mlmodel.id", ondelete="CASCADE")))
+    result_id: int = Field(foreign_key="resultsubmission.id")
     predicted_goal_diff: float
     created_dt: datetime = Field(default_factory=datetime.utcnow)
     result: "ResultSubmission" = Relationship()
@@ -106,9 +101,9 @@ class PredictionRead(SQLModel):
 
 class MLMetric(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    prediction_id: int
+    prediction_id: int = Field(sa_column=Column(Integer, ForeignKey("prediction.id", ondelete="CASCADE")))
     result_id: int
-    ml_model_id: int
+    ml_model_id: int = Field(sa_column=Column(Integer, ForeignKey("mlmodel.id", ondelete="CASCADE")))
     prediction_dt: datetime
     result_goal_diff: int
     predicted_goal_diff: float
