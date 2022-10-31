@@ -1,6 +1,9 @@
 name: Training of FootyTracker model and deployment of ML microservice
 
 on:      
+  push:
+    branches:
+      - feature/**    
   workflow_dispatch:
     branches:     
       - main
