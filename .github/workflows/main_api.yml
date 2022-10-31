@@ -29,6 +29,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        pip install -r src/api/requirements.txt
         pip install -r src/api/requirements-dev.txt
 
     - name: Run tests
