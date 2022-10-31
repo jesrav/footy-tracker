@@ -4,7 +4,7 @@ import numpy as np
 
 import arviz as az
 from matplotlib import pyplot as plt
-from sklearn .model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score
 
 from common import get_footy_training_data
 from user_strength_model import UserStrengthModel
