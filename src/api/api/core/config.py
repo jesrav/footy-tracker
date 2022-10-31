@@ -36,7 +36,7 @@ class Settings(BaseSettings):
             return v
         raise ValueError(v)
 
-    DATABASE_URL: str = "database url"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/footy"
 
     ML_MODEL_URL: str = "model microservice url"
 
