@@ -10,7 +10,8 @@ on:
       - main      
   workflow_dispatch:
     branches:     
-      - *
+      - main
+      - feature/**
 
 jobs:
   
