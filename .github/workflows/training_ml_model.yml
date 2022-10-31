@@ -1,0 +1,31 @@
+name: Training of FootyTracker model and deployment of ML microservice
+
+on:      
+  workflow_dispatch:
+    branches:     
+      - *
+
+jobs:
+  
+  test-code:
+    name: Training of ML model
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10
+
+    - name: Install dependencies
+      run: |
+        pip install -r src/ml_api/requirements.txt
+
+    - name: Train ML model
+      run: |
+        cd src/ml_api
+        python train.py
+
+      
