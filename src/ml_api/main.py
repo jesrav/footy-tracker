@@ -1,46 +1,27 @@
 """
 FootyTracker ML microservice to predict goal difference of match.
-
-Right now it's just a sigmoid transformation of the difference in team ratings.
 """
-import math
+import pickle
+from typing import Dict
 
 from fastapi import FastAPI
 
-from schemas import RowForML, DataForML
+from schemas import DataForML, RowForML, UserStrength
+
+with open("model_training_artifacts/model.pickle", "rb") as f:
+    model = pickle.load(f)
 
 app = FastAPI()
 
 
-async def magic_footy_sigmoid(x):
-    """"Magic footy sigmoid that outputs value between -10 and 10"""
-    if x >= 0:
-        z = math.exp(-x)
-        return 20 * (1 / (1 + z)) - 10
-    else:
-        z = math.exp(x)
-        return 20 * (z / (1 + z)) - 10
-
-
-async def predict_goal_diff_based_on_ratings(result_to_predict: RowForML) -> float:
-    """"
-    Naive rule to predict the result based on the teams combined rating
-    """
-    magic_factor = 100
-
-    team1_rating = (
-        result_to_predict.team1_attacker_offensive_rating_before_game
-        + result_to_predict.team1_defender_defensive_rating_before_game
-    ) / 2
-    team2_rating = (
-        result_to_predict.team2_attacker_offensive_rating_before_game
-        + result_to_predict.team2_defender_defensive_rating_before_game
-    ) / 2
-    return await magic_footy_sigmoid((team1_rating - team2_rating) / magic_factor)
+def predict_using_user_strengths(row: RowForML, model: Dict[int, UserStrength]) -> float:
+    """Predict goal difference for a single row of data"""
+    team1_strength = model[row.team1_attacker_user_id].defensive_strength + model[row.team2_defender_user_id].attack_strength
+    team2_strength = model[row.team2_attacker_user_id].defensive_strength - model[row.team1_defender_user_id].attack_strength
+    return team1_strength - team2_strength
 
 
 @app.post("/rating_based_predict")
 async def predict(body: DataForML) -> float:
-    result_to_predict = [r for r in body.data if r.result_to_predict][0]
-    return await predict_goal_diff_based_on_ratings(result_to_predict)
-
+    row_to_predict = [row for row in body.data if row.result_to_predict][0]
+    return predict_using_user_strengths(row_to_predict, model)

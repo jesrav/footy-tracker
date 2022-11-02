@@ -1,10 +1,10 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.dummy import DummyRegressor
-from sklearn .model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score
 
-from common import get_footy_training_data
-from user_strength_model import UserStrengthModel
+from footy_ml.common import get_footy_training_data
+from footy_ml.user_strength_model import UserStrengthModel
 
 FEATURES = [
     'team1_defender_defensive_rating_before_game',
@@ -21,7 +21,7 @@ dm = DummyRegressor(strategy='mean')
 fm = UserStrengthModel()
 
 cv_scores_fm = cross_val_score(fm, df, df[TARGET], cv=5, scoring='neg_mean_squared_error')
-print(np.sqrt(-cv_scores_fm.mean()))
+print(f"MAE for user strength model {np.sqrt(-cv_scores_fm.mean())}")
 
 cv_scores_lm = cross_val_score(lm, df[FEATURES], df[TARGET], cv=5, scoring='neg_mean_squared_error')
 print(np.sqrt(-cv_scores_lm.mean()))

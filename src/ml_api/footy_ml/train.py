@@ -1,4 +1,5 @@
 import json
+import pickle
 
 import numpy as np
 
@@ -6,11 +7,11 @@ import arviz as az
 from matplotlib import pyplot as plt
 from sklearn.model_selection import cross_val_score
 
-from common import get_footy_training_data
-from user_strength_model import UserStrengthModel
+from footy_ml.common import get_footy_training_data
+from footy_ml.user_strength_model import UserStrengthModel
 
 TARGET = 'goal_diff'
-MODEL_TRAINING_OUT_DIR = "model_training_output"
+MODEL_TRAINING_OUT_DIR = "model_training_artifacts"
 
 
 def save_user_parameter_plot(model: UserStrengthModel, parameter_name: str, outdir: str):
@@ -43,15 +44,16 @@ if __name__ == '__main__':
     cv_scores_fm = cross_val_score(footy_model, df, df[TARGET], cv=5, scoring='neg_mean_squared_error')
     metrics = {"mae_cv": np.sqrt(-cv_scores_fm.mean())}
     with open(f"{MODEL_TRAINING_OUT_DIR}/metrics.json", "w") as f:
-        json.dump(metrics, f)
+       json.dump(metrics, f)
 
     print("Fit model on entire data set")
     footy_model.fit(df, df.goal_diff)
 
     print("Save model")
-    with open(f"{MODEL_TRAINING_OUT_DIR}/model.pickle", "w") as f:
-        json.dump(metrics, f)
+    trained_model_dict = footy_model.to_minimal_representation()
+    with open(f"{MODEL_TRAINING_OUT_DIR}/model.pickle", "wb") as f:
+        pickle.dump(trained_model_dict, f)
 
-    print("Plot offensiveand defensive strength parameters of users")
+    print("Plot offensive and defensive strength parameters of users")
     save_user_parameter_plot(footy_model, "defensive_strength", MODEL_TRAINING_OUT_DIR)
     save_user_parameter_plot(footy_model, "attack_strength", MODEL_TRAINING_OUT_DIR)

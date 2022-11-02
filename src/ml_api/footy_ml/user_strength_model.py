@@ -1,10 +1,13 @@
+from typing import Dict
+
 import pymc as pm
 from sklearn.base import BaseEstimator, TransformerMixin
+
+from schemas import UserStrength
 
 
 class UserStrengthModel(BaseEstimator, TransformerMixin):
     def __init__(self, mc_sample_size=1500, mc_tune_size=1500):
-        self.model = pm.Model()
         self.users = None
         self.trace = None
         self.attack_strengths = None
@@ -70,3 +73,12 @@ class UserStrengthModel(BaseEstimator, TransformerMixin):
         X["team2_theta"] = X.team2_def_strength + X.team2_att_strength
         predicted_goal_diff = (X["team1_theta"] - X["team2_theta"]).clip(-10, 10)
         return predicted_goal_diff
+
+    def to_minimal_representation(self) -> Dict[int, UserStrength]:
+        return {
+            int(u): UserStrength(
+                attack_strength=float(self.attack_strengths[u]),
+                defensive_strength=float(self.defensive_strengths[u]),
+            )
+            for u in self.users
+        }
