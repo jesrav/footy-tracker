@@ -52,5 +52,7 @@ async def predict(body: DataForML) -> float:
 
 @app.get("/get_user_strengths", response_model=List[UserStrength])
 async def get_user_strengths() -> List[UserStrength]:
-    user_strengths = [UserStrength(user_id=user_id, **strength.dict()) for user_id, strength in model.items()]
-    return user_strengths
+    return [
+        UserStrength(user_id=user_id, **strength.dict())
+        for user_id, strength in model.items()
+    ]

@@ -79,8 +79,7 @@ class UserStrengthModel(BaseEstimator, TransformerMixin):
         X["team2_att_strength"] = X.team2_attacker_user_id.apply(lambda x: self.attack_strengths.get(x, 0))
         X["team1_theta"] = X.teadm1_def_strength + X.team1_att_strength
         X["team2_theta"] = X.team2_def_strength + X.team2_att_strength
-        predicted_goal_diff = (X["team1_theta"] - X["team2_theta"]).clip(-10, 10)
-        return predicted_goal_diff
+        return (X["team1_theta"] - X["team2_theta"]).clip(-10, 10)
 
     def to_minimal_representation(self) -> Dict[int, FootyStrength]:
         return {
