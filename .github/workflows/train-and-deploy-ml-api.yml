@@ -26,6 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r src/ml_api/requirements.txt
+        
 
     - name: Train ML model
       run: |
@@ -40,6 +41,7 @@ jobs:
   build-push-container:
     name: Build and push docker image
     runs-on: ubuntu-latest
+    needs: train-model
     environment: ${{ inputs.environment }}
     steps:
       - name: Login to Docker Hub
