@@ -57,7 +57,7 @@ jobs:
       - name: 'Build and push image'
         run: |
           image_name=jesrav/footy-tracker-ml:${{ inputs.build_number }}
-          docker build -t $full_image_name -f Dockerfile .
+          docker build -t $image_name -f Dockerfile .
           docker tag footy-tracker_ml_api:latest jesrav/footy-tracker_ml_api:latest
           docker push $image_name
 
