@@ -31,6 +31,7 @@ jobs:
     - name: Train ML model
       run: |
         cd src/ml_api
+        pip install .
         python api/footy_ml/train.py
     - name: Archive ML training output
       uses: actions/upload-artifact@v3
