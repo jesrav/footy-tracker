@@ -29,7 +29,6 @@ jobs:
 
     - name: Train ML model
       run: |
-        cd src/ml_api
-        python train.py
+        python footy_ml/train.py
 
       
