@@ -1,10 +1,5 @@
 build:
-	docker build -t footy-tracker-ml .
-
-tag_and_push:
-	az acr login --name footycr
-	docker tag footy-tracker-ml:latest footycr.azurecr.io/footy-tracker-ml:latest
-	docker push footycr.azurecr.io/footy-tracker-ml:latest
+	docker build -t jesrav/footy-tracker_ml_api .
 
 run:
 	uvicorn api.main:app --port 8002 --reload

@@ -18,4 +18,4 @@ RUN pip install -r requirements.txt
 # add src code
 COPY api api
 
-ENTRYPOINT ["uvicorn", "main:app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "80"]
+ENTRYPOINT ["uvicorn", "api.main:app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "80"]
