@@ -3,10 +3,18 @@ from typing import Dict
 import pymc as pm
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from schemas import UserStrength
+from schemas import FootyStrength
 
 
 class UserStrengthModel(BaseEstimator, TransformerMixin):
+    """Bayesian model where each user has an attack and defensive strength.
+
+    The goal difference is modelled as a normal distribution where the mean (expected goal difference)
+    has a contribution from each player's attack or defensive strength.
+    This way we can directly interpret the strength of each player on offense or defense as their expected
+    contribution to the goal difference.
+    We wrap a pymc3 model in a sklearn transformer, so we can use it with a fit/predict api.
+    """
     def __init__(self, mc_sample_size=1500, mc_tune_size=1500):
         self.users = None
         self.trace = None
@@ -35,11 +43,11 @@ class UserStrengthModel(BaseEstimator, TransformerMixin):
             team2_att = pm.ConstantData("team2_att", team2_att_idx, dims="match")
 
             # global model parameters
-            sd_att = pm.HalfNormal("sd_att", sigma=2)
-            sd_def = pm.HalfNormal("sd_def", sigma=2)
-            sd = pm.HalfNormal("sd", sigma=1)
+            sd_att = pm.HalfNormal("sd_att", sigma=5)
+            sd_def = pm.HalfNormal("sd_def", sigma=5)
+            sd = pm.HalfNormal("sd", sigma=5)
 
-            # User-specific model parameters
+            # User-specific attack and defense model parameters
             attack_strength = pm.Normal("attack_strength", mu=0, sigma=sd_att, dims="user")
             defensive_strength = pm.Normal("defensive_strength", mu=0, sigma=sd_def, dims="user")
 
@@ -74,9 +82,9 @@ class UserStrengthModel(BaseEstimator, TransformerMixin):
         predicted_goal_diff = (X["team1_theta"] - X["team2_theta"]).clip(-10, 10)
         return predicted_goal_diff
 
-    def to_minimal_representation(self) -> Dict[int, UserStrength]:
+    def to_minimal_representation(self) -> Dict[int, FootyStrength]:
         return {
-            int(u): UserStrength(
+            int(u): FootyStrength(
                 attack_strength=float(self.attack_strengths[u]),
                 defensive_strength=float(self.defensive_strengths[u]),
             )

@@ -11,3 +11,6 @@ run:
 
 run_docker:
 	docker run -p 80:80 footy-tracker-ml
+
+make train:
+	python footy_ml/train.py

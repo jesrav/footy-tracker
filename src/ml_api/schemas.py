@@ -30,6 +30,10 @@ class DataForML(BaseModel):
     data: List[RowForML]
 
 
-class UserStrength(BaseModel):
+class FootyStrength(BaseModel):
     attack_strength: float
     defensive_strength: float
+
+
+class UserStrength(FootyStrength):
+    user_id: int
