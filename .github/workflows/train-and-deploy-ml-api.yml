@@ -58,7 +58,7 @@ jobs:
       - name: 'Build and push image'
         run: |
           cd src/ml_api
-          image_name=jesrav/footy-tracker-ml:${{ github.run_number }}
+          image_name=jesrav/footy-tracker_ml_api:${{ github.run_number }}
           docker build -t $image_name .
           docker push $image_name
 
