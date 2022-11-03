@@ -16,9 +16,6 @@ COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
 # add src code
-COPY footy_ml footy_ml
-COPY schemas.py .
-COPY main.py .
-COPY model_training_artifacts model_training_artifacts
+COPY api api
 
 ENTRYPOINT ["uvicorn", "main:app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "80"]

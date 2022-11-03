@@ -3,8 +3,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.dummy import DummyRegressor
 from sklearn.model_selection import cross_val_score
 
-from footy_ml.common import get_footy_training_data
-from footy_ml.user_strength_model import UserStrengthModel
+from api.footy_ml.common import get_footy_training_data
+from api.footy_ml.user_strength_model import UserStrengthModel
 
 FEATURES = [
     'team1_defender_defensive_rating_before_game',

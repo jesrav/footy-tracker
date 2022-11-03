@@ -3,7 +3,7 @@ from typing import Dict
 import pymc as pm
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from schemas import FootyStrength
+from api.schemas import FootyStrength
 
 
 class UserStrengthModel(BaseEstimator, TransformerMixin):

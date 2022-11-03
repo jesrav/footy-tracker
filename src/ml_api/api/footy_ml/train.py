@@ -7,11 +7,11 @@ import arviz as az
 from matplotlib import pyplot as plt
 from sklearn.model_selection import cross_val_score
 
-from common import get_footy_training_data
-from user_strength_model import UserStrengthModel
+from api.footy_ml.common import get_footy_training_data
+from api.footy_ml.user_strength_model import UserStrengthModel
 
 TARGET = 'goal_diff'
-MODEL_TRAINING_OUT_DIR = "model_training_artifacts"
+MODEL_TRAINING_OUT_DIR = "api/model_training_artifacts"
 
 
 def save_user_parameter_plot(model: UserStrengthModel, parameter_name: str, outdir: str):

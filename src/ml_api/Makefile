@@ -7,10 +7,10 @@ tag_and_push:
 	docker push footycr.azurecr.io/footy-tracker-ml:latest
 
 run:
-	uvicorn main:app --port 8002 --reload
+	uvicorn api.main:app --port 8002 --reload
 
 run_docker:
 	docker run -p 80:80 footy-tracker-ml
 
 make train:
-	python footy_ml/train.py
+	python api/footy_ml/train.py

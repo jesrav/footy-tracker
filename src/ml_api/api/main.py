@@ -14,9 +14,9 @@ from typing import Dict, List
 
 from fastapi import FastAPI, HTTPException
 
-from schemas import DataForML, RowForML, FootyStrength, UserStrength
+from api.schemas import DataForML, RowForML, FootyStrength, UserStrength
 
-with open("model_training_artifacts/model.pickle", "rb") as f:
+with open("api/model_training_artifacts/model.pickle", "rb") as f:
     model = pickle.load(f)
 
 app = FastAPI()
@@ -43,6 +43,7 @@ async def predict(body: DataForML) -> float:
     except KeyError:
         raise HTTPException(status_code=404, detail="one of the users of the result to predict does not exist.")
     return prediction
+
 
 @app.post("/predict")
 async def predict(body: DataForML) -> float:
