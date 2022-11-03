@@ -55,11 +55,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # TODO: Should be updated to use ${{ github.run_number }} as tag instead of latest. Need to update the DO deployment workflow as well.
       - name: 'Build and push image'
         run: |
           cd src/ml_api
-          image_name=jesrav/footy-tracker_ml_api:${{ github.run_number }}
+          image_name=jesrav/footy-tracker_ml_api:latest 
           docker build -t $image_name .
           docker push $image_name
-
+      - name: 'Deploy to DigitalOcean'
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+          "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_ML_API_ID }}/deployments"
       
