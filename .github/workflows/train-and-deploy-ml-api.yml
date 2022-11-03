@@ -1,0 +1,57 @@
+name: Training of FootyTracker model and deployment of ML microservice
+
+on:      
+  push:
+    branches:
+      - feature/**    
+  workflow_dispatch:
+    branches:     
+      - main
+      - feature/**
+
+jobs:
+  
+  train-model:
+    name: Training of ML model
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        pip install -r src/ml_api/requirements.txt
+
+    - name: Train ML model
+      run: |
+        cd src/ml_api
+        python footy_ml/train.py
+    - name: Archive ML training output
+      uses: actions/upload-artifact@v3
+      with:
+        name: ml-training-artifacts
+        path: src/ml_api/model_training_artifacts
+
+  build-push-container:
+    name: Build and push docker image
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: 'Build and push image'
+        run: |
+          image_name=jesrav/footy-tracker-ml:${{ inputs.build_number }}
+          docker build -t $full_image_name -f Dockerfile .
+          docker tag footy-tracker_ml_api:latest jesrav/footy-tracker_ml_api:latest
+          docker push $image_name
+
+      
