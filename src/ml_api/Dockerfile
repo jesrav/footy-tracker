@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9
+FROM ubuntu:latest
 
 # set working directory
 WORKDIR /usr/src/ml_api
@@ -8,17 +8,14 @@ WORKDIR /usr/src/ml_api
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install system dependencies
-RUN apt-get update \
-  && apt-get -y install netcat gcc postgresql \
-  && apt-get clean
-
 # install python dependencies
+RUN apt update
+RUN apt -y install python3-pip
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
-# add app
-COPY . .
+# add src code
+COPY api api
 
-ENTRYPOINT ["uvicorn", "main:app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "80"]
+ENTRYPOINT ["uvicorn", "api.main:app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "80"]

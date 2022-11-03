@@ -1,0 +1,74 @@
+name: Training of FootyTracker model and deployment of ML microservice
+
+on:      
+  schedule:
+      - cron: '0 5 * * *' # Run at 05:00 UTC every day
+  workflow_dispatch:
+    branches:     
+      - main
+      - feature/**
+
+jobs:
+  
+  train-model:
+    name: Training of ML model
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        pip install -r src/ml_api/requirements.txt
+        
+
+    - name: Train ML model
+      run: |
+        cd src/ml_api
+        pip install .
+        python api/footy_ml/train.py
+    - name: Archive ML training output
+      uses: actions/upload-artifact@v3
+      with:
+        name: ml-training-artifacts
+        path: src/ml_api/api/model_training_artifacts
+
+  build-push-container:
+    name: Build and push docker image
+    runs-on: ubuntu-latest
+    needs: train-model
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download model training artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: ml-training-artifacts
+          path: downloaded_model_training_artifacts
+      - name: Copy trained model into api
+        run: |
+          cp downloaded_model_training_artifacts/model.pickle src/ml_api/api/model_training_artifacts/model.pickle
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # TODO: Should be updated to use ${{ github.run_number }} as tag instead of latest. Need to update the DO deployment workflow as well.
+      - name: 'Build and push image'
+        run: |
+          cd src/ml_api
+          image_name=jesrav/footy-tracker_ml_api:latest 
+          docker build -t $image_name .
+          docker push $image_name
+      - name: 'Deploy to DigitalOcean'
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+          "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_ML_API_ID }}/deployments"
+      

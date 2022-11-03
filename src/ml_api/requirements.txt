@@ -1,3 +1,7 @@
-uvicorn==0.15.0
+uvicorn
 fastapi
 pandas
+numpy
+pymc
+requests
+sklearn
