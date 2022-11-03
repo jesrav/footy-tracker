@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.11
+FROM ubuntu:latest
 
 # set working directory
 WORKDIR /usr/src/ml_api
@@ -8,12 +8,9 @@ WORKDIR /usr/src/ml_api
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install system dependencies
-RUN apt-get update \
-  && apt-get -y install libhdf5-serial-dev netcdf-bin libnetcdf-dev \
-  && apt-get clean
-
 # install python dependencies
+RUN apt update
+RUN apt -y install python3-pip
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
@@ -23,8 +20,5 @@ COPY footy_ml .
 COPY schemas.py .
 COPY main.py .
 COPY model_training_artifacts .
-
-# train model
-RUN python footy_ml/train.py
 
 ENTRYPOINT ["uvicorn", "main:app", "--proxy-headers", "--forwarded-allow-ips", "*", "--host", "0.0.0.0", "--port", "80"]
