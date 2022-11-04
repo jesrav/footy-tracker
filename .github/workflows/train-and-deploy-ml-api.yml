@@ -38,8 +38,8 @@ jobs:
         name: ml-training-artifacts
         path: src/ml_api/api/model_training_artifacts
 
-  build-push-container:
-    name: Build and push docker image
+  deploy:
+    name: deploy docker container to Digital Ocean
     runs-on: ubuntu-latest
     needs: train-model
     environment: ${{ inputs.environment }}
@@ -65,7 +65,6 @@ jobs:
           image_name=jesrav/footy-tracker_ml_api:latest 
           docker build -t $image_name .
           docker push $image_name
-    trigger-digital-ocean-deployment:
       - name: 'Trigger deploy to DigitalOcean'
         run: |
           curl -X POST \
