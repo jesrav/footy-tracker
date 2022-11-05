@@ -23,11 +23,14 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
     we return None
     """
     timeout = httpx.Timeout(10.0)
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        resp: Response = await client.post(
-            url=url,
-            json=json.loads(data_for_prediction.json()),
-        )
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            resp: Response = await client.post(
+                url=url,
+                json=json.loads(data_for_prediction.json()),
+            )
+    except httpx.HTTPError as exc:
+        return None
     if resp.status_code != 200:
         return None
     json_resp = resp.json()
