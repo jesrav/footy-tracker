@@ -11,7 +11,7 @@ from api.crud.user_stats import update_user_participant_stats_based_on_result
 from api.models import result as result_models
 from api.models import user as user_models
 from api.core.deps import get_session, get_current_user
-from api.services.ml import add_prediction_background_tasks, update_ml_metrics_from_predictions
+from api.crud.ml import add_prediction_background_tasks, update_ml_metrics_from_predictions
 
 router = APIRouter()
 
