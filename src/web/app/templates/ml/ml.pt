@@ -1,22 +1,185 @@
 <div metal:use-macro="load: ../shared/_layout.pt">
     <div metal:fill-slot="content" tal:omit-tag="True">
 
+                <div class="card">
+                    <header class="card-header p-3">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-64x64 mt-3">
+                                    <img src="/static/img/dice-outline.svg" alt="dice-icon">
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p class="title is-2 mt-4">FootyML</p>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="tabs is-large">
+                        <ul>
+                            <li class="is-active">
+                                <a class="tablinks" onclick="TabclickHandle(event, 'mymodels')">
+                                        <span class="icon">
+                                            <img src="/static/img/robot.png" alt="user-icon">
+                                        </span>
+                                    <span>My models</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="tablinks" onclick="TabclickHandle(event, 'mlleaderboard')">
+                                        <span class="icon">
+                                            <img src="/static/img/leaderboard-2.png" alt="user-icon">
+                                        </span>
+                                    <span>ML leaderboard</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="columns">
+                    <div class="column is-one-quarter">
+                    <div class="card-content">
 
-        <div class="content">
 
-            <section class="section">
-                <div class="container">
-                    <h1 class="title">
-                        Track your table football results and ratings🚀
-                    </h1>
+                        <div id="tabs-with-content">
+
+                            <div id="mymodels" class="tabcontent">
+
+                                <div class="card" id="model-1">
+                                    <header class="card-header p-1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-96x96 mb-1">
+                                                    <img src="https://robohash.org/${ user_ml_models[0].model_name }" class="is-rounded"
+                                                         alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-5">${ user_ml_models[0].model_name }</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left">1</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE</th>
+                                                    <td class="has-text-left">
+                                                    ${ ml_metrics[0].rolling_long_window_mae }
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card" id="model-2">
+                                    <header class="card-header p-1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-96x96 mb-1">
+                                                    <img src="https://robohash.org/${ user_ml_models[1].model_name }" class="is-rounded"
+                                                         alt="model-image2">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-5">${ user_ml_models[1].model_name }</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left">1</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE</th>
+                                                    <td class="has-text-left">
+                                                    ${ ml_metrics[0].rolling_long_window_mae }
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card" id="model-3">
+                                    <header class="card-header p-1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-96x96 mb-1">
+                                                    <img src="https://robohash.org/${ user_ml_models[1].model_name }" class="is-rounded"
+                                                         alt="model-image2">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-5">${ user_ml_models[1].model_name }</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left">1</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE</th>
+                                                    <td class="has-text-left">
+                                                    ${ ml_metrics[0].rolling_long_window_mae }
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div id="mlleaderboard" class="tabcontent is-hidden">
+                                Leaderboad
+                            </div>
+
+                        </div>
+
+
+                    </div>
                 </div>
-            </section>
-
-        </div>
-
+                    </div>
+                </div>
+            </div>
     </div>
 
-    <div metal:fill-slot="additional-css" tal:omit-tag="True">
-        <!-- additional css from the page -->
-    </div>
-</div>
+<script>
+    function TabclickHandle(evt, tabId) {
+        let i, tabcontent, tablinks;
+
+        // This is to clear the previous clicked content.
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.add('is-hidden');
+        }
+
+        // Set the tab to be "active".
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].parentElement.classList.remove('is-active');
+        }
+
+        // Display the clicked tab and set it to active.
+        document.getElementById(tabId).classList.remove('is-hidden');
+        evt.currentTarget.parentElement.classList.add('is-active');
+    }
+</script>

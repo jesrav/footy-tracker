@@ -19,3 +19,15 @@ class MLModelRead(BaseModel):
     model_name: str
     user_id: int
     created_dt: datetime
+
+
+class MLMetric(BaseModel):
+    id: int
+    prediction_id: int
+    result_id: int
+    ml_model_id: int
+    prediction_dt: datetime
+    result_goal_diff: int
+    predicted_goal_diff: float
+    rolling_short_window_mae: float
+    rolling_long_window_mae: float

@@ -3,7 +3,7 @@ from typing import List
 import httpx
 from httpx import Response
 
-from app.models.ml import MLModelRead, MLModel, MLModelCreate
+from app.models.ml import MLModelRead, MLModel, MLModelCreate, MLMetric
 from app.models.team import UsersForTeamsSuggestion, TeamsSuggestion
 from app.models.validation_error import ValidationError
 from app.config import settings
@@ -55,3 +55,13 @@ async def get_user_ml_models(bearer_token: str) -> List[MLModel]:
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [MLModel(**m) for m in resp.json()]
+
+
+async def get_ml_metrics() -> List[MLMetric]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(
+            url=settings.BASE_WEB_API_URL + "/ml/metrics/",
+        )
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [MLMetric(**m) for m in resp.json()]

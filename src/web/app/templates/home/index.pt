@@ -66,6 +66,14 @@
                             <span>Leader board</span>
                         </button>
                     </div>
+                    <div class="column">
+                        <button class="button is-large is-fullwidth" onclick="location.href='/ml'">
+                            <span class="icon is-large">
+                                <ion-icon name="dice-outline"></ion-icon>
+                            </span>
+                            <span>FootyML</span>
+                        </button>
+                    </div>
                 </div>
         </div>
         </div>
