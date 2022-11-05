@@ -1,4 +1,4 @@
-name: CI for FootyTracker API
+name: CI/CD pipeline for FootyTracker API
 
 on:
   pull_request:
@@ -52,12 +52,12 @@ jobs:
       - name: 'Build and push image'
         run: |
           cd src/ml_api
-          image_name=jesrav/footy-tracker_api:latest 
+          image_name=jesrav/footy-tracker-api:latest 
           docker build -t $image_name .
           docker push $image_name
-      # - name: 'Trigger deploy to DigitalOcean'
-      #   run: |
-      #     curl -X POST \
-      #     -H "Content-Type: application/json" \
-      #     -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
-      #     "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_API_ID }}/deployments"
+      - name: 'Trigger deploy to DigitalOcean'
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+          "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_API_ID }}/deployments"
