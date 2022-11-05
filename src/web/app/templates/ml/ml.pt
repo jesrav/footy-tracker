@@ -34,20 +34,17 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="columns">
-                    <div class="column is-one-quarter">
-                    <div class="card-content">
-
-
-                        <div id="tabs-with-content">
-
-                            <div id="mymodels" class="tabcontent">
+                    <div id="tabs-with-content">
+                        <div id="mymodels" class="tabcontent">
+                            <div class="columns">
+                            <div class="column is-one-quarter">
+                            <div class="card-content">
 
                                 <div class="card" id="model-1">
                                     <header class="card-header p-1">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-96x96 mb-1">
+                                                <figure class="image is-64x64 mb-1">
                                                     <img src="https://robohash.org/${ user_ml_models[0].model_name }" class="is-rounded"
                                                          alt="model-image1">
                                                 </figure>
@@ -81,7 +78,7 @@
                                     <header class="card-header p-1">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-96x96 mb-1">
+                                                <figure class="image is-64x64 mb-1">
                                                     <img src="https://robohash.org/${ user_ml_models[1].model_name }" class="is-rounded"
                                                          alt="model-image2">
                                                 </figure>
@@ -115,7 +112,7 @@
                                     <header class="card-header p-1">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-96x96 mb-1">
+                                                <figure class="image is-64x64 mb-1">
                                                     <img src="https://robohash.org/${ user_ml_models[1].model_name }" class="is-rounded"
                                                          alt="model-image2">
                                                 </figure>
@@ -144,25 +141,123 @@
                                         </div>
                                     </div>
                                 </div>
+                                </div>
+                                </div>
+                                <div class="column is-two-third">
+                                    <div class="columns is-mobile">
+                                        <div class="column is-11">
+                                            <canvas id="mlEvalChart"></canvas>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <br>
+                                    </div>
+                                    <br>
+                                    <br>
+                                </div>
 
                             </div>
 
-
-                            <div id="mlleaderboard" class="tabcontent is-hidden">
-                                Leaderboad
-                            </div>
+                </div>
+                        <div id="mlleaderboard" class="tabcontent is-hidden">
 
                         </div>
-
-
-                    </div>
                 </div>
-                    </div>
                 </div>
             </div>
+
     </div>
 
 <script>
+    const metric_dates = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in ml_metrics]};
+
+    let metrics = []
+    const metrics_values = ${ [m.rolling_short_window_mae for m in ml_metrics]};
+    metric_dates.forEach((date, date_index) => {
+        metrics.push({x: date, y: metrics_values[date_index]})
+    });
+
+
+    const data = {
+        datasets: [
+            {
+                label: 'Rolling MAE',
+                backgroundColor: 'rgb(0, 209, 178)',
+                borderColor: 'rgb(0, 209, 178)',
+                data: metrics,
+            },
+/*            {
+                label: 'Defensive rating',
+                backgroundColor: 'rgb(32, 156, 238)',
+                borderColor: 'rgb(32, 156, 238)',
+                data: defensive_ratings,
+            },
+            {
+                label: 'Offensive rating',
+                backgroundColor: 'rgb(255, 221, 87)',
+                borderColor: 'rgb(255, 221, 87)',
+                data: offensive_ratings,
+            },*/
+        ]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            'millisecond': 'MMM d yyyy',
+                            'second': 'MMM d yyyy',
+                            'minute': 'MMM d yyyy',
+                            'hour': 'MMM d yyyy',
+                            'day': 'MMM d yyyy',
+                            'week': 'MMM d yyyy',
+                            'month': 'MMM d yyyy',
+                            'quarter': 'MMM d yyyy',
+                            'year': 'MMM d yyyy',
+                        }
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        boxWidth: 15,
+                        fontSize: 3
+                    }
+                }
+            }
+
+        }
+    };
+
+    const mlEvalChart = new Chart(
+            document.getElementById('mlEvalChart'),
+            config
+    );
+
+
+
     function TabclickHandle(evt, tabId) {
         let i, tabcontent, tablinks;
 

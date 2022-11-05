@@ -2,7 +2,7 @@ from typing import List
 
 from starlette.requests import Request
 
-from app.models.ml import MLModel, MLModelRead
+from app.models.ml import MLModel, MLModelRead, MLMetric
 from app.services import ml_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
