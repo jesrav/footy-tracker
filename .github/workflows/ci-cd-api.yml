@@ -1,0 +1,63 @@
+name: CI for FootyTracker API
+
+on:
+  pull_request:
+    branches: 
+      - main
+  push:
+    branches:
+      - main      
+  workflow_dispatch:
+    branches:     
+      - main
+      - feature/**
+
+jobs:
+  
+  test-code:
+    name: Run pytest
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install dependencies
+      run: |
+        pip install -r src/api/requirements.txt
+        pip install -r src/api/requirements-dev.txt
+
+    - name: Run tests
+      run: |
+        cd src/api
+        pytest tests
+
+  deploy_api:
+    name: Deploy api docker container to Digital Ocean
+    runs-on: ubuntu-latest
+    needs: test-code
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # TODO: Should be updated to use ${{ github.run_number }} as tag instead of latest. Need to update the DO deployment workflow as well.
+      - name: 'Build and push image'
+        run: |
+          cd src/ml_api
+          image_name=jesrav/footy-tracker_api:latest 
+          docker build -t $image_name .
+          docker push $image_name
+      # - name: 'Trigger deploy to DigitalOcean'
+      #   run: |
+      #     curl -X POST \
+      #     -H "Content-Type: application/json" \
+      #     -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+      #     "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_API_ID }}/deployments"

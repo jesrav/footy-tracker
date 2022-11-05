@@ -11,7 +11,7 @@ from api.crud.user_stats import update_user_participant_stats_based_on_result
 from api.models import result as result_models
 from api.models import user as user_models
 from api.core.deps import get_session, get_current_user
-from api.services.ml import add_prediction_background_tasks, update_ml_metrics_from_predictions
+from api.crud.ml import add_prediction_background_tasks, update_ml_metrics_from_predictions
 
 router = APIRouter()
 
@@ -40,8 +40,9 @@ async def create_result(
     ]:
         if not await get_user(session=session, user_id=user_id):
             raise HTTPException(
-                status_code=400, detail=f"One of the user id's does not exist."
+                status_code=400, detail="One of the user id's does not exist."
             )
+
     result = await result_crud.create_result(session=session, submitter=current_user, result=result)
 
     await add_prediction_background_tasks(
@@ -60,8 +61,13 @@ async def read_results(
         user_id: Optional[int] = None,
         session: AsyncSession = Depends(get_session)
 ):
-    results = await result_crud.get_results(session, skip=skip, limit=limit, for_approval=for_approval, user_id=user_id)
-    return results
+    return await result_crud.get_results(
+        session,
+        skip=skip,
+        limit=limit,
+        for_approval=for_approval,
+        user_id=user_id,
+    )
 
 
 @router.get("/results/{result_id}", response_model=result_models.ResultSubmissionRead, tags=["results"])
@@ -136,5 +142,4 @@ async def validate_result(
         )
     await session.commit()
     await session.refresh(validated_result)
-    refreshed_validated_result = await result_crud.get_result(session, result_id=validated_result.id)
-    return refreshed_validated_result
+    return await result_crud.get_result(session, result_id=validated_result.id)

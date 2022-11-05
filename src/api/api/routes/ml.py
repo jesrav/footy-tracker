@@ -7,8 +7,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.responses import StreamingResponse, Response
 from starlette.status import HTTP_204_NO_CONTENT
 
-from api.core.deps import get_session, get_current_user
 from api.core.config import settings
+from api.core.deps import get_session, get_current_user
 from api.crud.ml import (
     create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions,
     get_ml_metrics, get_ml_model, delete_ml_model_by_id
@@ -84,6 +84,16 @@ async def add_ml_model(
             detail="A user can hve no more than 3 ML models registered. Please edit one of your current models"
         )
     ml_model = await create_ml_model(session=session, ml_model_create=ml_model, user_id=current_user.id)
+    if not ml_model:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "ML model could not be created. "
+                "The model URL does not return prediction when called with example data. "
+                "Please make sure that the model URL can make predictions with the example data "
+                "available at /ml/example_prediction_data/json."
+            )
+        )
     return ml_model
 
 
@@ -161,8 +171,9 @@ async def suggest_teams(
     ]:
         if not await get_user(session=session, user_id=user_id):
             raise HTTPException(
-                status_code=400, detail=f"One of the user id's does not exist."
+                status_code=400, detail="One of the user id's does not exist."
             )
+
     return await suggest_most_fair_teams(users=users, session=session)
 
 

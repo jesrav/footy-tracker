@@ -8,14 +8,10 @@ from httpx import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import text
 import pandas as pd
-from starlette.background import BackgroundTasks
 
-from api.crud.ml import get_ml_models, add_prediction, add_ml_metrics, get_predictions
 from api.models.ml import (
-    DataForML, DataForMLInternal, RowForMLInternal, MLModel, Prediction, PredictionRead, MLMetric
+    DataForML, DataForMLInternal, RowForMLInternal, PredictionRead, MLMetric
 )
-from api.core.config import settings
-from api.models.result import ResultSubmission
 
 
 async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[float, None]:
@@ -32,93 +28,11 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
             url=url,
             json=json.loads(data_for_prediction.json()),
         )
-    if resp.status_code == 200:
-        json_resp = resp.json()
-        if isinstance(json_resp, float):
-            return json_resp
-    else:
+    if resp.status_code != 200:
         return None
-
-
-async def single_prediction_task(
-    result_id: int,
-    ml_model: MLModel,
-    ml_data: DataForMLInternal,
-    session: AsyncSession,
-) -> Union[Prediction, None]:
-    """Make prediction for a specific result id using an ML model API and write prediction to db.
-
-    If the API call is unsuccessful we return None and no prediction is written to the db.
-
-
-    Parameters
-    ----------
-    result_id: int
-        Result id for the match we are making a prediction for
-    ml_model: MLModel
-        ML model (API) we are using to make the prediction
-    ml_data: DataForMLInternal
-        Data for making prediction. Contains information that is not sent to the ML API
-    session: AsyncSession
-
-    Returns
-    -------
-    int
-        Predicted goal difference (team1 goals - team2 goals)
-    """
-    # Get data for prediction, without columns we don't want to send to the ML endpoint
-    data_for_prediction = DataForML.parse_obj(ml_data)
-
-    # Get a prediction from ML model API
-    prediction = await get_ml_prediction(url=ml_model.model_url, data_for_prediction=data_for_prediction)
-
-    if prediction is None:
-        return None
-
-    # Get the row/result that the prediction was made on
-    row_to_predict = [r for r in ml_data.data if r.result_to_predict][0]
-
-    # If the teams have been switched (not shown to the API), we correct the prediction
-    if row_to_predict.teams_switched:
-        prediction = -prediction
-
-    # Add prediction to db
-    prediction = await add_prediction(
-        session=session, model_id=ml_model.id, result_id=result_id, predicted_goal_diff=prediction
-    )
-    return prediction
-
-
-async def add_prediction_background_tasks(
-        result: ResultSubmission, ml_prediction_background_tasks: BackgroundTasks, session: AsyncSession
-):
-    """Add predictions tasks for a specific result to a collection of background tasks `ml_prediction_background_tasks`
-
-    A prediction task is added for each model registered in the db.
-    """
-    ml_models = await get_ml_models(session=session)
-    ml_data = await get_ml_data(
-        session=session, n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION, result_id_to_predict=result.id
-    )
-    for ml_model in ml_models:
-        ml_prediction_background_tasks.add_task(
-            single_prediction_task,
-            result_id=result.id,
-            ml_model=ml_model,
-            ml_data=ml_data,
-            session=session,
-        )
-
-
-async def update_ml_metrics_from_predictions(session: AsyncSession):
-    """Add model metrics for any new approved results"""
-    predictions = await get_predictions(session=session)
-    ml_metrics = calculate_ml_metrics(
-        predictions,
-        short_rolling_window_size=settings.METRICS_SHORT_WINDOW_SIZE,
-        long_rolling_window_size=settings.METRICS_LONG_WINDOW_SIZE
-    )
-    await add_ml_metrics(ml_metrics, session=session)
+    json_resp = resp.json()
+    if isinstance(json_resp, float):
+        return json_resp
 
 
 def mean_absolute_error(y_pred: float, y_actual: int) -> float:
@@ -164,8 +78,7 @@ def calculate_ml_metrics(
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
 
-    ml_metrics = [MLMetric(**row) for row in ml_metrics_data]
-    return ml_metrics
+    return [MLMetric(**row) for row in ml_metrics_data]
 
 
 async def get_ml_data(
@@ -249,10 +162,7 @@ async def add_ml_target(df: pd.DataFrame) -> pd.DataFrame:
 
 async def get_ml_data_query(n_rows: Union[int, None]) -> str:
     """Get SQL query for historical data to be use in ML training and prediction"""
-    if n_rows:
-        limit_statement = f"limit {n_rows}"
-    else:
-        limit_statement = ""
+    limit_statement = f"limit {n_rows}" if n_rows else ""
     return f"""
         with userrating_before_game_was_appoved as (
     select * from 
