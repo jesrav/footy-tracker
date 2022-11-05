@@ -51,7 +51,7 @@ jobs:
       # TODO: Should be updated to use ${{ github.run_number }} as tag instead of latest. Need to update the DO deployment workflow as well.
       - name: 'Build and push image'
         run: |
-          cd src/ml_api
+          cd src/api
           image_name=jesrav/footy-tracker-api:latest 
           docker build -t $image_name .
           docker push $image_name
