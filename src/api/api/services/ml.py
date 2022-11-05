@@ -11,6 +11,7 @@ import pandas as pd
 from starlette.background import BackgroundTasks
 
 from api.crud.ml import get_ml_models, add_prediction, add_ml_metrics, get_predictions
+from api.crud.result import get_latest_approved_result
 from api.models.ml import (
     DataForML, DataForMLInternal, RowForMLInternal, MLModel, Prediction, PredictionRead, MLMetric
 )
@@ -166,6 +167,15 @@ def calculate_ml_metrics(
 
     ml_metrics = [MLMetric(**row) for row in ml_metrics_data]
     return ml_metrics
+
+
+async def get_ml_data_for_prediction(session: AsyncSession):
+    latest_approved_result = await get_latest_approved_result(session)
+    return await get_ml_data(
+        session=session,
+        n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION + 1,
+        result_id_to_predict=latest_approved_result.id,
+    )
 
 
 async def get_ml_data(

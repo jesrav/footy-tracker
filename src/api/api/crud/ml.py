@@ -5,13 +5,20 @@ from sqlalchemy.orm import joinedload
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from api.models.ml import MLModel, MLModelCreate, Prediction, PredictionRead, MLMetric
+from api.services.ml import get_ml_prediction, get_ml_data_for_prediction
 
 
 async def create_ml_model(
     session: AsyncSession,
-        ml_model_create: MLModelCreate,
-        user_id: int,
+    ml_model_create: MLModelCreate,
+    user_id: int,
 ) -> MLModel:
+    # Test that the model url can be used to make predictions
+    data_for_test_prediction = await get_ml_data_for_prediction(session)
+    test_prediction = get_ml_prediction(url=ml_model_create.model_url, data_for_prediction=data_for_test_prediction)
+    if test_prediction is None:
+        return None
+
     ml_model = MLModel(
         model_name=ml_model_create.model_name,
         model_url=ml_model_create.model_url,

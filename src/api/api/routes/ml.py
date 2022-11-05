@@ -8,19 +8,17 @@ from starlette.responses import StreamingResponse, Response
 from starlette.status import HTTP_204_NO_CONTENT
 
 from api.core.deps import get_session, get_current_user
-from api.core.config import settings
 from api.crud.ml import (
     create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions,
     get_ml_metrics, get_ml_model, delete_ml_model_by_id
 )
-from api.crud.result import get_latest_approved_result
 from api.crud.user import get_user
 from api.models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead, MLMetric, \
     MLModelUpdate
 from api.models.team import UsersForTeamsSuggestion
 from api.models.user import User
 from api.services.team_suggestion import suggest_most_fair_teams
-from api.services.ml import get_ml_data
+from api.services.ml import get_ml_data, get_ml_data_for_prediction
 
 router = APIRouter()
 
@@ -55,12 +53,7 @@ async def get_ml_training_data_json(
 async def get_ml_prediction_data_example_json(
     session: AsyncSession = Depends(get_session)
 ):
-    latest_approved_result = await get_latest_approved_result(session)
-    return await get_ml_data(
-        session=session,
-        n_rows=settings.N_HISTORICAL_ROWS_FOR_PREDICTION + 1,
-        result_id_to_predict=latest_approved_result.id,
-    )
+    return await get_ml_data_for_prediction(session)
 
 
 @router.post("/ml/ml_models/", tags=["ml"])
@@ -84,6 +77,16 @@ async def add_ml_model(
             detail="A user can hve no more than 3 ML models registered. Please edit one of your current models"
         )
     ml_model = await create_ml_model(session=session, ml_model_create=ml_model, user_id=current_user.id)
+    if not ml_model:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "ML model could not be created. "
+                "The model URL does not return prediction when called with example data. "
+                "Please make sure that the model URL can make predictions with the example data "
+                "available at /ml/example_prediction_data/json."
+            )
+        )
     return ml_model
 
 
