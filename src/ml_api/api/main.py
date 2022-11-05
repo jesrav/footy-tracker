@@ -10,14 +10,20 @@ This way we can directly interpret the strength of each player on offense or def
 contribution to the goal difference.
 """
 import pickle
+from collections import defaultdict
 from typing import Dict, List
 
 from fastapi import FastAPI, HTTPException
 
 from api.schemas import DataForML, RowForML, FootyStrength, UserStrength
 
-with open("api/model_training_artifacts/model.pickle", "rb") as f:
-    model = pickle.load(f)
+try:
+    with open("api/model_training_artifacts/model.pickle", "rb") as f:
+        model_dict = pickle.load(f)
+        model = defaultdict(lambda: FootyStrength(attack_strength=0, defensive_strength=0), model_dict)
+except FileNotFoundError:
+    print("No trained model to load - a default model where all users have the same strength of 0 is used instead")
+    model = defaultdict(lambda: FootyStrength(attack_strength=0, defensive_strength=0))
 
 app = FastAPI()
 
@@ -43,12 +49,6 @@ async def predict(body: DataForML) -> float:
     except KeyError:
         raise HTTPException(status_code=404, detail="one of the users of the result to predict does not exist.")
     return prediction
-
-
-@app.post("/predict")
-async def predict(body: DataForML) -> float:
-    row_to_predict = [row for row in body.data if row.result_to_predict][0]
-    return predict_using_user_strengths(row_to_predict, model)
 
 
 @app.get("/get_user_strengths", response_model=List[UserStrength])
