@@ -28,12 +28,11 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
             url=url,
             json=json.loads(data_for_prediction.json()),
         )
-    if resp.status_code == 200:
-        json_resp = resp.json()
-        if isinstance(json_resp, float):
-            return json_resp
-    else:
+    if resp.status_code != 200:
         return None
+    json_resp = resp.json()
+    if isinstance(json_resp, float):
+        return json_resp
 
 
 def mean_absolute_error(y_pred: float, y_actual: int) -> float:
@@ -79,8 +78,7 @@ def calculate_ml_metrics(
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
 
-    ml_metrics = [MLMetric(**row) for row in ml_metrics_data]
-    return ml_metrics
+    return [MLMetric(**row) for row in ml_metrics_data]
 
 
 async def get_ml_data(
@@ -164,10 +162,7 @@ async def add_ml_target(df: pd.DataFrame) -> pd.DataFrame:
 
 async def get_ml_data_query(n_rows: Union[int, None]) -> str:
     """Get SQL query for historical data to be use in ML training and prediction"""
-    if n_rows:
-        limit_statement = f"limit {n_rows}"
-    else:
-        limit_statement = ""
+    limit_statement = f"limit {n_rows}" if n_rows else ""
     return f"""
         with userrating_before_game_was_appoved as (
     select * from 
