@@ -30,9 +30,12 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
         )
     if resp.status_code != 200:
         return None
+<<<<<<< HEAD
     json_resp = resp.json()
     if isinstance(json_resp, float):
         return json_resp
+=======
+>>>>>>> feature/api/validate-ml-models-added
 
 
 def mean_absolute_error(y_pred: float, y_actual: int) -> float:
