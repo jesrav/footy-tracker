@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-name: CI for FootyTracker API
-=======
 name: CI/CD pipeline for FootyTracker API
->>>>>>> feature/api/validate-ml-models-added
 
 on:
   pull_request:
@@ -56,17 +52,6 @@ jobs:
       - name: 'Build and push image'
         run: |
           cd src/ml_api
-<<<<<<< HEAD
-          image_name=jesrav/footy-tracker_api:latest 
-          docker build -t $image_name .
-          docker push $image_name
-      # - name: 'Trigger deploy to DigitalOcean'
-      #   run: |
-      #     curl -X POST \
-      #     -H "Content-Type: application/json" \
-      #     -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
-      #     "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_API_ID }}/deployments"
-=======
           image_name=jesrav/footy-tracker-api:latest 
           docker build -t $image_name .
           docker push $image_name
@@ -76,4 +61,4 @@ jobs:
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
           "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_API_ID }}/deployments"
->>>>>>> feature/api/validate-ml-models-added
+
