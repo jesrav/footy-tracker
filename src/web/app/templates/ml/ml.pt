@@ -65,13 +65,13 @@
                                                 <tr>
                                                     <th class="has-text-left">MAE long window</th>
                                                     <td class="has-text-left">
-                                                    ${ model_latest_ml_metric[user_ml_models[0].id].rolling_long_window_mae }
+                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[0].id].rolling_long_window_mae) }
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="has-text-left">MAE short window</th>
                                                     <td class="has-text-left">
-                                                    ${ model_latest_ml_metric[user_ml_models[0].id].rolling_short_window_mae }
+                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[0].id].rolling_short_window_mae) }
                                                     </td>
                                                 </tr>
                                             </table>
@@ -105,13 +105,13 @@
                                                 <tr>
                                                     <th class="has-text-left">MAE long window</th>
                                                     <td class="has-text-left">
-                                                    ${ model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae }
+                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae) }
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="has-text-left">MAE short window</th>
                                                     <td class="has-text-left">
-                                                    ${ model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae }
+                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae) }
                                                     </td>
                                                 </tr>
                                             </table>
@@ -145,13 +145,13 @@
                                                 <tr>
                                                     <th class="has-text-left">MAE long window</th>
                                                     <td class="has-text-left">
-                                                            ${ model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae }
+                                                            ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae) }
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="has-text-left">MAE short window</th>
                                                     <td class="has-text-left">
-                                                            ${ model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae }
+                                                            ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae) }
                                                     </td>
                                                 </tr>
                                             </table>
