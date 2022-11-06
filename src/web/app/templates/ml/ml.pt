@@ -117,16 +117,9 @@
 
     const metric_dates_model2 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[1].id]]};
     let model2_metrics_metrics = []
-    const model2_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[1]]};
+    const model2_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[user_ml_models[1].id]]};
     metric_dates_model2.forEach((date, date_index) => {
-        model2_metrics_metrics.push({x: date, y: model1_metrics_values[date_index]})
-    });
-
-    const metric_dates_model3 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[1].id]]};
-    let model3_metrics_metrics = []
-    const model3_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[1]]};
-    metric_dates_model3.forEach((date, date_index) => {
-        model3_metrics_metrics.push({x: date, y: model1_metrics_values[date_index]})
+        model2_metrics_metrics.push({x: date, y: model2_metrics_values[date_index]})
     });
 
     const data = {
@@ -138,16 +131,10 @@
                 data: model1_metrics_metrics,
             },
             {
-                label: 'Defensive rating',
+                label: 'Rolling MAE',
                 backgroundColor: 'rgb(32, 156, 238)',
                 borderColor: 'rgb(32, 156, 238)',
                 data: model2_metrics_metrics,
-            },
-            {
-                label: 'Offensive rating',
-                backgroundColor: 'rgb(255, 221, 87)',
-                borderColor: 'rgb(255, 221, 87)',
-                data: model3_metrics_metrics,
             },
         ]
     };
