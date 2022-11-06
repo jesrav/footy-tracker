@@ -60,7 +60,7 @@
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <tr>
                                                     <th class="has-text-left">Ranking</th>
-                                                    <td class="has-text-left">1</td>
+                                                    <td class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id] }</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="has-text-left">MAE long window</th>
@@ -119,7 +119,7 @@
         model1_metrics.push({x: date, y: model1_metrics_values[date_index]})
     });
     datasets.push({
-                label: 'Rolling MAE',
+                label: '${ user_ml_models[0].model_name }',
                 backgroundColor: 'rgb(0, 209, 178)',
                 borderColor: 'rgb(0, 209, 178)',
                 data: model1_metrics,
@@ -134,7 +134,7 @@
         model2_metrics.push({x: date, y: model2_metrics_values[date_index]})
     });
     datasets.push({
-                label: 'Rolling MAE',
+                label: '${ user_ml_models[1].model_name }',
                 backgroundColor: 'rgb(32, 156, 238)',
                 borderColor: 'rgb(32, 156, 238)',
                 data: model2_metrics,
@@ -150,7 +150,7 @@
         model3_metrics.push({x: date, y: model3_metrics_values[date_index]})
     });
     datasets.push({
-        label: 'Rolling MAE',
+        label: '${ user_ml_models[2].model_name }',
         backgroundColor: 'rgb(255, 221, 87)',
         borderColor: 'rgb(255, 221, 87)',
         data: model3_metrics,
@@ -199,6 +199,10 @@
                 }
             },
             plugins: {
+                title: {
+                  display: true,
+                  text: 'Rolling MAE',
+                },
                 legend: {
                     display: true,
                     position: "bottom",
