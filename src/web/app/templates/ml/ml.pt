@@ -63,9 +63,15 @@
                                                     <td class="has-text-left">1</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="has-text-left">MAE</th>
+                                                    <th class="has-text-left">MAE long window</th>
                                                     <td class="has-text-left">
-                                                    ${ ml_metrics[0].rolling_long_window_mae }
+                                                    ${ model_latest_ml_metric[user_ml_models[0].id].rolling_long_window_mae }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE short window</th>
+                                                    <td class="has-text-left">
+                                                    ${ model_latest_ml_metric[user_ml_models[0].id].rolling_short_window_mae }
                                                     </td>
                                                 </tr>
                                             </table>
@@ -97,9 +103,15 @@
                                                     <td class="has-text-left">1</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="has-text-left">MAE</th>
+                                                    <th class="has-text-left">MAE long window</th>
                                                     <td class="has-text-left">
-                                                    ${ ml_metrics[0].rolling_long_window_mae }
+                                                    ${ model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE short window</th>
+                                                    <td class="has-text-left">
+                                                    ${ model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae }
                                                     </td>
                                                 </tr>
                                             </table>
@@ -131,9 +143,15 @@
                                                     <td class="has-text-left">1</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="has-text-left">MAE</th>
+                                                    <th class="has-text-left">MAE long window</th>
                                                     <td class="has-text-left">
-                                                    ${ ml_metrics[0].rolling_long_window_mae }
+                                                            ${ model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE short window</th>
+                                                    <td class="has-text-left">
+                                                            ${ model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae }
                                                     </td>
                                                 </tr>
                                             </table>
@@ -169,14 +187,26 @@
     </div>
 
 <script>
-    const metric_dates = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in ml_metrics]};
-
-    let metrics = []
-    const metrics_values = ${ [m.rolling_short_window_mae for m in ml_metrics]};
-    metric_dates.forEach((date, date_index) => {
-        metrics.push({x: date, y: metrics_values[date_index]})
+    const metric_dates_model1 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[0].id]]};
+    let model1_metrics_metrics = []
+    const model1_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[user_ml_models[0].id]]};
+    metric_dates_model1.forEach((date, date_index) => {
+        model1_metrics_metrics.push({x: date, y: model1_metrics_values[date_index]})
     });
 
+    const metric_dates_model2 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[1].id]]};
+    let model2_metrics_metrics = []
+    const model2_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[1]]};
+    metric_dates_model2.forEach((date, date_index) => {
+        model2_metrics_metrics.push({x: date, y: model1_metrics_values[date_index]})
+    });
+
+    const metric_dates_model3 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[1].id]]};
+    let model3_metrics_metrics = []
+    const model3_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[1]]};
+    metric_dates_model3.forEach((date, date_index) => {
+        model3_metrics_metrics.push({x: date, y: model1_metrics_values[date_index]})
+    });
 
     const data = {
         datasets: [
@@ -184,20 +214,20 @@
                 label: 'Rolling MAE',
                 backgroundColor: 'rgb(0, 209, 178)',
                 borderColor: 'rgb(0, 209, 178)',
-                data: metrics,
+                data: model1_metrics_metrics,
             },
-/*            {
+            {
                 label: 'Defensive rating',
                 backgroundColor: 'rgb(32, 156, 238)',
                 borderColor: 'rgb(32, 156, 238)',
-                data: defensive_ratings,
+                data: model2_metrics_metrics,
             },
             {
                 label: 'Offensive rating',
                 backgroundColor: 'rgb(255, 221, 87)',
                 borderColor: 'rgb(255, 221, 87)',
-                data: offensive_ratings,
-            },*/
+                data: model3_metrics_metrics,
+            },
         ]
     };
 
