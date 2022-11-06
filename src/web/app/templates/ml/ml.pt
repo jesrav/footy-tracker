@@ -44,13 +44,13 @@
                                     <header class="card-header p-1">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-64x64 mb-1">
+                                                <figure class="image is-64x64 mb-1 is-clickable">
                                                     <img src="https://robohash.org/${ user_ml_models[m].model_name }" class="is-rounded"
-                                                         alt="model-image1">
+                                                         onclick="location.href='/ml/${user_ml_models[m].id}'" alt="model-image1">
                                                 </figure>
                                             </div>
                                             <div class="media-content">
-                                                <p class="title is-3 mt-5">${ user_ml_models[m].model_name }</p>
+                                                <p class="title is-3 mt-4">${ user_ml_models[m].model_name }</p>
                                             </div>
                                         </div>
                                     </header>
@@ -60,18 +60,145 @@
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <tr>
                                                     <th class="has-text-left">Ranking</th>
-                                                    <td class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id] }</td>
+                                                    <td tal:condition="ml_model_rankings[user_ml_models[m].id]" class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id] }</td>
+                                                    <td tal:condition="not ml_model_rankings[user_ml_models[m].id]" class="has-text-left"> NA </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE long window</th>
+                                                    <td tal:condition="model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
+                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[m].id].rolling_long_window_mae) }
+                                                    </td>
+                                                    <td tal:condition="not model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE short window</th>
+                                                    <td tal:condition="model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
+                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[m].id].rolling_short_window_mae) }
+                                                    </td>
+                                                    <td tal:condition="not model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div tal:condition="0 not in user_ml_models" class="card mt-2" id=${model_css_ids[0]}>
+                                    <header class="card-header p-1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-64x64 mb-1 is-clickable">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded"
+                                                         onclick="location.href='/ml/add_model'" alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-4">Add new robot</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left"> NA</td>
                                                 </tr>
                                                 <tr>
                                                     <th class="has-text-left">MAE long window</th>
                                                     <td class="has-text-left">
-                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[m].id].rolling_long_window_mae) }
+                                                    NA
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="has-text-left">MAE short window</th>
                                                     <td class="has-text-left">
-                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[m].id].rolling_short_window_mae) }
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div tal:condition="1 not in user_ml_models" class="card mt-2" id=${model_css_ids[1]}>
+                                    <header class="card-header p-1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-64x64 mb-1 is-clickable">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded"
+                                                         onclick="location.href='/ml/add_model'" alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-4">Add new robot</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left"> NA</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE long window</th>
+                                                    <td class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE short window</th>
+                                                    <td class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div tal:condition="2 not in user_ml_models" class="card mt-2" id=${model_css_ids[2]}>
+                                    <header class="card-header p-1">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-64x64 mb-1 is-clickable">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded"
+                                                         onclick="location.href='/ml/add_model'" alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-4">Add new robot</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left"> NA</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE long window</th>
+                                                    <td class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE short window</th>
+                                                    <td class="has-text-left">
+                                                    NA
                                                     </td>
                                                 </tr>
                                             </table>
@@ -81,6 +208,10 @@
                                 </div>
 
                                 </div>
+
+
+
+
                                 </div>
                                 <div class="column is-two-third">
                                     <div class="columns is-mobile">

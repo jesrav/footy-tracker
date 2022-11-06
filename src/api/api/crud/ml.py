@@ -1,7 +1,6 @@
 from typing import Optional, List, Union
 
 from sqlalchemy import select, delete
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.background import BackgroundTasks

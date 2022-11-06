@@ -1,0 +1,51 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+        <div class="content">
+            <div class="container">
+                <div class="card">
+
+                    <header class="card-header p-3">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-64x64 mt-3">
+                                    <img src="/static/img/robot.png">
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p class="title is-3 mt-4">Add ML model</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="card-content" id="add-model">
+                        <form action="" method="POST" class="form">
+                            <div class="field">
+                                <label class="label">Model Name</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" name="name" type="text" placeholder=" Model name" value="${ name }">
+                                    <span class="icon is-small is-left">
+                                        <ion-icon name="chatbox-ellipses-outline"></ion-icon>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Model URL</label>
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" name="url" type="text" placeholder=" Model URL"
+                                           value="${ url }">
+                                    <span class="icon is-small is-left">
+                                        <ion-icon name="link-outline"></ion-icon>
+                                   </span>
+                                </div>
+                            </div>
+                            <button type="submit" class="button is-primary">Add model</button>
+                            <h5 class="help is-danger" tal:condition="error">${ error }</h5>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/static/css/bulma-tables.min.css">
     <link rel="stylesheet" href="/static/css/profile-image.css">
     <link rel="stylesheet" href="/static/css/ml-profile-image.css">
+    <link rel="stylesheet" href="/static/css/extra.css">
   </head>
 
 <body>

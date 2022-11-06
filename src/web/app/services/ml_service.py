@@ -33,7 +33,7 @@ async def add_ml_model(ml_model: MLModelCreate, bearer_token: str) -> List[MLMod
         )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
-    return [MLModel(**m) for m in resp.json()]
+    return MLModel(**resp.json())
 
 
 async def get_ml_models() -> List[MLModelRead]:
