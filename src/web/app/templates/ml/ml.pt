@@ -41,10 +41,10 @@
                             <div class="card-content">
 
                                 <div tal:repeat="m user_ml_models" class="card mt-2" id=${model_css_ids[m]}>
-                                    <header class="card-header p-1">
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/${user_ml_models[m].id}'">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-64x64 mb-1 is-clickable">
+                                                <figure class="image is-64x64 mb-1">
                                                     <img src="https://robohash.org/${ user_ml_models[m].model_name }" class="is-rounded"
                                                          onclick="location.href='/ml/${user_ml_models[m].id}'" alt="model-image1">
                                                 </figure>
@@ -88,12 +88,11 @@
                                 </div>
 
                                 <div tal:condition="0 not in user_ml_models" class="card mt-2" id=${model_css_ids[0]}>
-                                    <header class="card-header p-1">
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/add_model'">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-64x64 mb-1 is-clickable">
-                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded"
-                                                         onclick="location.href='/ml/add_model'" alt="model-image1">
+                                                <figure class="image is-64x64 mb-1">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded" alt="model-image1">
                                                 </figure>
                                             </div>
                                             <div class="media-content">
@@ -128,12 +127,11 @@
                                 </div>
 
                                 <div tal:condition="1 not in user_ml_models" class="card mt-2" id=${model_css_ids[1]}>
-                                    <header class="card-header p-1">
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/add_model'">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-64x64 mb-1 is-clickable">
-                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded"
-                                                         onclick="location.href='/ml/add_model'" alt="model-image1">
+                                                <figure class="image is-64x64 mb-1">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded" alt="model-image1">
                                                 </figure>
                                             </div>
                                             <div class="media-content">
@@ -168,12 +166,11 @@
                                 </div>
 
                                 <div tal:condition="2 not in user_ml_models" class="card mt-2" id=${model_css_ids[2]}>
-                                    <header class="card-header p-1">
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/add_model'">
                                         <div class="media">
                                             <div class="media-left">
-                                                <figure class="image is-64x64 mb-1 is-clickable">
-                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded"
-                                                         onclick="location.href='/ml/add_model'" alt="model-image1">
+                                                <figure class="image is-64x64 mb-1">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded" alt="model-image1">
                                                 </figure>
                                             </div>
                                             <div class="media-content">
