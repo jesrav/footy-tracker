@@ -40,17 +40,17 @@
                             <div class="column is-one-quarter">
                             <div class="card-content">
 
-                                <div class="card" id="model-1">
+                                <div tal:repeat="m user_ml_models" class="card mt-2" id=${model_css_ids[m]}>
                                     <header class="card-header p-1">
                                         <div class="media">
                                             <div class="media-left">
                                                 <figure class="image is-64x64 mb-1">
-                                                    <img src="https://robohash.org/${ user_ml_models[0].model_name }" class="is-rounded"
+                                                    <img src="https://robohash.org/${ user_ml_models[m].model_name }" class="is-rounded"
                                                          alt="model-image1">
                                                 </figure>
                                             </div>
                                             <div class="media-content">
-                                                <p class="title is-3 mt-5">${ user_ml_models[0].model_name }</p>
+                                                <p class="title is-3 mt-5">${ user_ml_models[m].model_name }</p>
                                             </div>
                                         </div>
                                     </header>
@@ -79,86 +79,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <br>
-                                <div class="card" id="model-2">
-                                    <header class="card-header p-1">
-                                        <div class="media">
-                                            <div class="media-left">
-                                                <figure class="image is-64x64 mb-1">
-                                                    <img src="https://robohash.org/${ user_ml_models[1].model_name }" class="is-rounded"
-                                                         alt="model-image2">
-                                                </figure>
-                                            </div>
-                                            <div class="media-content">
-                                                <p class="title is-3 mt-5">${ user_ml_models[1].model_name }</p>
-                                            </div>
-                                        </div>
-                                    </header>
-                                    <div class="card-content">
-                                        <div class="content">
 
-                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
-                                                <tr>
-                                                    <th class="has-text-left">Ranking</th>
-                                                    <td class="has-text-left">1</td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE long window</th>
-                                                    <td class="has-text-left">
-                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae) }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE short window</th>
-                                                    <td class="has-text-left">
-                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae) }
-                                                    </td>
-                                                </tr>
-                                            </table>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="card" id="model-3">
-                                    <header class="card-header p-1">
-                                        <div class="media">
-                                            <div class="media-left">
-                                                <figure class="image is-64x64 mb-1">
-                                                    <img src="https://robohash.org/${ user_ml_models[1].model_name }" class="is-rounded"
-                                                         alt="model-image2">
-                                                </figure>
-                                            </div>
-                                            <div class="media-content">
-                                                <p class="title is-3 mt-5">${ user_ml_models[1].model_name }</p>
-                                            </div>
-                                        </div>
-                                    </header>
-                                    <div class="card-content">
-                                        <div class="content">
-
-                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
-                                                <tr>
-                                                    <th class="has-text-left">Ranking</th>
-                                                    <td class="has-text-left">1</td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE long window</th>
-                                                    <td class="has-text-left">
-                                                            ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_long_window_mae) }
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE short window</th>
-                                                    <td class="has-text-left">
-                                                            ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[1].id].rolling_short_window_mae) }
-                                                    </td>
-                                                </tr>
-                                            </table>
-
-                                        </div>
-                                    </div>
-                                </div>
                                 </div>
                                 </div>
                                 <div class="column is-two-third">
