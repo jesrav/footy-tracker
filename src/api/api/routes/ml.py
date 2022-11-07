@@ -198,5 +198,6 @@ async def read_ml_metrics(
     session: AsyncSession = Depends(get_session),
     skip: int = 0,
     limit: int = 100,
+    ml_model_id: Optional[int] = None,
 ):
-    return await get_ml_metrics(session)
+    return await get_ml_metrics(session, skip=skip, limit=limit, ml_model_id=ml_model_id)

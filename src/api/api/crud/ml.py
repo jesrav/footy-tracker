@@ -132,10 +132,28 @@ async def get_predictions(
     ]
 
 
-async def get_ml_metrics(session: AsyncSession) -> List[MLMetric]:
-    statement = select(MLMetric)
+async def get_ml_metrics(
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 100,
+        ml_model_id: Optional[int] = None
+) -> List[MLMetric]:
+    if ml_model_id is not None:
+        statement = (
+            select(MLMetric)
+            .filter(MLMetric.ml_model_id == ml_model_id)
+            .order_by(MLMetric.prediction_dt)
+            .offset(skip).limit(limit)
+        )
+    else:
+        statement = (
+            select(MLMetric)
+            .order_by(MLMetric.prediction_dt)
+            .offset(skip).limit(limit)
+        )
     result = await session.execute(statement)
-    return result.scalars().all()
+    ml_metrics = result.scalars().all()
+    return  sorted(ml_metrics, key=lambda r: r.prediction_dt, reverse=True)
 
 
 async def add_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> None:
