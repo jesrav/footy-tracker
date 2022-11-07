@@ -42,19 +42,14 @@ def mean_absolute_error(y_pred: float, y_actual: int) -> float:
     return abs(y_pred - y_actual)
 
 
-def get_worst_possible_impute_of_predictions(df: pd.DataFrame) -> pd.DataFrame:
-    """Replace missing predictions with the worst possible prediction of a goal diff between-10 and 10"""
-    df = df.copy()
+def get_reasonably_bad_prediction(df: pd.DataFrame) -> pd.DataFrame:
+    """Replace missing predictions with a reasonably bad baseline prediction of 0 goal difference.
 
-    def _get_worst_possible_prediction(result_goal_diff: int):
-        if result_goal_diff >=0:
-            return -10
-        else:
-            return 10
-    prediction_missing = df.prediction.isna()
-    df.loc[prediction_missing, 'prediction'] = df[prediction_missing].result_goal_diff.apply(
-        lambda x: _get_worst_possible_prediction(x)
-    )
+    This penalizes missing predictions, but not so much that it will be impossible to recover from.
+    """
+    df = df.copy()
+    prediction_missing = df.predicted_goal_diff.isna()
+    df.loc[prediction_missing, 'predicted_goal_diff'] = 0
     return df
 
 
@@ -71,10 +66,10 @@ def calculate_ml_metrics(
     predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
 
     # Penalize missing predictions
-    predictions_df = get_worst_possible_impute_of_predictions(predictions_df)
+    predictions_with_imputed_df = get_reasonably_bad_prediction(predictions_df)
 
     # Add the absolute error of each prediction
-    predictions_df['ae'] = predictions_df.apply(
+    predictions_df['ae'] = predictions_with_imputed_df.apply(
         lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1
     )
 
@@ -99,7 +94,7 @@ def calculate_ml_metrics(
     ml_metrics_data = predictions_df.to_dict('records')
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
-
+        rec["predicted_goal_diff"] = rec["predicted_goal_diff"] if not np.isnan(rec["predicted_goal_diff"]) else None
     return [MLMetric(**row) for row in ml_metrics_data]
 
 
