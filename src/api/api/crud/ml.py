@@ -242,7 +242,6 @@ async def single_prediction_task(
 
     If the API call is unsuccessful, a prediction of none is written to the database.
 
-
     Parameters
     ----------
     result_id: int

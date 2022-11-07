@@ -209,12 +209,6 @@ async def read_ml_metrics(session: AsyncSession = Depends(get_session)):
     return await get_latest_ml_metrics(session)
 
 
-@router.get("/ml/metrics/latest{ml_model_id}", response_model=MLMetric, tags=["ml"])
-async def read_ml_metrics(ml_model_id: int, session: AsyncSession = Depends(get_session),
-):
-    return await get_latest_model_ml_metrics(ml_model_id=ml_model_id, session=session)
-
-
 @router.get("/ml/rankings/", response_model=List[MLModelRanking], tags=["ml"])
 async def read_ml_model_rankings(session: AsyncSession = Depends(get_session),
 ):

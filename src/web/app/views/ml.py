@@ -11,7 +11,7 @@ router = fastapi.APIRouter()
 
 @router.get('/ml')
 @template()
-async def ml(request: Request):
+async def user_ml_overview(request: Request):
     vm = UserMLOverviewViewModel(request)
     await vm.authorize()
     if vm.redirect_response:

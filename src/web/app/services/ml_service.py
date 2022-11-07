@@ -1,9 +1,9 @@
-from typing import List
+from typing import List, Optional
 
 import httpx
 from httpx import Response
 
-from app.models.ml import MLModelRead, MLModel, MLModelCreate, MLMetric
+from app.models.ml import MLModelRead, MLModel, MLModelCreate, MLMetric, MLModelRanking
 from app.models.team import UsersForTeamsSuggestion, TeamsSuggestion
 from app.models.validation_error import ValidationError
 from app.config import settings
@@ -57,11 +57,27 @@ async def get_user_ml_models(bearer_token: str) -> List[MLModel]:
     return [MLModel(**m) for m in resp.json()]
 
 
-async def get_ml_metrics() -> List[MLMetric]:
+async def get_ml_metrics(ml_model_id: int) -> List[MLMetric]:
     async with httpx.AsyncClient() as client:
         resp: Response = await client.get(
-            url=settings.BASE_WEB_API_URL + "/ml/metrics/",
+            url=settings.BASE_WEB_API_URL + f"/ml/metrics/?ml_model_id={ml_model_id}",
         )
         if resp.status_code != 200:
             raise ValidationError(resp.text, status_code=resp.status_code)
     return [MLMetric(**m) for m in resp.json()]
+
+
+async def get_latest_ml_metrics() -> List[MLMetric]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=f"{settings.BASE_WEB_API_URL}/ml/metrics/latest")
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [MLMetric(**m) for m in resp.json()]
+
+
+async def get_ml_model_rankings() -> List[MLModelRanking]:
+    async with httpx.AsyncClient() as client:
+        resp: Response = await client.get(url=f"{settings.BASE_WEB_API_URL}/ml/rankings/")
+        if resp.status_code != 200:
+            raise ValidationError(resp.text, status_code=resp.status_code)
+    return [MLModelRanking(**m) for m in resp.json()]

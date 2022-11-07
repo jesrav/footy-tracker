@@ -60,24 +60,15 @@
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <tr>
                                                     <th class="has-text-left">Ranking</th>
-                                                    <td tal:condition="ml_model_rankings[user_ml_models[m].id]" class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id] }</td>
+                                                    <td tal:condition="ml_model_rankings[user_ml_models[m].id]" class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id].ranking }</td>
                                                     <td tal:condition="not ml_model_rankings[user_ml_models[m].id]" class="has-text-left"> NA </td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="has-text-left">MAE long window</th>
-                                                    <td tal:condition="model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
-                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[m].id].rolling_long_window_mae) }
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
+                                                    <td tal:condition="latest_ml_model_metrics[user_ml_models[m].id]" class="has-text-left">
+                                                    ${ "{:.2f}".format(latest_ml_model_metrics[user_ml_models[m].id].rolling_long_window_mae) }
                                                     </td>
-                                                    <td tal:condition="not model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
-                                                    NA
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE short window</th>
-                                                    <td tal:condition="model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
-                                                    ${ "{:.2f}".format(model_latest_ml_metric[user_ml_models[m].id].rolling_short_window_mae) }
-                                                    </td>
-                                                    <td tal:condition="not model_latest_ml_metric[user_ml_models[m].id]" class="has-text-left">
+                                                    <td tal:condition="not latest_ml_model_metrics[user_ml_models[m].id]" class="has-text-left">
                                                     NA
                                                     </td>
                                                 </tr>
@@ -109,13 +100,7 @@
                                                     <td class="has-text-left"> NA</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="has-text-left">MAE long window</th>
-                                                    <td class="has-text-left">
-                                                    NA
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE short window</th>
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
                                                     <td class="has-text-left">
                                                     NA
                                                     </td>
@@ -148,13 +133,7 @@
                                                     <td class="has-text-left"> NA</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="has-text-left">MAE long window</th>
-                                                    <td class="has-text-left">
-                                                    NA
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE short window</th>
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
                                                     <td class="has-text-left">
                                                     NA
                                                     </td>
@@ -187,13 +166,7 @@
                                                     <td class="has-text-left"> NA</td>
                                                 </tr>
                                                 <tr>
-                                                    <th class="has-text-left">MAE long window</th>
-                                                    <td class="has-text-left">
-                                                    NA
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="has-text-left">MAE short window</th>
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
                                                     <td class="has-text-left">
                                                     NA
                                                     </td>
@@ -205,9 +178,6 @@
                                 </div>
 
                                 </div>
-
-
-
 
                                 </div>
                                 <div class="column is-two-third">
@@ -329,7 +299,10 @@
             plugins: {
                 title: {
                   display: true,
-                  text: 'Rolling MAE',
+                  text: 'Rolling MAE (100 games)',
+                  font: {
+                    size: 20
+                  }
                 },
                 legend: {
                     display: true,
@@ -348,8 +321,6 @@
             document.getElementById('mlEvalChart'),
             config
     );
-
-
 
     function TabclickHandle(evt, tabId) {
         let i, tabcontent, tablinks;
