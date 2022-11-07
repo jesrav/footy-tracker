@@ -11,6 +11,7 @@ class UserMLOverviewViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
         self.user_ml_models: Dict[int, MLModel] = {}
+        self.ml_models: List[MLModel] = {}
         self.model_ml_metrics: Dict[int, List[MLMetric]] = {}
         self.latest_ml_model_metrics: Dict[int, MLMetric] = {}
         self.model_css_ids: List[str] = ["model-1", "model-2", "model-3"]
@@ -22,6 +23,7 @@ class UserMLOverviewViewModel(ViewModelBase):
             i: ml_model
             for i, ml_model in enumerate(await ml_service.get_user_ml_models(self.bearer_token))
         }
+        self.ml_models = await ml_service.get_ml_models()
         self.model_ml_metrics = {
             ml_model.id: await ml_service.get_ml_metrics(ml_model_id=ml_model.id)
             for ml_model in self.user_ml_models.values()

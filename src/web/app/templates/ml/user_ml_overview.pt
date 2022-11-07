@@ -192,11 +192,43 @@
                                     <br>
                                     <br>
                                 </div>
-
                             </div>
+                        </div>
 
-                </div>
                         <div id="mlleaderboard" class="tabcontent is-hidden">
+                            <div class="b-table">
+                                    <div class="table-wrapper has-mobile-cards">
+                                        <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                            <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th>Ranking</th>
+                                                <th>100 game rolling MAE</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr tal:repeat="m ml_models" class="table-row" id="${ m.id }"
+                                                                                  onclick="location.href='/ml/${ m.id }';"
+                                                                                  style="cursor:pointer;">
+                                                <td class="is-image-cell">
+                                                    <div class="image">
+                                                        <img src="https://robohash.org/${ m.model_name }" class="is-rounded"
+                                                             alt="user-icon">
+                                                    </div>
+
+                                                </td>
+                                                <td data-label="Model Name">${ m.model_name }</td>
+                                                <td data-label="Ranking">${ml_model_rankings[m.id]}</td>
+                                                <td data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[m.id].rolling_long_window_mae) }</td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
 
                         </div>
                 </div>
