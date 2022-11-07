@@ -10,15 +10,14 @@ from app.viewmodels.shared.viewmodel import ViewModelBase
 class MLModelViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
-        self.user_ml_models: Dict[int, MLModel] = {}
-        self.ml_models: List[MLModelRead] = []
-        self.model_ml_metrics: Dict[int, List[MLMetric]] = {}
+        self.ml_model: MLModel = None
+        self.model_ml_metrics: List[MLMetric]
         self.model_latest_ml_metric: Dict[int, MLMetric] = {}
         self.model_css_ids: List[str] = ["model-1", "model-2", "model-3"]
         self.ml_model_rankings: Dict[int: int] = {}
 
     async def load(self):
-        # Get the users models in a dictionary for convenience
+
         user_ml_models = await ml_service.get_user_ml_models(self.bearer_token)
         self.user_ml_models = {i: ml_model for i, ml_model in enumerate(user_ml_models)}
 

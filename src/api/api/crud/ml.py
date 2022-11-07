@@ -1,7 +1,7 @@
-from typing import Optional, List, Union
+from typing import Optional, List
 
-from sqlalchemy import select, delete
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select, delete, func, and_
+from sqlalchemy.orm import joinedload, selectinload
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.background import BackgroundTasks
 
@@ -154,6 +154,33 @@ async def get_ml_metrics(
     result = await session.execute(statement)
     ml_metrics = result.scalars().all()
     return  sorted(ml_metrics, key=lambda r: r.prediction_dt, reverse=True)
+
+
+async def get_latest_ml_metrics(session: AsyncSession) -> List[MLMetric]:
+    subquery = (
+        select(MLMetric.ml_model_id, func.max(MLMetric.prediction_dt).label('maxdate'))
+        .group_by(MLMetric.ml_model_id)
+        .subquery('t2')
+    )
+    statement = (
+        select(MLMetric)
+        .join(
+            subquery, and_(MLMetric.ml_model_id == subquery.c.ml_model_id, MLMetric.prediction_dt == subquery.c.maxdate)
+        )
+    )
+    result = await session.execute(statement)
+    return result.scalars().all()
+
+
+async def get_latest_model_ml_metrics(ml_model_id: int, session: AsyncSession):
+    statement = (
+        select(MLMetric)
+        .filter(MLMetric.ml_model_id == ml_model_id)
+        .order_by(MLMetric.prediction_dt.desc())
+        .limit(1)
+    )
+    result = await session.execute(statement)
+    return result.scalar_one_or_none()
 
 
 async def add_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> None:

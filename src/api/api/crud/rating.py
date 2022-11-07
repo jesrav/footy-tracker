@@ -63,9 +63,9 @@ async def get_latest_user_rating(session: AsyncSession, user_id: int) -> rating_
         select(rating_models.UserRating)
         .filter(rating_models.UserRating.user_id == user_id)
         .order_by(rating_models.UserRating.created_dt.desc())
-    )
+    ).limit(1)
     result = await session.execute(statement.options(selectinload(rating_models.UserRating.user)))
-    return result.scalars().first()
+    return result.scalar_one_or_none()
 
 
 async def get_user_ratings(

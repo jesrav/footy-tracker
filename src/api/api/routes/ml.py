@@ -11,7 +11,7 @@ from api.core.config import settings
 from api.core.deps import get_session, get_current_user
 from api.crud.ml import (
     create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions,
-    get_ml_metrics, get_ml_model, delete_ml_model_by_id
+    get_ml_metrics, get_ml_model, delete_ml_model_by_id, get_latest_ml_metrics, get_latest_model_ml_metrics
 )
 from api.crud.result import get_latest_approved_result
 from api.crud.user import get_user
@@ -201,3 +201,14 @@ async def read_ml_metrics(
     ml_model_id: Optional[int] = None,
 ):
     return await get_ml_metrics(session, skip=skip, limit=limit, ml_model_id=ml_model_id)
+
+
+@router.get("/ml/metrics/latest", response_model=List[MLMetric], tags=["ml"])
+async def read_ml_metrics(session: AsyncSession = Depends(get_session)):
+    return await get_latest_ml_metrics(session)
+
+
+@router.get("/ml/metrics/latest{ml_model_id}", response_model=MLMetric, tags=["ml"])
+async def read_ml_metrics(ml_model_id: int, session: AsyncSession = Depends(get_session),
+):
+    return await get_latest_model_ml_metrics(ml_model_id=ml_model_id, session=session)
