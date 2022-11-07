@@ -94,7 +94,7 @@ class PredictionRead(SQLModel):
     id: int
     ml_model_id: int
     result_id: int
-    predicted_goal_diff: float
+    predicted_goal_diff: Optional[float]
     created_dt: datetime
     result_goal_diff: Optional[float]
 

@@ -167,10 +167,10 @@ async def single_prediction_task(
     ml_model: MLModel,
     ml_data: DataForMLInternal,
     session: AsyncSession,
-) -> Union[Prediction, None]:
+) -> Prediction:
     """Make prediction for a specific result id using an ML model API and write prediction to db.
 
-    If the API call is unsuccessful we return None and no prediction is written to the db.
+    If the API call is unsuccessful, a prediction of none is written to the database.
 
 
     Parameters
@@ -194,14 +194,11 @@ async def single_prediction_task(
     # Get a prediction from ML model API
     prediction = await get_ml_prediction(url=ml_model.model_url, data_for_prediction=data_for_prediction)
 
-    if prediction is None:
-        return None
-
     # Get the row/result that the prediction was made on
     row_to_predict = [r for r in ml_data.data if r.result_to_predict][0]
 
     # If the teams have been switched (not shown to the API), we correct the prediction
-    if row_to_predict.teams_switched:
+    if row_to_predict.teams_switched and prediction is not None:
         prediction = -prediction
 
     # Add prediction to db

@@ -42,17 +42,36 @@ def mean_absolute_error(y_pred: float, y_actual: int) -> float:
     return abs(y_pred - y_actual)
 
 
+def get_worst_possible_impute_of_predictions(df: pd.DataFrame) -> pd.DataFrame:
+    """Replace missing predictions with the worst possible prediction of a goal diff between-10 and 10"""
+    df = df.copy()
+
+    def _get_worst_possible_prediction(result_goal_diff: int):
+        if result_goal_diff >=0:
+            return -10
+        else:
+            return 10
+    prediction_missing = df.prediction.isna()
+    df.loc[prediction_missing, 'prediction'] = df[prediction_missing].result_goal_diff.apply(
+        lambda x: _get_worst_possible_prediction(x)
+    )
+    return df
+
+
 def calculate_ml_metrics(
     predictions: List[PredictionRead],
     short_rolling_window_size: int = 10,
     long_rolling_window_size: int = 100,
 ) -> List[MLMetric]:
     """Calculate metrics for each model."""
-    # Only use results that have a goal dif (They have been approved)
+    # Only use predictions that have a goal difference (They have been approved)
     predictions = [pred for pred in predictions if pred.result_goal_diff is not None]
 
     # Get data into a dataframe
     predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
+
+    # Penalize missing predictions
+    predictions_df = get_worst_possible_impute_of_predictions(predictions_df)
 
     # Add the absolute error of each prediction
     predictions_df['ae'] = predictions_df.apply(
