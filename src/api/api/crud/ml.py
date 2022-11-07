@@ -8,7 +8,7 @@ from starlette.background import BackgroundTasks
 from api.core.config import settings
 from api.crud.result import get_latest_approved_result
 from api.models.ml import MLModel, MLModelCreate, Prediction, PredictionRead, MLMetric, DataForML, RowForML, \
-    DataForMLInternal
+    DataForMLInternal, MLModelRanking
 from api.models.result import ResultSubmission
 from api.services.ml import get_ml_prediction, get_ml_data, calculate_ml_metrics
 
@@ -189,6 +189,15 @@ async def add_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> N
     for ml_metric in new_ml_metrics:
         session.add(ml_metric)
     await session.commit()
+
+
+async def get_ml_model_rankings(session: AsyncSession) -> List[MLModelRanking]:
+    latest_ml_metrics = await get_latest_ml_metrics(session=session)
+    mae_ranking_order = sorted(latest_ml_metrics, key=lambda m: m.rolling_long_window_mae)
+    return [
+        MLModelRanking(ml_model_id=m.ml_model_id, ranking=i)
+        for i, m in enumerate(mae_ranking_order, start=1)
+    ]
 
 
 async def add_prediction_background_tasks(

@@ -11,7 +11,8 @@ from api.core.config import settings
 from api.core.deps import get_session, get_current_user
 from api.crud.ml import (
     create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions,
-    get_ml_metrics, get_ml_model, delete_ml_model_by_id, get_latest_ml_metrics, get_latest_model_ml_metrics
+    get_ml_metrics, get_ml_model, delete_ml_model_by_id, get_latest_ml_metrics, get_latest_model_ml_metrics,
+    get_ml_model_rankings
 )
 from api.crud.result import get_latest_approved_result
 from api.crud.user import get_user
@@ -214,7 +215,7 @@ async def read_ml_metrics(ml_model_id: int, session: AsyncSession = Depends(get_
     return await get_latest_model_ml_metrics(ml_model_id=ml_model_id, session=session)
 
 
-# @router.get("/ml/rankings/", response_model=List[MLModelRanking], tags=["ml"])
-# async def read_ml_metrics(ml_model_id: int, session: AsyncSession = Depends(get_session),
-# ):
-#     return await get_ml_model_rankings(session=session)
+@router.get("/ml/rankings/", response_model=List[MLModelRanking], tags=["ml"])
+async def read_ml_model_rankings(session: AsyncSession = Depends(get_session),
+):
+    return await get_ml_model_rankings(session=session)

@@ -109,12 +109,10 @@ class MLMetric(SQLModel, table=True):
     predicted_goal_diff: Optional[float]
     rolling_short_window_mae: float
     rolling_long_window_mae: float
+    rolling_short_window_bias: float
+    rolling_long_window_bias: float
 
 
 class MLModelRanking(SQLModel):
-    model_id: int
-    overall_ranking: int
-    short_window_mae_ranking: int
-    long_window_mae_ranking: int
-    bias_ranking: int
-    updated_dt: datetime
+    ml_model_id: int
+    ranking: int

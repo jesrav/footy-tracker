@@ -38,10 +38,6 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
         return json_resp
 
 
-def mean_absolute_error(y_pred: float, y_actual: int) -> float:
-    return abs(y_pred - y_actual)
-
-
 def get_reasonably_bad_prediction(df: pd.DataFrame) -> pd.DataFrame:
     """Replace missing predictions with a reasonably bad baseline prediction of 0 goal difference.
 
@@ -68,10 +64,11 @@ def calculate_ml_metrics(
     # Penalize missing predictions
     predictions_with_imputed_df = get_reasonably_bad_prediction(predictions_df)
 
+    # Add the residual of each prediction
+    predictions_df['residual'] = predictions_df.predicted_goal_diff - predictions_df.result_goal_diff
+
     # Add the absolute error of each prediction
-    predictions_df['ae'] = predictions_with_imputed_df.apply(
-        lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1
-    )
+    predictions_df['ae'] = predictions_df['residual'].abs()
 
     # Add the rolling mean absolute error for each model for a short and long window
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
@@ -83,6 +80,20 @@ def calculate_ml_metrics(
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
     predictions_df["rolling_long_window_mae"] = (
         predictions_df.groupby('ml_model_id')["ae"]
+        .rolling(window=long_rolling_window_size, min_periods=1)
+        .mean().values
+    )
+
+    # Add the rolling BIAS for each model for a short and long window
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
+    predictions_df["rolling_short_window_bias"] = (
+        predictions_df.groupby('ml_model_id')["residual"]
+        .rolling(window=short_rolling_window_size, min_periods=1)
+        .mean().values
+    )
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
+    predictions_df["rolling_long_window_bias"] = (
+        predictions_df.groupby('ml_model_id')["residual"]
         .rolling(window=long_rolling_window_size, min_periods=1)
         .mean().values
     )
