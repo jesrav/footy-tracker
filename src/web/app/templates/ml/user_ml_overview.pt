@@ -17,6 +17,14 @@
                     <div class="tabs is-large">
                         <ul>
                             <li class="is-active">
+                                <a class="tablinks" onclick="TabclickHandle(event, 'mlleaderboard')">
+                                    <span class="icon">
+                                        <img src="/static/img/leaderboard-2.png" alt="user-icon">
+                                    </span>
+                                    <span>ML leaderboard</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a class="tablinks" onclick="TabclickHandle(event, 'mymodels')">
                                         <span class="icon">
                                             <img src="/static/img/robot.png" alt="user-icon">
@@ -24,18 +32,10 @@
                                     <span>My models</span>
                                 </a>
                             </li>
-                            <li>
-                                <a class="tablinks" onclick="TabclickHandle(event, 'mlleaderboard')">
-                                        <span class="icon">
-                                            <img src="/static/img/leaderboard-2.png" alt="user-icon">
-                                        </span>
-                                    <span>ML leaderboard</span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                     <div id="tabs-with-content">
-                        <div id="mymodels" class="tabcontent">
+                        <div id="mymodels" class="tabcontent is-hidden">
                             <div class="columns">
                             <div class="column is-one-quarter">
                             <div class="card-content">
@@ -60,15 +60,15 @@
                                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                                 <tr>
                                                     <th class="has-text-left">Ranking</th>
-                                                    <td tal:condition="ml_model_rankings[user_ml_models[m].id]" class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id].ranking }</td>
-                                                    <td tal:condition="not ml_model_rankings[user_ml_models[m].id]" class="has-text-left"> NA </td>
+                                                    <td tal:condition="user_ml_models[m].id in ml_model_rankings" class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id].ranking }</td>
+                                                    <td tal:condition="user_ml_models[m].id not in ml_model_rankings" class="has-text-left"> NA </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="has-text-left">MAE (rolling 100 games)</th>
-                                                    <td tal:condition="latest_ml_model_metrics[user_ml_models[m].id]" class="has-text-left">
+                                                    <td tal:condition="user_ml_models[m].id in latest_ml_model_metrics" class="has-text-left">
                                                     ${ "{:.2f}".format(latest_ml_model_metrics[user_ml_models[m].id].rolling_long_window_mae) }
                                                     </td>
-                                                    <td tal:condition="not latest_ml_model_metrics[user_ml_models[m].id]" class="has-text-left">
+                                                    <td tal:condition="user_ml_models[m].id not in latest_ml_model_metrics" class="has-text-left">
                                                     NA
                                                     </td>
                                                 </tr>
@@ -195,7 +195,7 @@
                             </div>
                         </div>
 
-                        <div id="mlleaderboard" class="tabcontent is-hidden">
+                        <div id="mlleaderboard" class="tabcontent is-active">
                             <div class="b-table">
                                     <div class="table-wrapper has-mobile-cards">
                                         <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
@@ -219,9 +219,11 @@
                                                     </div>
 
                                                 </td>
-                                                <td data-label="Model Name">${ m.model_name }</td>
-                                                <td data-label="Ranking">${ml_model_rankings[m.id].ranking}</td>
-                                                <td data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[m.id].rolling_long_window_mae) }</td>
+                                                <td data-label="Name">${ m.model_name }</td>
+                                                <td tal:condition="m.id in ml_model_rankings" data-label="Ranking">${ml_model_rankings[m.id].ranking}</td>
+                                                <td tal:condition="m.id not in ml_model_rankings" data-label="Ranking">NA</td>
+                                                <td tal:condition="m.id in latest_ml_model_metrics" data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[m.id].rolling_long_window_mae) }</td>
+                                                <td tal:condition="m.id not in latest_ml_model_metrics" data-label="100 game rolling MAE">NA</td>
                                             </tr>
 
                                             </tbody>
