@@ -220,7 +220,7 @@
 
                                                 </td>
                                                 <td data-label="Model Name">${ m.model_name }</td>
-                                                <td data-label="Ranking">${ml_model_rankings[m.id]}</td>
+                                                <td data-label="Ranking">${ml_model_rankings[m.id].ranking}</td>
                                                 <td data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[m.id].rolling_long_window_mae) }</td>
                                             </tr>
 
