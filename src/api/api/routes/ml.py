@@ -16,7 +16,7 @@ from api.crud.ml import (
 from api.crud.result import get_latest_approved_result
 from api.crud.user import get_user
 from api.models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead, MLMetric, \
-    MLModelUpdate
+    MLModelUpdate, MLModelRanking
 from api.models.team import UsersForTeamsSuggestion
 from api.models.user import User
 from api.services.team_suggestion import suggest_most_fair_teams
@@ -212,3 +212,9 @@ async def read_ml_metrics(session: AsyncSession = Depends(get_session)):
 async def read_ml_metrics(ml_model_id: int, session: AsyncSession = Depends(get_session),
 ):
     return await get_latest_model_ml_metrics(ml_model_id=ml_model_id, session=session)
+
+
+# @router.get("/ml/rankings/", response_model=List[MLModelRanking], tags=["ml"])
+# async def read_ml_metrics(ml_model_id: int, session: AsyncSession = Depends(get_session),
+# ):
+#     return await get_ml_model_rankings(session=session)

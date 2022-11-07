@@ -12,9 +12,7 @@ class MLModelViewModel(ViewModelBase):
         super().__init__(request)
         self.ml_model: MLModel = None
         self.model_ml_metrics: List[MLMetric]
-        self.model_latest_ml_metric: Dict[int, MLMetric] = {}
-        self.model_css_ids: List[str] = ["model-1", "model-2", "model-3"]
-        self.ml_model_rankings: Dict[int: int] = {}
+        self.latest_model_ml_metric: MLMetric
 
     async def load(self):
 
