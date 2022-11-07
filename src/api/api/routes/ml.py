@@ -83,6 +83,12 @@ async def add_ml_model(
             status_code=400,
             detail="A user can hve no more than 3 ML models registered. Please edit one of your current models"
         )
+    latest_approved_result = await get_latest_approved_result(session)
+    if not latest_approved_result:
+        raise HTTPException(
+            status_code=400,
+            detail="No approved result found. At least one result must be approved before a model can be created."
+        )
     ml_model = await create_ml_model(session=session, ml_model_create=ml_model, user_id=current_user.id)
     if not ml_model:
         raise HTTPException(

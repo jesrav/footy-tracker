@@ -1,8 +1,8 @@
-from typing import Optional, List
+from typing import List
 
 from starlette.requests import Request
 
-from app.models.result import ResultSubmissionRead, ResultForUserDisplay
+from app.models.result import ResultForUserDisplay
 from app.services import tracking_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
