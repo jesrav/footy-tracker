@@ -38,7 +38,7 @@ async def create_result(
 async def get_results(
         session: AsyncSession, skip: int = 0, limit: int = 100, for_approval: bool = False, user_id: Optional[int] = None
 ) -> List[result_models.ResultSubmission]:
-    statement = select(result_models.ResultSubmission).offset(skip).limit(limit)
+    statement = select(result_models.ResultSubmission).order_by(result_models.ResultSubmission.created_dt.desc()).offset(skip).limit(limit)
 
     if for_approval:
         statement = statement.filter(result_models.ResultSubmission.approved == None)
