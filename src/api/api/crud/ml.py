@@ -94,8 +94,25 @@ async def add_prediction(
     return prediction
 
 
-async def get_predictions(session: AsyncSession) -> List[PredictionRead]:
-    statement = select(Prediction)
+async def get_predictions(
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 100,
+        ml_model_id: Optional[int] = None
+) -> List[PredictionRead]:
+    if ml_model_id is not None:
+        statement = (
+            select(Prediction)
+            .filter(Prediction.ml_model_id==ml_model_id)
+            .order_by(Prediction.created_dt)
+            .offset(skip).limit(limit)
+        )
+    else:
+        statement = (
+            select(Prediction)
+            .order_by(Prediction.created_dt)
+            .offset(skip).limit(limit)
+        )
     result = await session.execute(statement.options(joinedload('result'),))
     predictions = result.scalars().all()
     return [
@@ -111,7 +128,7 @@ async def get_predictions(session: AsyncSession) -> List[PredictionRead]:
             ),
             created_dt=prediction.created_dt,
         )
-        for prediction in predictions
+        for prediction in reversed(predictions)
     ]
 
 

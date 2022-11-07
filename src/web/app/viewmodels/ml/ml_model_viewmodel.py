@@ -7,7 +7,7 @@ from app.services import ml_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
-class MLViewModel(ViewModelBase):
+class MLModelViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
         self.user_ml_models: Dict[int, MLModel] = {}
