@@ -37,9 +37,7 @@ async def ml_model(ml_model_id: int, request: Request):
 async def add_ml_model(request: Request):
     vm = AddMLViewModel(request)
     await vm.authorize()
-    if vm.redirect_response:
-        return vm.redirect_response
-    return await vm.to_dict()
+    return vm.redirect_response or await vm.to_dict()
 
 
 @router.post('/ml/add_model')
@@ -49,5 +47,6 @@ async def add_ml_model(request: Request):
     await vm.post_form()
     if vm.error:
         return await vm.to_dict()
-    response = fastapi.responses.RedirectResponse(url='/ml', status_code=status.HTTP_302_FOUND)
-    return response
+    return fastapi.responses.RedirectResponse(
+        url='/ml', status_code=status.HTTP_302_FOUND
+    )

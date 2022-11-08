@@ -105,7 +105,12 @@ def calculate_ml_metrics(
     ml_metrics_data = predictions_df.to_dict('records')
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
-        rec["predicted_goal_diff"] = rec["predicted_goal_diff"] if not np.isnan(rec["predicted_goal_diff"]) else None
+        rec["predicted_goal_diff"] = (
+            None
+            if np.isnan(rec["predicted_goal_diff"])
+            else rec["predicted_goal_diff"]
+        )
+
     return [MLMetric(**row) for row in ml_metrics_data]
 
 

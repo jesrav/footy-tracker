@@ -24,10 +24,10 @@ class UserMLOverviewViewModel(ViewModelBase):
         users = await user_service.get_all_users()
         self.users = {u.id: u for u in users}
 
-        self.user_ml_models = {
-            i: ml_model
-            for i, ml_model in enumerate(await ml_service.get_user_ml_models(self.bearer_token))
-        }
+        self.user_ml_models = dict(
+            enumerate(await ml_service.get_user_ml_models(self.bearer_token))
+        )
+
         ml_models = await ml_service.get_ml_models()
         self.ml_models = {
             ml_model.id: ml_model
