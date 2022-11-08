@@ -82,7 +82,34 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card mt-2">
+                    <header class="card-header p-1">
+                        <p class="title is-2 mt-4"> Bio </p>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+
+                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                <tr>
+                                    <th class="has-text-left">Human overlord</th>
+                                    <td class="has-text-left">
+                                        ${ user.nickname }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="has-text-left">First consciousness</th>
+                                    <td>
+                                        <small class="has-text-grey is-abbr-like">${ ml_model.created_dt.strftime("%Y-%m-%d %H:%M:%S") }</small>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </div>
         <div class="column is-two-third">
             <div id="tabs-with-content">

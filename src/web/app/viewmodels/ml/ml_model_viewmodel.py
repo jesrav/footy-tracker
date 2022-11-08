@@ -3,7 +3,7 @@ from typing import List, Optional
 from starlette.requests import Request
 
 from app.models.ml import MLModel, MLMetric, MLModelRanking
-from app.services import ml_service
+from app.services import ml_service, user_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
 

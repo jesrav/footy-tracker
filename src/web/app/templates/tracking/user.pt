@@ -253,7 +253,7 @@
                                                     <td data-label="Opposing attacker">${r.opposing_attacker.nickname}</td>
                                                     <td data-label="Opposing defender">${r.opposing_defender.nickname}</td>
                                                     <td data-label="Created">
-                                                        <small class="has-text-grey is-abbr-like">${r.created_dt}</small>
+                                                        <small class="has-text-grey is-abbr-like">${r.created_dt.strftime("%Y-%m-%d %H:%M:%S")}</small>
                                                     </td>
                                                 </tr>
 

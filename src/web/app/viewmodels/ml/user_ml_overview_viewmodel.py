@@ -2,14 +2,17 @@ from typing import List, Dict
 
 from starlette.requests import Request
 
-from app.models.ml import MLModel, MLModelRead, MLMetric
+from app.models.ml import MLModel, MLMetric
+from app.models.user import UserReadUnauthorized
 from app.services import ml_service
+from app.services import user_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
 class UserMLOverviewViewModel(ViewModelBase):
     def __init__(self, request: Request):
         super().__init__(request)
+        self.users: Dict[int, UserReadUnauthorized] = {}
         self.user_ml_models: Dict[int, MLModel] = {}
         self.ml_models: Dict[int, MLModel] = {}
         self.model_ml_metrics: Dict[int, List[MLMetric]] = {}
@@ -18,7 +21,9 @@ class UserMLOverviewViewModel(ViewModelBase):
         self.ml_model_rankings: Dict[int: int] = {}
 
     async def load(self):
-        # We get the users models in a dictionary for convenience
+        users = await user_service.get_all_users()
+        self.users = {u.id: u for u in users}
+
         self.user_ml_models = {
             i: ml_model
             for i, ml_model in enumerate(await ml_service.get_user_ml_models(self.bearer_token))

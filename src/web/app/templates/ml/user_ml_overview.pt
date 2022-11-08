@@ -208,7 +208,7 @@
                                                 <th>Ranking</th>
                                                 <th>100 game rolling MAE</th>
                                                 <th>Human overlord</th>
-                                                <th>First conscious at</th>
+                                                <th>First consciousness</th>
                                                 <th></th>
                                             </tr>
                                             </thead>
@@ -228,8 +228,10 @@
                                                 <td tal:condition="i not in ml_model_rankings" data-label="Ranking">NA</td>
                                                 <td tal:condition="i in latest_ml_model_metrics" data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[i].rolling_long_window_mae) }</td>
                                                 <td tal:condition="i not in latest_ml_model_metrics" data-label="100 game rolling MAE">NA</td>
-                                                <td data-label="Human overlord">${ ml_models[i].user_id }</td>
-                                                <td data-label="First conscious at">${ ml_models[i].created_dt }</td>
+                                                <td data-label="Human overlord">${ users[ml_models[i].user_id].nickname }</td>
+                                                <td data-label="First consciousness">
+                                                    <small class="has-text-grey is-abbr-like">${ ml_models[i].created_dt.strftime("%Y-%m-%d %H:%M:%S") }</small>
+                                                </td>
                                             </tr>
 
                                             </tbody>
