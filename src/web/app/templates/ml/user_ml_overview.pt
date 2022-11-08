@@ -14,7 +14,7 @@
                             </div>
                         </div>
                     </header>
-                    <div class="tabs is-large">
+                    <div class="tabs is-medium is-centered">
                         <ul>
                             <li class="is-active">
                                 <a class="tablinks" onclick="TabclickHandle(event, 'mlleaderboard')">
@@ -41,12 +41,12 @@
                             <div class="card-content">
 
                                 <div tal:repeat="m user_ml_models" class="card mt-2" id=${model_css_ids[m]}>
-                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/${user_ml_models[m].id}'">
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/model/${user_ml_models[m].id}'">
                                         <div class="media">
                                             <div class="media-left">
                                                 <figure class="image is-64x64 mb-1">
                                                     <img src="https://robohash.org/${ user_ml_models[m].model_name }" class="is-rounded"
-                                                         onclick="location.href='/ml/${user_ml_models[m].id}'" alt="model-image1">
+                                                         onclick="location.href='/ml/model/${user_ml_models[m].id}'" alt="model-image1">
                                                 </figure>
                                             </div>
                                             <div class="media-content">
@@ -196,6 +196,8 @@
                         </div>
 
                         <div id="mlleaderboard" class="tabcontent is-active">
+                        <div class="card-content">
+                        <div class="container">
                             <div class="b-table">
                                     <div class="table-wrapper has-mobile-cards">
                                         <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
@@ -210,7 +212,7 @@
                                             </thead>
                                             <tbody>
                                             <tr tal:repeat="m ml_models" class="table-row" id="${ m.id }"
-                                                                                  onclick="location.href='/ml/${ m.id }';"
+                                                                                  onclick="location.href='/ml/model/${ m.id }';"
                                                                                   style="cursor:pointer;">
                                                 <td class="is-image-cell">
                                                     <div class="image">
@@ -230,8 +232,8 @@
                                         </table>
                                     </div>
                                 </div>
-
-
+                        </div>
+                        </div>
                         </div>
                 </div>
                 </div>

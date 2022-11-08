@@ -20,7 +20,7 @@ async def user_ml_overview(request: Request):
     return await vm.to_dict()
 
 
-@router.get('/ml/{model_id}')
+@router.get('/ml/model/{model_id}')
 @template()
 async def ml_model(model_id: int, request: Request):
     vm = UserMLOverviewViewModel(request)
