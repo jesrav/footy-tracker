@@ -1,15 +1,14 @@
-from typing import Optional, List, Union
+from typing import Optional, List
 
-from sqlalchemy import select, delete
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select, delete, func, and_
+from sqlalchemy.orm import joinedload, selectinload
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.background import BackgroundTasks
 
 from api.core.config import settings
 from api.crud.result import get_latest_approved_result
 from api.models.ml import MLModel, MLModelCreate, Prediction, PredictionRead, MLMetric, DataForML, RowForML, \
-    DataForMLInternal
+    DataForMLInternal, MLModelRanking
 from api.models.result import ResultSubmission
 from api.services.ml import get_ml_prediction, get_ml_data, calculate_ml_metrics
 
@@ -95,8 +94,25 @@ async def add_prediction(
     return prediction
 
 
-async def get_predictions(session: AsyncSession) -> List[PredictionRead]:
-    statement = select(Prediction)
+async def get_predictions(
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 100,
+        ml_model_id: Optional[int] = None
+) -> List[PredictionRead]:
+    if ml_model_id is not None:
+        statement = (
+            select(Prediction)
+            .filter(Prediction.ml_model_id==ml_model_id)
+            .order_by(Prediction.created_dt)
+            .offset(skip).limit(limit)
+        )
+    else:
+        statement = (
+            select(Prediction)
+            .order_by(Prediction.created_dt)
+            .offset(skip).limit(limit)
+        )
     result = await session.execute(statement.options(joinedload('result'),))
     predictions = result.scalars().all()
     return [
@@ -112,14 +128,59 @@ async def get_predictions(session: AsyncSession) -> List[PredictionRead]:
             ),
             created_dt=prediction.created_dt,
         )
-        for prediction in predictions
+        for prediction in reversed(predictions)
     ]
 
 
-async def get_ml_metrics(session: AsyncSession) -> List[MLMetric]:
-    statement = select(MLMetric)
+async def get_ml_metrics(
+        session: AsyncSession,
+        skip: int = 0,
+        limit: int = 100,
+        ml_model_id: Optional[int] = None
+) -> List[MLMetric]:
+    if ml_model_id is not None:
+        statement = (
+            select(MLMetric)
+            .filter(MLMetric.ml_model_id == ml_model_id)
+            .order_by(MLMetric.prediction_dt)
+            .offset(skip).limit(limit)
+        )
+    else:
+        statement = (
+            select(MLMetric)
+            .order_by(MLMetric.prediction_dt)
+            .offset(skip).limit(limit)
+        )
+    result = await session.execute(statement)
+    ml_metrics = result.scalars().all()
+    return  sorted(ml_metrics, key=lambda r: r.prediction_dt, reverse=True)
+
+
+async def get_latest_ml_metrics(session: AsyncSession) -> List[MLMetric]:
+    subquery = (
+        select(MLMetric.ml_model_id, func.max(MLMetric.prediction_dt).label('maxdate'))
+        .group_by(MLMetric.ml_model_id)
+        .subquery('t2')
+    )
+    statement = (
+        select(MLMetric)
+        .join(
+            subquery, and_(MLMetric.ml_model_id == subquery.c.ml_model_id, MLMetric.prediction_dt == subquery.c.maxdate)
+        )
+    )
     result = await session.execute(statement)
     return result.scalars().all()
+
+
+async def get_latest_model_ml_metrics(ml_model_id: int, session: AsyncSession):
+    statement = (
+        select(MLMetric)
+        .filter(MLMetric.ml_model_id == ml_model_id)
+        .order_by(MLMetric.prediction_dt.desc())
+        .limit(1)
+    )
+    result = await session.execute(statement)
+    return result.scalar_one_or_none()
 
 
 async def add_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> None:
@@ -128,6 +189,15 @@ async def add_ml_metrics(ml_metrics: List[MLMetric], session: AsyncSession) -> N
     for ml_metric in new_ml_metrics:
         session.add(ml_metric)
     await session.commit()
+
+
+async def get_ml_model_rankings(session: AsyncSession) -> List[MLModelRanking]:
+    latest_ml_metrics = await get_latest_ml_metrics(session=session)
+    mae_ranking_order = sorted(latest_ml_metrics, key=lambda m: m.rolling_long_window_mae)
+    return [
+        MLModelRanking(ml_model_id=m.ml_model_id, ranking=i)
+        for i, m in enumerate(mae_ranking_order, start=1)
+    ]
 
 
 async def add_prediction_background_tasks(
@@ -167,11 +237,10 @@ async def single_prediction_task(
     ml_model: MLModel,
     ml_data: DataForMLInternal,
     session: AsyncSession,
-) -> Union[Prediction, None]:
+) -> Prediction:
     """Make prediction for a specific result id using an ML model API and write prediction to db.
 
-    If the API call is unsuccessful we return None and no prediction is written to the db.
-
+    If the API call is unsuccessful, a prediction of none is written to the database.
 
     Parameters
     ----------
@@ -194,14 +263,11 @@ async def single_prediction_task(
     # Get a prediction from ML model API
     prediction = await get_ml_prediction(url=ml_model.model_url, data_for_prediction=data_for_prediction)
 
-    if prediction is None:
-        return None
-
     # Get the row/result that the prediction was made on
     row_to_predict = [r for r in ml_data.data if r.result_to_predict][0]
 
     # If the teams have been switched (not shown to the API), we correct the prediction
-    if row_to_predict.teams_switched:
+    if row_to_predict.teams_switched and prediction is not None:
         prediction = -prediction
 
     # Add prediction to db

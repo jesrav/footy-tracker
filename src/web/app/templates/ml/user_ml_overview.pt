@@ -1,0 +1,386 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+                <div class="card">
+                    <header class="card-header p-3">
+                        <div class="media">
+                            <div class="media-left">
+                                <figure class="image is-64x64 mt-3">
+                                    <img src="/static/img/dice-outline.svg" alt="dice-icon">
+                                </figure>
+                            </div>
+                            <div class="media-content">
+                                <p class="title is-2 mt-4">Footy ML</p>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="tabs is-medium is-centered">
+                        <ul>
+                            <li class="is-active">
+                                <a class="tablinks" onclick="TabclickHandle(event, 'mlleaderboard')">
+                                    <span class="icon">
+                                        <img src="/static/img/leaderboard-2.png" alt="user-icon">
+                                    </span>
+                                    <span>ML leaderboard</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="tablinks" onclick="TabclickHandle(event, 'mymodels')">
+                                        <span class="icon">
+                                            <img src="/static/img/robot.png" alt="user-icon">
+                                        </span>
+                                    <span>My models</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="tabs-with-content">
+                        <div id="mymodels" class="tabcontent is-hidden">
+                            <div class="columns">
+                            <div class="column is-one-quarter">
+                            <div class="card-content">
+
+                                <div tal:repeat="m user_ml_models" class="card mt-2" id=${model_css_ids[m]}>
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/model/${user_ml_models[m].id}'">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-64x64 mb-1">
+                                                    <img src="https://robohash.org/${ user_ml_models[m].model_name }" class="is-rounded"
+                                                         onclick="location.href='/ml/model/${user_ml_models[m].id}'" alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-4">${ user_ml_models[m].model_name }</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td tal:condition="user_ml_models[m].id in ml_model_rankings" class="has-text-left"> ${ ml_model_rankings[user_ml_models[m].id].ranking }</td>
+                                                    <td tal:condition="user_ml_models[m].id not in ml_model_rankings" class="has-text-left"> NA </td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
+                                                    <td tal:condition="user_ml_models[m].id in latest_ml_model_metrics" class="has-text-left">
+                                                    ${ "{:.2f}".format(latest_ml_model_metrics[user_ml_models[m].id].rolling_long_window_mae) }
+                                                    </td>
+                                                    <td tal:condition="user_ml_models[m].id not in latest_ml_model_metrics" class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div tal:condition="0 not in user_ml_models" class="card mt-2" id=${model_css_ids[0]}>
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/add_model'">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-64x64 mb-1">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded" alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-4">Add new model</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left"> NA</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
+                                                    <td class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div tal:condition="1 not in user_ml_models" class="card mt-2" id=${model_css_ids[1]}>
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/add_model'">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-64x64 mb-1">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded" alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-4">Add new model</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left"> NA</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
+                                                    <td class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div tal:condition="2 not in user_ml_models" class="card mt-2" id=${model_css_ids[2]}>
+                                    <header class="card-header p-1 is-clickable" onclick="location.href='/ml/add_model'">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <figure class="image is-64x64 mb-1">
+                                                    <img src="/static/img/add-circle-outline.svg" class="is-rounded" alt="model-image1">
+                                                </figure>
+                                            </div>
+                                            <div class="media-content">
+                                                <p class="title is-3 mt-4">Add new model</p>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-content">
+                                        <div class="content">
+
+                                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                                <tr>
+                                                    <th class="has-text-left">Ranking</th>
+                                                    <td class="has-text-left"> NA</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="has-text-left">MAE (rolling 100 games)</th>
+                                                    <td class="has-text-left">
+                                                    NA
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                </div>
+
+                                </div>
+                                <div class="column is-two-third">
+                                    <div class="columns is-mobile">
+                                        <div class="column is-11">
+                                            <canvas id="mlEvalChart"></canvas>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <br>
+                                    </div>
+                                    <br>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="mlleaderboard" class="tabcontent is-active">
+                        <div class="card-content">
+                        <div class="container">
+                            <div class="b-table">
+                                    <div class="table-wrapper has-mobile-cards">
+                                        <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                            <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th>Ranking</th>
+                                                <th>100 game rolling MAE</th>
+                                                <th>Human overlord</th>
+                                                <th>First consciousness</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr tal:repeat="i ml_model_rankings" class="table-row" id="${ i }"
+                                                                                  onclick="location.href='/ml/model/${ i }';"
+                                                                                  style="cursor:pointer;">
+                                                <td class="is-image-cell">
+                                                    <div class="image">
+                                                        <img src="https://robohash.org/${ ml_models[i].model_name }" class="is-rounded"
+                                                             alt="user-icon">
+                                                    </div>
+
+                                                </td>
+                                                <td data-label="Name">${ ml_models[i].model_name }</td>
+                                                <td tal:condition="i in ml_model_rankings" data-label="Ranking">${ml_model_rankings[i].ranking}</td>
+                                                <td tal:condition="i not in ml_model_rankings" data-label="Ranking">NA</td>
+                                                <td tal:condition="i in latest_ml_model_metrics" data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[i].rolling_long_window_mae) }</td>
+                                                <td tal:condition="i not in latest_ml_model_metrics" data-label="100 game rolling MAE">NA</td>
+                                                <td data-label="Human overlord">${ users[ml_models[i].user_id].nickname }</td>
+                                                <td data-label="First consciousness">
+                                                    <small class="has-text-grey is-abbr-like">${ ml_models[i].created_dt.strftime("%Y-%m-%d %H:%M:%S") }</small>
+                                                </td>
+                                            </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                        </div>
+                        </div>
+                        </div>
+                </div>
+                </div>
+            </div>
+
+    </div>
+
+<script>
+    const datasets = []
+</script>
+
+<script tal:condition="0 in user_ml_models">
+    const metric_dates_model1 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[0].id]]};
+    let model1_metrics = []
+    const model1_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[user_ml_models[0].id]]};
+    metric_dates_model1.forEach((date, date_index) => {
+        model1_metrics.push({x: date, y: model1_metrics_values[date_index]})
+    });
+    datasets.push({
+                label: '${ user_ml_models[0].model_name }',
+                backgroundColor: 'rgb(0, 209, 178)',
+                borderColor: 'rgb(0, 209, 178)',
+                data: model1_metrics,
+            })
+</script>
+
+<script tal:condition="1 in user_ml_models">
+    const metric_dates_model2 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[1].id]]};
+    let model2_metrics = []
+    const model2_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[user_ml_models[1].id]]};
+    metric_dates_model2.forEach((date, date_index) => {
+        model2_metrics.push({x: date, y: model2_metrics_values[date_index]})
+    });
+    datasets.push({
+                label: '${ user_ml_models[1].model_name }',
+                backgroundColor: 'rgb(32, 156, 238)',
+                borderColor: 'rgb(32, 156, 238)',
+                data: model2_metrics,
+            })
+
+</script>
+
+<script tal:condition="2 in user_ml_models">
+    const metric_dates_model3 = ${ [r.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for r in model_ml_metrics[user_ml_models[2].id]]};
+    let model3_metrics = []
+    const model3_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics[user_ml_models[2].id]]};
+    metric_dates_model3.forEach((date, date_index) => {
+        model3_metrics.push({x: date, y: model3_metrics_values[date_index]})
+    });
+    datasets.push({
+        label: '${ user_ml_models[2].model_name }',
+        backgroundColor: 'rgb(255, 221, 87)',
+        borderColor: 'rgb(255, 221, 87)',
+        data: model3_metrics,
+    })
+</script>
+
+<script>
+    const data = {
+        datasets: datasets
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            'millisecond': 'MMM d yyyy',
+                            'second': 'MMM d yyyy',
+                            'minute': 'MMM d yyyy',
+                            'hour': 'MMM d yyyy',
+                            'day': 'MMM d yyyy',
+                            'week': 'MMM d yyyy',
+                            'month': 'MMM d yyyy',
+                            'quarter': 'MMM d yyyy',
+                            'year': 'MMM d yyyy',
+                        }
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                  display: true,
+                  text: 'Rolling MAE (100 games)',
+                  font: {
+                    size: 20
+                  }
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        boxWidth: 15,
+                        fontSize: 3
+                    }
+                }
+            }
+
+        }
+    };
+
+    const mlEvalChart = new Chart(
+            document.getElementById('mlEvalChart'),
+            config
+    );
+
+    function TabclickHandle(evt, tabId) {
+        let i, tabcontent, tablinks;
+
+        // This is to clear the previous clicked content.
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.add('is-hidden');
+        }
+
+        // Set the tab to be "active".
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].parentElement.classList.remove('is-active');
+        }
+
+        // Display the clicked tab and set it to active.
+        document.getElementById(tabId).classList.remove('is-hidden');
+        evt.currentTarget.parentElement.classList.add('is-active');
+    }
+</script>

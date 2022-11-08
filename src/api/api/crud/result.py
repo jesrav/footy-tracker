@@ -36,10 +36,13 @@ async def create_result(
 
 
 async def get_results(
-        session: AsyncSession, skip: int = 0, limit: int = 100, for_approval: bool = False, user_id: Optional[int] = None
+    session: AsyncSession, skip: int = 0, limit: int = 100, for_approval: bool = False, user_id: Optional[int] = None
 ) -> List[result_models.ResultSubmission]:
-    statement = select(result_models.ResultSubmission).offset(skip).limit(limit)
-
+    statement = (
+        select(result_models.ResultSubmission)
+        .order_by(result_models.ResultSubmission.created_dt)
+        .offset(skip).limit(limit)
+    )
     if for_approval:
         statement = statement.filter(result_models.ResultSubmission.approved == None)
     else:
@@ -56,10 +59,11 @@ async def get_results(
         joinedload('team2.attacker'),
     ))
     if not user_id:
-        return db_result.scalars().all()
+        results = db_result.scalars().all()
     else:
         all_results = db_result.scalars().all()
-        return [r for r in all_results if user_id in r.match_participants]
+        results = [r for r in all_results if user_id in r.match_participants]
+    return sorted(results, key=lambda r: r.created_dt, reverse=True)
 
 
 async def _get_results_with_user_participation(

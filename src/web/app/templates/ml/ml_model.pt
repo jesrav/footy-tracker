@@ -1,0 +1,256 @@
+<div metal:use-macro="load: ../shared/_layout.pt">
+    <div metal:fill-slot="content" tal:omit-tag="True">
+
+        <div class="card">
+            <header class="card-header p-3">
+                <div class="media">
+                    <div class="media-left">
+                        <figure class="image is-64x64 mt-3">
+                            <img src="https://robohash.org/${ ml_model.model_name }">
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <p class="title is-2 mt-4">${ ml_model.model_name }</p>
+                    </div>
+                </div>
+            </header>
+            <div class="tabs is-small is-centered">
+                <ul>
+                    <li class="is-active">
+                        <a class="tablinks" onclick="TabclickHandle(event, 'metrics')">
+                        <span class="icon">
+                            <img src="/static/img/trending-up-outline.svg" alt="user-icon">
+                        </span>
+                            <span>Metrics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="tablinks" onclick="TabclickHandle(event, 'residuals')">
+                    <span class="icon">
+                        <img src="/static/img/stats-chart-outline.svg" alt="user-icon">
+                    </span>
+                            <span>Residuals</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="tablinks" onclick="TabclickHandle(event, 'predictions')">
+                    <span class="icon">
+                        <img src="/static/img/pin-outline.svg" alt="user-icon">
+                    </span>
+                            <span>Predictions</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="columns">
+            <div class="column is-one-quarter">
+            <div class="card-content">
+                <div class="card mt-2">
+                    <header class="card-header p-1">
+                        <p class="title is-2 m-2"> Score Card </p>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+
+                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                <tr>
+                                    <th class="has-text-left">Ranking</th>
+                                    <td tal:condition="True" class="has-text-left">
+                                        ${ ml_model_ranking.ranking }
+                                    </td>
+                                    <td tal:condition="False"
+                                            class="has-text-left"> NA
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="has-text-left">MAE (rolling 100 games)</th>
+                                    <td tal:condition="latest_model_ml_metric"
+                                            class="has-text-left">
+                                            ${ "{:.2f}".format(latest_model_ml_metric.rolling_long_window_mae) }
+                                    </td>
+                                    <td tal:condition="not latest_model_ml_metric"
+                                            class="has-text-left">
+                                        NA
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="has-text-left">Bias (rolling 100 games)</th>
+                                    <td tal:condition="latest_model_ml_metric"
+                                            class="has-text-left">
+                                            ${ "{:.2f}".format(latest_model_ml_metric.rolling_long_window_bias) }
+                                    </td>
+                                    <td tal:condition="not latest_model_ml_metric"
+                                            class="has-text-left">
+                                        NA
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-2">
+                    <header class="card-header p-1">
+                        <p class="title is-2 m-2 is"> Bio </p>
+                    </header>
+                    <div class="card-content">
+                        <div class="content">
+
+                            <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                <tr>
+                                    <th class="has-text-left">Human overlord</th>
+                                    <td class="has-text-left">
+                                        ${ user.nickname }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="has-text-left">First consciousness</th>
+                                    <td>
+                                        <small class="has-text-grey is-abbr-like">${ ml_model.created_dt.strftime("%Y-%m-%d %H:%M:%S") }</small>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="column is-two-third">
+            <div id="tabs-with-content">
+                <div id="metrics" class="tabcontent is-active">
+                    <div class="columns is-mobile">
+                        <div class="column is-11">
+                            <canvas id="mlEvalChart"></canvas>
+                        </div>
+                        <br>
+                        <br>
+                        <br>
+                    </div>
+                    <br>
+                    <br>
+                </div>
+                <div id="residuals" class="tabcontent is-hidden">
+                    Comming soon ...
+                </div>
+                <div id="predictions" class="tabcontent is-hidden">
+                    Comming soon ...
+                </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    const datasets = []
+</script>
+
+<script tal:condition="model_ml_metrics">
+    const metric_dates_model1 = ${ [m.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for m in model_ml_metrics]};
+    let model1_metrics = []
+    const model1_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics]};
+    metric_dates_model1.forEach((date, date_index) => {
+        model1_metrics.push({x: date, y: model1_metrics_values[date_index]})
+    });
+    datasets.push({
+                label: '${ ml_model.model_name }',
+                backgroundColor: 'rgb(0, 209, 178)',
+                borderColor: 'rgb(0, 209, 178)',
+                data: model1_metrics,
+            })
+</script>
+
+<script>
+    const data = {
+        datasets: datasets
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        displayFormats: {
+                            'millisecond': 'MMM d yyyy',
+                            'second': 'MMM d yyyy',
+                            'minute': 'MMM d yyyy',
+                            'hour': 'MMM d yyyy',
+                            'day': 'MMM d yyyy',
+                            'week': 'MMM d yyyy',
+                            'month': 'MMM d yyyy',
+                            'quarter': 'MMM d yyyy',
+                            'year': 'MMM d yyyy',
+                        }
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6,
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                  display: true,
+                  text: 'Rolling MAE (100 games)',
+                  font: {
+                    size: 20
+                  }
+                },
+                legend: {
+                    display: true,
+                    position: "bottom",
+                    labels: {
+                        boxWidth: 15,
+                        fontSize: 3
+                    }
+                }
+            }
+
+        }
+    };
+
+    const mlEvalChart = new Chart(
+            document.getElementById('mlEvalChart'),
+            config
+    );
+
+    function TabclickHandle(evt, tabId) {
+        let i, tabcontent, tablinks;
+
+        // This is to clear the previous clicked content.
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.add('is-hidden');
+        }
+
+        // Set the tab to be "active".
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].parentElement.classList.remove('is-active');
+        }
+
+        // Display the clicked tab and set it to active.
+        document.getElementById(tabId).classList.remove('is-hidden');
+        evt.currentTarget.parentElement.classList.add('is-active');
+    }
+</script>

@@ -38,8 +38,15 @@ async def get_ml_prediction(url: str, data_for_prediction: DataForML) -> Union[f
         return json_resp
 
 
-def mean_absolute_error(y_pred: float, y_actual: int) -> float:
-    return abs(y_pred - y_actual)
+def get_reasonably_bad_prediction(df: pd.DataFrame) -> pd.DataFrame:
+    """Replace missing predictions with a reasonably bad baseline prediction of 0 goal difference.
+
+    This penalizes missing predictions, but not so much that it will be impossible to recover from.
+    """
+    df = df.copy()
+    prediction_missing = df.predicted_goal_diff.isna()
+    df.loc[prediction_missing, 'predicted_goal_diff'] = 0
+    return df
 
 
 def calculate_ml_metrics(
@@ -48,16 +55,20 @@ def calculate_ml_metrics(
     long_rolling_window_size: int = 100,
 ) -> List[MLMetric]:
     """Calculate metrics for each model."""
-    # Only use results that have a goal dif (They have been approved)
+    # Only use predictions that have a goal difference (They have been approved)
     predictions = [pred for pred in predictions if pred.result_goal_diff is not None]
 
     # Get data into a dataframe
     predictions_df = pd.DataFrame([pred.dict() for pred in predictions])
 
+    # Penalize missing predictions
+    predictions_with_imputed_df = get_reasonably_bad_prediction(predictions_df)
+
+    # Add the residual of each prediction
+    predictions_df['residual'] = predictions_df.predicted_goal_diff - predictions_df.result_goal_diff
+
     # Add the absolute error of each prediction
-    predictions_df['ae'] = predictions_df.apply(
-        lambda x: mean_absolute_error(x['predicted_goal_diff'], x['result_goal_diff']), axis=1
-    )
+    predictions_df['ae'] = predictions_df['residual'].abs()
 
     # Add the rolling mean absolute error for each model for a short and long window
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
@@ -73,6 +84,20 @@ def calculate_ml_metrics(
         .mean().values
     )
 
+    # Add the rolling BIAS for each model for a short and long window
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
+    predictions_df["rolling_short_window_bias"] = (
+        predictions_df.groupby('ml_model_id')["residual"]
+        .rolling(window=short_rolling_window_size, min_periods=1)
+        .mean().values
+    )
+    predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
+    predictions_df["rolling_long_window_bias"] = (
+        predictions_df.groupby('ml_model_id')["residual"]
+        .rolling(window=long_rolling_window_size, min_periods=1)
+        .mean().values
+    )
+
     # Rename columns to match MLMetric pydantic model
     predictions_df = predictions_df.rename(columns={'created_dt': 'prediction_dt', "id": "prediction_id"})
 
@@ -80,7 +105,7 @@ def calculate_ml_metrics(
     ml_metrics_data = predictions_df.to_dict('records')
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
-
+        rec["predicted_goal_diff"] = rec["predicted_goal_diff"] if not np.isnan(rec["predicted_goal_diff"]) else None
     return [MLMetric(**row) for row in ml_metrics_data]
 
 

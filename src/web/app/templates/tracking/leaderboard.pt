@@ -16,7 +16,7 @@
                             </div>
                         </div>
                     </header>
-                    <div class="tabs">
+                    <div class="tabs is-centered">
                         <ul>
                             <li class="is-active">
                                 <a class="tablinks" onclick="TabclickHandle(event, 'overall')">

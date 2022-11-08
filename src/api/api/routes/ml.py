@@ -1,5 +1,5 @@
 import io
-from typing import List, Union
+from typing import List, Union, Optional
 
 import pandas as pd
 from fastapi import Depends, APIRouter, HTTPException
@@ -11,12 +11,13 @@ from api.core.config import settings
 from api.core.deps import get_session, get_current_user
 from api.crud.ml import (
     create_ml_model, get_ml_models, get_ml_model_by_url, get_ml_model_by_name, get_ml_models_by_user, get_predictions,
-    get_ml_metrics, get_ml_model, delete_ml_model_by_id
+    get_ml_metrics, get_ml_model, delete_ml_model_by_id, get_latest_ml_metrics, get_latest_model_ml_metrics,
+    get_ml_model_rankings
 )
 from api.crud.result import get_latest_approved_result
 from api.crud.user import get_user
 from api.models.ml import RowForML, DataForML, MLModelCreate, MLModelRead, MLModel, PredictionRead, MLMetric, \
-    MLModelUpdate
+    MLModelUpdate, MLModelRanking
 from api.models.team import UsersForTeamsSuggestion
 from api.models.user import User
 from api.services.team_suggestion import suggest_most_fair_teams
@@ -82,6 +83,12 @@ async def add_ml_model(
         raise HTTPException(
             status_code=400,
             detail="A user can hve no more than 3 ML models registered. Please edit one of your current models"
+        )
+    latest_approved_result = await get_latest_approved_result(session)
+    if not latest_approved_result:
+        raise HTTPException(
+            status_code=400,
+            detail="No approved result found. At least one result must be approved before a model can be created."
         )
     ml_model = await create_ml_model(session=session, ml_model_create=ml_model, user_id=current_user.id)
     if not ml_model:
@@ -179,13 +186,30 @@ async def suggest_teams(
 
 @router.get("/ml/predictions/", response_model=List[PredictionRead], tags=["ml"])
 async def read_ml_predictions(
+    skip: int = 0,
+    limit: int = 100,
+    ml_model_id: Optional[int] = None,
     session: AsyncSession = Depends(get_session),
 ):
-    return await get_predictions(session)
+    return await get_predictions(session=session, skip=skip, limit=limit, ml_model_id=ml_model_id)
 
 
 @router.get("/ml/metrics/", response_model=List[MLMetric], tags=["ml"])
 async def read_ml_metrics(
     session: AsyncSession = Depends(get_session),
+    skip: int = 0,
+    limit: int = 100,
+    ml_model_id: Optional[int] = None,
 ):
-    return await get_ml_metrics(session)
+    return await get_ml_metrics(session, skip=skip, limit=limit, ml_model_id=ml_model_id)
+
+
+@router.get("/ml/metrics/latest", response_model=List[MLMetric], tags=["ml"])
+async def read_ml_metrics(session: AsyncSession = Depends(get_session)):
+    return await get_latest_ml_metrics(session)
+
+
+@router.get("/ml/rankings/", response_model=List[MLModelRanking], tags=["ml"])
+async def read_ml_model_rankings(session: AsyncSession = Depends(get_session),
+):
+    return await get_ml_model_rankings(session=session)
