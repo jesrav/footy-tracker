@@ -1,8 +1,8 @@
-from typing import List, Dict, Optional
+from typing import List, Optional
 
 from starlette.requests import Request
 
-from app.models.ml import MLModel, MLModelRead, MLMetric
+from app.models.ml import MLModel, MLMetric
 from app.services import ml_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
