@@ -192,7 +192,7 @@
 
                         <div class="columns is-mobile">
                             <div class="column is-11">
-                                <div class="tabs">
+                                <div class="tabs is-large is-centered">
                                     <ul>
                                         <li class="is-active"><a class="tablinks"
                                                                  onclick="TabclickHandle(event, 'historical-ratings')">
