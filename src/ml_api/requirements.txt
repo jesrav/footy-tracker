@@ -4,4 +4,4 @@ pandas
 numpy
 pymc
 requests
-sklearn
+scikit-learn
