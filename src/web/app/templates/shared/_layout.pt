@@ -55,6 +55,10 @@
                 Leader board
             </a>
 
+            <a tal:condition="is_logged_in" class="navbar-item" href="/ml">
+                Footy ML
+            </a>
+
             <a class="navbar-item" href="/about">
                 About
             </a>
