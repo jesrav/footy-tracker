@@ -4,6 +4,7 @@ from starlette import status
 from starlette.requests import Request
 
 from app.viewmodels.ml.add_ml_model_viewmodel import AddMLViewModel
+from app.viewmodels.ml.ml_model_viewmodel import MLModelViewModel
 from app.viewmodels.ml.user_ml_overview_viewmodel import UserMLOverviewViewModel
 
 router = fastapi.APIRouter()
@@ -20,16 +21,15 @@ async def user_ml_overview(request: Request):
     return await vm.to_dict()
 
 
-@router.get('/ml/model/{model_id}')
+@router.get('/ml/model/{ml_model_id}')
 @template()
-async def ml_model(model_id: int, request: Request):
-    vm = UserMLOverviewViewModel(request)
+async def ml_model(ml_model_id: int, request: Request):
+    vm = MLModelViewModel(ml_model_id=ml_model_id, request=request)
     await vm.authorize()
     if vm.redirect_response:
         return vm.redirect_response
     await vm.load()
     return await vm.to_dict()
-
 
 
 @router.get('/ml/add_model')
