@@ -32,6 +32,8 @@ class MLMetric(BaseModel):
     predicted_goal_diff: Optional[float]
     rolling_short_window_mae: float
     rolling_long_window_mae: float
+    rolling_short_window_bias: float
+    rolling_long_window_bias: float
 
 
 class MLModelRanking(BaseModel):
