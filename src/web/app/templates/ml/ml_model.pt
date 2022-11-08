@@ -17,6 +17,14 @@
             <div class="tabs is-medium is-centered">
                 <ul>
                     <li class="is-active">
+                        <a class="tablinks" onclick="TabclickHandle(event, 'metrics')">
+                        <span class="icon">
+                            <img src="/static/img/trending-up-outline.svg" alt="user-icon">
+                        </span>
+                            <span>Metrics</span>
+                        </a>
+                    </li>
+                    <li>
                         <a class="tablinks" onclick="TabclickHandle(event, 'residuals')">
                     <span class="icon">
                         <img src="/static/img/stats-chart-outline.svg" alt="user-icon">
@@ -25,11 +33,11 @@
                         </a>
                     </li>
                     <li>
-                        <a class="tablinks" onclick="TabclickHandle(event, 'metrics')">
-                        <span class="icon">
-                            <img src="/static/img/trending-up-outline.svg" alt="user-icon">
-                        </span>
-                            <span>Metrics</span>
+                        <a class="tablinks" onclick="TabclickHandle(event, 'predictions')">
+                    <span class="icon">
+                        <img src="/static/img/pin-outline.svg" alt="user-icon">
+                    </span>
+                            <span>Predictions</span>
                         </a>
                     </li>
                 </ul>
@@ -113,11 +121,7 @@
         </div>
         <div class="column is-two-third">
             <div id="tabs-with-content">
-                <div id="residuals" class="tabcontent is-active">
-                    hej
-                </div>
-
-                <div id="metrics" class="tabcontent is-hidden">
+                <div id="metrics" class="tabcontent is-active">
                     <div class="columns is-mobile">
                         <div class="column is-11">
                             <canvas id="mlEvalChart"></canvas>
@@ -128,6 +132,12 @@
                     </div>
                     <br>
                     <br>
+                </div>
+                <div id="residuals" class="tabcontent is-hidden">
+                    Comming soon ...
+                </div>
+                <div id="predictions" class="tabcontent is-hidden">
+                    Comming soon ...
                 </div>
                 </div>
 
