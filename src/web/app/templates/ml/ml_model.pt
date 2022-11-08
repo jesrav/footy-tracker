@@ -48,8 +48,8 @@
                             <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
                                 <tr>
                                     <th class="has-text-left">Ranking</th>
-                                    <td tal:condition="True"
-                                            class="has-text-left"> 1
+                                    <td tal:condition="True" class="has-text-left">
+                                        ${ ml_model_ranking.ranking }
                                     </td>
                                     <td tal:condition="False"
                                             class="has-text-left"> NA

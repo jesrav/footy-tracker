@@ -211,21 +211,21 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr tal:repeat="m ml_models" class="table-row" id="${ m.id }"
-                                                                                  onclick="location.href='/ml/model/${ m.id }';"
+                                            <tr tal:repeat="i ml_model_rankings" class="table-row" id="${ i }"
+                                                                                  onclick="location.href='/ml/model/${ i }';"
                                                                                   style="cursor:pointer;">
                                                 <td class="is-image-cell">
                                                     <div class="image">
-                                                        <img src="https://robohash.org/${ m.model_name }" class="is-rounded"
+                                                        <img src="https://robohash.org/${ ml_models[i].model_name }" class="is-rounded"
                                                              alt="user-icon">
                                                     </div>
 
                                                 </td>
-                                                <td data-label="Name">${ m.model_name }</td>
-                                                <td tal:condition="m.id in ml_model_rankings" data-label="Ranking">${ml_model_rankings[m.id].ranking}</td>
-                                                <td tal:condition="m.id not in ml_model_rankings" data-label="Ranking">NA</td>
-                                                <td tal:condition="m.id in latest_ml_model_metrics" data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[m.id].rolling_long_window_mae) }</td>
-                                                <td tal:condition="m.id not in latest_ml_model_metrics" data-label="100 game rolling MAE">NA</td>
+                                                <td data-label="Name">${ ml_models[i].model_name }</td>
+                                                <td tal:condition="i in ml_model_rankings" data-label="Ranking">${ml_model_rankings[i].ranking}</td>
+                                                <td tal:condition="i not in ml_model_rankings" data-label="Ranking">NA</td>
+                                                <td tal:condition="i in latest_ml_model_metrics" data-label="100 game rolling MAE">${ '{:.2f}'.format(latest_ml_model_metrics[i].rolling_long_window_mae) }</td>
+                                                <td tal:condition="i not in latest_ml_model_metrics" data-label="100 game rolling MAE">NA</td>
                                             </tr>
 
                                             </tbody>
