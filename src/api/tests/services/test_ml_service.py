@@ -5,12 +5,7 @@ from pandas.testing import assert_frame_equal
 import pytest
 
 from api.models.ml import PredictionRead, MLMetric
-from api.services.ml import mean_absolute_error, calculate_ml_metrics, randomize_team_order, add_ml_target
-
-
-@pytest.mark.parametrize("y_true, y_pred, expected_mae", [(1, 4, 3), (10, 2, 8), (1, 1, 0), (1, 5, 4), (3, 1, 2)])
-def test_mean_absolute_error(y_true, y_pred, expected_mae):
-    assert mean_absolute_error(y_true, y_pred) == expected_mae
+from api.services.ml import calculate_ml_metrics, randomize_team_order, add_ml_target
 
 
 def test_calculate_ml_metrics():
