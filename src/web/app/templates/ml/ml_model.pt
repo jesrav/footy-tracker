@@ -14,7 +14,7 @@
                     </div>
                 </div>
             </header>
-            <div class="tabs is-medium is-centered">
+            <div class="tabs is-small is-centered">
                 <ul>
                     <li class="is-active">
                         <a class="tablinks" onclick="TabclickHandle(event, 'metrics')">
@@ -48,7 +48,7 @@
             <div class="card-content">
                 <div class="card mt-2">
                     <header class="card-header p-1">
-                        <p class="title is-2 mt-4"> Model Score Card </p>
+                        <p class="title is-2 m-2"> Score Card </p>
                     </header>
                     <div class="card-content">
                         <div class="content">
@@ -93,7 +93,7 @@
 
                 <div class="card mt-2">
                     <header class="card-header p-1">
-                        <p class="title is-2 mt-4"> Bio </p>
+                        <p class="title is-2 m-2 is"> Bio </p>
                     </header>
                     <div class="card-content">
                         <div class="content">
