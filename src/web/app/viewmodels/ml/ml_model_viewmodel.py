@@ -3,6 +3,7 @@ from typing import List, Optional
 from starlette.requests import Request
 
 from app.models.ml import MLModel, MLMetric, MLModelRanking
+from app.models.user import UserReadUnauthorized
 from app.services import ml_service, user_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
@@ -12,6 +13,7 @@ class MLModelViewModel(ViewModelBase):
         super().__init__(request)
         self.ml_model_id = ml_model_id
         self.ml_model: Optional[MLModel] = None
+        self.model_user: Optional[UserReadUnauthorized] = None
         self.model_ml_metrics: List[MLMetric] = []
         self.latest_model_ml_metric: Optional[MLMetric] = None
         self.ml_model_ranking: Optional[MLModelRanking] = None
@@ -23,6 +25,7 @@ class MLModelViewModel(ViewModelBase):
         else:
             self.error = "Model not found"
 
+        self.model_user = await user_service.get_user_by_id(self.ml_model.user_id)
         self.model_ml_metrics = await ml_service.get_ml_metrics(self.ml_model.id)
 
         latest_ml_metric = await ml_service.get_latest_ml_metrics()
