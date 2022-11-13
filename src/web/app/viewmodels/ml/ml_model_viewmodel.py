@@ -1,10 +1,11 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from starlette.requests import Request
 
-from app.models.ml import MLModel, MLMetric, MLModelRanking
+from app.models.ml import MLModel, MLMetric, MLModelRanking, PredictionRead
+from app.models.result import ResultForUserDisplay
 from app.models.user import UserReadUnauthorized
-from app.services import ml_service, user_service
+from app.services import ml_service, user_service, tracking_service
 from app.viewmodels.shared.viewmodel import ViewModelBase
 
 
@@ -17,6 +18,7 @@ class MLModelViewModel(ViewModelBase):
         self.model_ml_metrics: List[MLMetric] = []
         self.latest_model_ml_metric: Optional[MLMetric] = None
         self.ml_model_ranking: Optional[MLModelRanking] = None
+        self.result_dict: Dict[int, ResultForUserDisplay] = {}
 
     async def load(self):
         ml_models = await ml_service.get_ml_models()
@@ -37,3 +39,8 @@ class MLModelViewModel(ViewModelBase):
         ml_model_rankings = await ml_service.get_ml_model_rankings()
         if self.ml_model_id in [m.ml_model_id for m in ml_model_rankings]:
             self.ml_model_ranking = [m for m in ml_model_rankings if m.ml_model_id == self.ml_model_id][0]
+
+        results = await tracking_service.get_approved_results()
+        self.result_dict = {
+            r.id: r for r in results
+        }

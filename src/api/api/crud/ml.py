@@ -142,18 +142,17 @@ async def get_ml_metrics(
         statement = (
             select(MLMetric)
             .filter(MLMetric.ml_model_id == ml_model_id)
-            .order_by(MLMetric.prediction_dt)
+            .order_by(MLMetric.prediction_dt.desc())
             .offset(skip).limit(limit)
         )
     else:
         statement = (
             select(MLMetric)
-            .order_by(MLMetric.prediction_dt)
+            .order_by(MLMetric.prediction_dt.desc())
             .offset(skip).limit(limit)
         )
     result = await session.execute(statement)
-    ml_metrics = result.scalars().all()
-    return  sorted(ml_metrics, key=lambda r: r.prediction_dt, reverse=True)
+    return result.scalars().all()
 
 
 async def get_latest_ml_metrics(session: AsyncSession) -> List[MLMetric]:

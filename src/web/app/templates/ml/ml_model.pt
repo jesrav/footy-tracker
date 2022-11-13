@@ -14,7 +14,7 @@
                     </div>
                 </div>
             </header>
-            <div class="tabs is-small is-centered">
+            <div class="tabs is-centered">
                 <ul>
                     <li class="is-active">
                         <a class="tablinks" onclick="TabclickHandle(event, 'metrics')">
@@ -22,14 +22,6 @@
                             <img src="/static/img/trending-up-outline.svg" alt="user-icon">
                         </span>
                             <span>Metrics</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="tablinks" onclick="TabclickHandle(event, 'residuals')">
-                    <span class="icon">
-                        <img src="/static/img/stats-chart-outline.svg" alt="user-icon">
-                    </span>
-                            <span>Residuals</span>
                         </a>
                     </li>
                     <li>
@@ -124,7 +116,7 @@
                 <div id="metrics" class="tabcontent is-active">
                     <div class="columns is-mobile">
                         <div class="column is-11">
-                            <canvas id="mlEvalChart"></canvas>
+                            <canvas id="MLMetricsChart"></canvas>
                         </div>
                         <br>
                         <br>
@@ -133,11 +125,53 @@
                     <br>
                     <br>
                 </div>
-                <div id="residuals" class="tabcontent is-hidden">
-                    Comming soon ...
-                </div>
                 <div id="predictions" class="tabcontent is-hidden">
-                    Comming soon ...
+
+                    <div class="section">
+                        <div tal:condition="model_ml_metrics" class="container">
+                            <h2 class="subtitle">Predictions</h2>
+                            <div class="b-table">
+                                <div class="table-wrapper has-mobile-cards">
+                                    <table class="table is-fullwidth is-striped is-hoverable is-fullwidth">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Absolute error</th>
+                                            <th>Actual goal diff (Team1 - Team2)</th>
+                                            <th>Predicted goal diff</th>
+                                            <th>Team1 defender</th>
+                                            <th>Team1 attacker</th>
+                                            <th>Team2 defender</th>
+                                            <th>Team2 attacker</th>
+                                            <th>Predicted at</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr tal:repeat="m model_ml_metrics">
+                                            <td data-label="Absolute error" class="is-progress-cell">
+                                                <progress max="100" class="progress is-small is-danger" value="${ (100/20)*abs(m.result_goal_diff - m.predicted_goal_diff) }"></progress>
+                                            </td>
+                                            <td data-label="Absolute error value">${ "{:.2f}".format(abs(m.result_goal_diff - m.predicted_goal_diff)) }</td>
+                                            <td data-label="Actual goal diff (Team1 - Team2)">${m.result_goal_diff}</td>
+                                            <td data-label="Predicted goal diff">${"{:.2f}".format(m.predicted_goal_diff)}</td>
+                                            <td data-label="Team1 defender">${result_dict[m.result_id].team1.attacker.nickname}</td>
+                                            <td data-label="Team1 attacker">${result_dict[m.result_id].team1.attacker.nickname}</td>
+                                            <td data-label="Team2 defender">${result_dict[m.result_id].team2.defender.nickname}</td>
+                                            <td data-label="Team2 attacker">${result_dict[m.result_id].team2.attacker.nickname}</td>
+                                            <td data-label="Predicted at">
+                                                <small class="has-text-grey is-abbr-like">${m.prediction_dt.strftime("%Y-%m-%d %H:%M:%S")}</small>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
                 </div>
 
@@ -160,28 +194,28 @@
 </script>
 
 <script tal:condition="model_ml_metrics">
-    const metric_dates_model1 = ${ [m.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for m in model_ml_metrics]};
-    let model1_metrics = []
+    const metric_dates_model = ${ [m.prediction_dt.strftime("%Y-%m-%d %H:%M:%S") for m in model_ml_metrics]};
+    let model_metrics = []
     const model1_metrics_values = ${ [m.rolling_short_window_mae for m in model_ml_metrics]};
-    metric_dates_model1.forEach((date, date_index) => {
-        model1_metrics.push({x: date, y: model1_metrics_values[date_index]})
+    metric_dates_model.forEach((date, date_index) => {
+        model_metrics.push({x: date, y: model1_metrics_values[date_index]})
     });
     datasets.push({
                 label: '${ ml_model.model_name }',
                 backgroundColor: 'rgb(0, 209, 178)',
                 borderColor: 'rgb(0, 209, 178)',
-                data: model1_metrics,
+                data: model_metrics,
             })
 </script>
 
 <script>
-    const data = {
+    const data_metrics = {
         datasets: datasets
     };
 
-    const config = {
+    const config_metrics = {
         type: 'line',
-        data: data,
+        data: data_metrics,
         options: {
             scales: {
                 x: {
@@ -236,10 +270,11 @@
         }
     };
 
-    const mlEvalChart = new Chart(
-            document.getElementById('mlEvalChart'),
-            config
+    const MLMetricsChart = new Chart(
+            document.getElementById('MLMetricsChart'),
+            config_metrics
     );
+
 
     function TabclickHandle(evt, tabId) {
         let i, tabcontent, tablinks;

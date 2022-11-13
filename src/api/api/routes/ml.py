@@ -184,16 +184,6 @@ async def suggest_teams(
     return await suggest_most_fair_teams(users=users, session=session)
 
 
-@router.get("/ml/predictions/", response_model=List[PredictionRead], tags=["ml"])
-async def read_ml_predictions(
-    skip: int = 0,
-    limit: int = 100,
-    ml_model_id: Optional[int] = None,
-    session: AsyncSession = Depends(get_session),
-):
-    return await get_predictions(session=session, skip=skip, limit=limit, ml_model_id=ml_model_id)
-
-
 @router.get("/ml/metrics/", response_model=List[MLMetric], tags=["ml"])
 async def read_ml_metrics(
     session: AsyncSession = Depends(get_session),

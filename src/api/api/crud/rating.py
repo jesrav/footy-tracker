@@ -74,12 +74,11 @@ async def get_user_ratings(
     statement = (
         select(rating_models.UserRating)
         .filter(rating_models.UserRating.user_id == user_id)
-        .order_by(rating_models.UserRating.created_dt)
+        .order_by(rating_models.UserRating.created_dt.desc())
         .offset(skip).limit(limit)
     )
     result = await session.execute(statement.options(selectinload(rating_models.UserRating.user)))
-    ratings = result.scalars().all()
-    return sorted(ratings, key=lambda r: r.created_dt, reverse=True)
+    return result.scalars().all()
 
 
 async def get_latest_ratings(session: AsyncSession) -> List[rating_models.UserRating]:
