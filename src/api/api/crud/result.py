@@ -40,7 +40,7 @@ async def get_results(
 ) -> List[result_models.ResultSubmission]:
     statement = (
         select(result_models.ResultSubmission)
-        .order_by(result_models.ResultSubmission.created_dt)
+        .order_by(result_models.ResultSubmission.created_dt.desc())
         .offset(skip).limit(limit)
     )
     if for_approval:
@@ -63,7 +63,7 @@ async def get_results(
     else:
         all_results = db_result.scalars().all()
         results = [r for r in all_results if user_id in r.match_participants]
-    return sorted(results, key=lambda r: r.created_dt, reverse=True)
+    return results
 
 
 async def _get_results_with_user_participation(
