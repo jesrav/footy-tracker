@@ -155,7 +155,7 @@
                                             <td data-label="Absolute error value">${ "{:.2f}".format(abs(m.result_goal_diff - m.predicted_goal_diff)) }</td>
                                             <td data-label="Actual goal diff (Team1 - Team2)">${m.result_goal_diff}</td>
                                             <td data-label="Predicted goal diff">${"{:.2f}".format(m.predicted_goal_diff)}</td>
-                                            <td data-label="Team1 defender">${result_dict[m.result_id].team1.attacker.nickname}</td>
+                                            <td data-label="Team1 defender">${result_dict[m.result_id].team1.defender.nickname}</td>
                                             <td data-label="Team1 attacker">${result_dict[m.result_id].team1.attacker.nickname}</td>
                                             <td data-label="Team2 defender">${result_dict[m.result_id].team2.defender.nickname}</td>
                                             <td data-label="Team2 attacker">${result_dict[m.result_id].team2.attacker.nickname}</td>
