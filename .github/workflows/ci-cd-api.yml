@@ -62,3 +62,28 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
           "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_API_ID }}/deployments"
 
+  deploy_web:
+    name: Deploy web docker container to Digital Ocean
+    runs-on: ubuntu-latest
+    needs: test-code
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # TODO: Should be updated to use ${{ github.run_number }} as tag instead of latest. Need to update the DO deployment workflow as well.
+      - name: 'Build and push image'
+        run: |
+          cd src/api
+          image_name=jesrav/footy-tracker_web:latest 
+          docker build -t $image_name .
+          docker push $image_name
+      - name: 'Trigger deploy to DigitalOcean'
+        run: |
+          curl -X POST \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+          "https://api.digitalocean.com/v2/apps/${{ secrets.DIGITALOCEAN_WEB_ID }}/deployments"
