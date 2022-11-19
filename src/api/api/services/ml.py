@@ -65,21 +65,21 @@ def calculate_ml_metrics(
     predictions_with_imputed_df = get_reasonably_bad_prediction(predictions_df)
 
     # Add the residual of each prediction
-    predictions_df['residual'] = predictions_df.predicted_goal_diff - predictions_df.result_goal_diff
+    predictions_df['residual'] = predictions_with_imputed_df.predicted_goal_diff - predictions_with_imputed_df.result_goal_diff
 
     # Add the absolute error of each prediction
-    predictions_df['ae'] = predictions_df['residual'].abs()
+    predictions_df['absolute_error'] = predictions_df['residual'].abs()
 
     # Add the rolling mean absolute error for each model for a short and long window
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
     predictions_df["rolling_short_window_mae"] = (
-        predictions_df.groupby('ml_model_id')["ae"]
+        predictions_df.groupby('ml_model_id')["absolute_error"]
         .rolling(window=short_rolling_window_size, min_periods=1)
         .mean().values
     )
     predictions_df = predictions_df.sort_values(by=['ml_model_id', 'created_dt'])
     predictions_df["rolling_long_window_mae"] = (
-        predictions_df.groupby('ml_model_id')["ae"]
+        predictions_df.groupby('ml_model_id')["absolute_error"]
         .rolling(window=long_rolling_window_size, min_periods=1)
         .mean().values
     )
@@ -105,7 +105,7 @@ def calculate_ml_metrics(
     ml_metrics_data = predictions_df.to_dict('records')
     for rec in ml_metrics_data:
         rec['prediction_dt'] = rec['prediction_dt'].to_pydatetime()
-        rec["predicted_goal_diff"] = rec["predicted_goal_diff"] if not np.isnan(rec["predicted_goal_diff"]) else None
+        rec["predicted_goal_diff"] = None if np.isnan(rec["predicted_goal_diff"]) else rec["predicted_goal_diff"]
     return [MLMetric(**row) for row in ml_metrics_data]
 
 

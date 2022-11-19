@@ -43,6 +43,7 @@ class MLMetric(BaseModel):
     rolling_long_window_mae: float
     rolling_short_window_bias: float
     rolling_long_window_bias: float
+    absolute_error: float
 
 
 class MLModelRanking(BaseModel):

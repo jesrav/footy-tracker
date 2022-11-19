@@ -107,6 +107,7 @@ class MLMetric(SQLModel, table=True):
     prediction_dt: datetime
     result_goal_diff: int
     predicted_goal_diff: Optional[float]
+    absolute_error: float
     rolling_short_window_mae: float
     rolling_long_window_mae: float
     rolling_short_window_bias: float

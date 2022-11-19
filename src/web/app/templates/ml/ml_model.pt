@@ -150,11 +150,11 @@
                                         <tbody>
                                         <tr tal:repeat="m model_ml_metrics">
                                             <td data-label="Absolute error" class="is-progress-cell">
-                                                <progress max="100" class="progress is-small is-danger" value="${ (100/20)*abs(m.result_goal_diff - m.predicted_goal_diff) }"></progress>
+                                                <progress max="100" class="progress is-small is-danger" value="${ (100/20)*m.absolute_error }"></progress>
                                             </td>
-                                            <td data-label="Absolute error value">${ "{:.2f}".format(abs(m.result_goal_diff - m.predicted_goal_diff)) }</td>
+                                            <td data-label="Absolute error value">${ "{:.2f}".format(m.absolute_error) }</td>
                                             <td data-label="Actual goal diff (Team1 - Team2)">${m.result_goal_diff}</td>
-                                            <td data-label="Predicted goal diff">${"{:.2f}".format(m.predicted_goal_diff)}</td>
+                                            <td data-label="Predicted goal diff">${"{:.2f}".format(m.predicted_goal_diff) if m.predicted_goal_diff else "Missing (registered as 0)" }</td>
                                             <td data-label="Team1 defender">${result_dict[m.result_id].team1.defender.nickname}</td>
                                             <td data-label="Team1 attacker">${result_dict[m.result_id].team1.attacker.nickname}</td>
                                             <td data-label="Team2 defender">${result_dict[m.result_id].team2.defender.nickname}</td>
