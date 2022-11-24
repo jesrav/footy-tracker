@@ -3,7 +3,7 @@ A table soccer tracking web app. Find a deployed version here
 
 - web app: [https://www.footy-tracker.live](https://www.footy-tracker.live) 
 - Min api: [https://api.footy-tracker.live](https://api.footy-tracker.live/docs).
-- ML prediction microservice: [https://ml.footy-tracker.live](https://api.footy-tracker.live/docs).
+- ML prediction microservice: [https://ml.footy-tracker.live](https://ml.footy-tracker.live/docs).
 
 # Get started
 Right now the development setup uses an Azure blob storage account for storing profile images, 
